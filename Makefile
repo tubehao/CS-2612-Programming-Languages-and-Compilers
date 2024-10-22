@@ -57,6 +57,10 @@ $(PL_FILES:%.v=%.vo): %.vo: %.v
 	@echo COQC $(<F)
 	@$(COQC) $(PL_FLAG) $<
 
+$(ASSIGNMENT_FILES:%.v=%.vo): %.vo: %.v
+	@echo COQC $(<F)
+	@$(COQC) $(PL_FLAG) $<
+
 all: $(FILES:%.v=%.vo)
 
 _CoqProject:
