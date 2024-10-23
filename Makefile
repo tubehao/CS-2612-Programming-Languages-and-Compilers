@@ -46,19 +46,19 @@ FILES = $(PL_FILES) \
 	$(ASSIGNMENT_FILES)
 
 $(SETS_FILES:%.v=%.vo): %.vo: %.v
-	@echo COQC $<
+	@echo COQC $<;
 	@$(COQC) $(SETS_FLAG) $<
 
 $(COMPCERT_FILES:%.v=%.vo): %.vo: %.v
-	@echo COQC $<
+	@echo COQC $<;
 	@$(COQC) $(COMPCERT_FLAG) $<
 			
 $(PL_FILES:%.v=%.vo): %.vo: %.v
-	@echo COQC $(<F)
+	@echo COQC $(<F);
 	@$(COQC) $(PL_FLAG) $<
 
 $(ASSIGNMENT_FILES:%.v=%.vo): %.vo: %.v
-	@echo COQC $(<F)
+	@echo COQC $(<F);
 	@$(COQC) $(PL_FLAG) $<
 
 all: $(FILES:%.v=%.vo)
@@ -73,12 +73,12 @@ depend: $(FILES)
 	@$(COQDEP) $(DEP_FLAG) $(FILES) > .depend
 
 clean:
-	@rm -f *.glob */*.glob
-	@rm -f *.vo */*.vo
-	@rm -f *.vok */*.vok
-	@rm -f *.vos */*.vos 
-	@rm -f .*.aux */.*.aux
-	@rm -f .depend
+	@rm -f *.glob */*.glob;
+	@rm -f *.vo */*.vo;
+	@rm -f *.vok */*.vok;
+	@rm -f *.vos */*.vos; 
+	@rm -f .*.aux */.*.aux;
+	@rm -f .depend;
 
 .PHONY: clean depend
 .DEFAULT_GOAL := all
