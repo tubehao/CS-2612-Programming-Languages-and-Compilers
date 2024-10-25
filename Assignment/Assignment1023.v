@@ -13,9 +13,11 @@ Local Open Scope Z.
 Lemma const_mono: forall a: Z,
   mono (fun x => a).
 Proof.
-Admitted. (* 请删除这一行_[Admitted]_并填入你的证明，以_[Qed]_结束。 *)
-
-
+  unfold mono.
+  intros.
+  simpl.
+  nia.
+Qed.
 (************)
 (** 习题：  *)
 (************)
@@ -27,8 +29,12 @@ Lemma mono_func_plus: forall f g,
   mono g ->
   mono (func_plus f g).
 Proof.
-Admitted. (* 请删除这一行_[Admitted]_并填入你的证明，以_[Qed]_结束。 *)
-
+  unfold mono, func_plus.
+  intros.
+  pose proof H n m H1.
+  pose proof H0 n m H1.
+  nia.
+Qed.
 
 
 (************)
@@ -46,7 +52,14 @@ Definition power4 (f: Z -> Z -> Z) (x: Z): Z :=
 Fact power2_power2: forall f a,
   assoc f ->
   power2 f (power2 f a) = power4 f a.
-Admitted. (* 请删除这一行_[Admitted]_并填入你的证明，以_[Qed]_结束。 *)
+Proof.
+  intros.
+  unfold power2, power4.
+  rewrite H .
+  rewrite H.
+  rewrite H.
+  reflexivity.
+Qed.
 
 
 
@@ -56,17 +69,44 @@ Admitted. (* 请删除这一行_[Admitted]_并填入你的证明，以_[Qed]_结
 
 Lemma size_nonneg: forall t,
   0 <= tree_size t.
-Admitted. (* 请删除这一行_[Admitted]_并填入你的证明，以_[Qed]_结束。 *)
+Proof.
+  induction t.
+  - simpl. lia.
+  - simpl. rewrite IHt1. lia.
+Qed. 
 
 
 (************)
 (** 习题：  *)
 (************)
+Fact reverse_involutive: forall t,
+  tree_reverse (tree_reverse t) = t.
+Proof. 
+  intros.
+  induction t; simpl.
+  - reflexivity.
+  - rewrite IHt1, IHt2.
+    reflexivity.
+Qed.
+
 
 Lemma reverse_result_Node: forall t t1 k t2,
   tree_reverse t = Node t1 k t2 ->
   t = Node (tree_reverse t2) k (tree_reverse t1).
-Admitted. (* 请删除这一行_[Admitted]_并填入你的证明，以_[Qed]_结束。 *)
+Proof.
+  intros t t1 k t2 H.
+  induction t as [| l IHl v r IHr].
+    discriminate H. 
+  - simpl in H. 
+    injection H as H1 H2 H3.
+    rewrite <- H1, <- H3. 
+    pose proof (reverse_involutive l) .
+    pose proof (reverse_involutive r).
+    rewrite H0, H.
+    rewrite H2.
+
+    reflexivity. 
+Qed.
 
 
 (************)
@@ -93,5 +133,11 @@ Fixpoint right_most (t: tree) (default: Z): Z :=
 
 Lemma left_most_reverse: forall t default,
   left_most (tree_reverse t) default = right_most t default.
-Admitted. (* 请删除这一行_[Admitted]_并填入你的证明，以_[Qed]_结束。 *)
-
+Proof. 
+  intros t.
+  induction t as [| l IHl v r IHr].
+  - reflexivity.
+  - simpl. specialize (IHl v). specialize (IHr v).
+    rewrite IHr.
+    reflexivity.
+Qed.
