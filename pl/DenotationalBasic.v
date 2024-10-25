@@ -162,76 +162,31 @@ Proof.
   reflexivity.
 Qed.
 
-(** 下面定义一种简单的语法变换---常量折叠---并证明其保持语义等价性。所谓常量折叠
-    指的是将只包含常量而不包含变量的表达式替换成为这个表达式的值。*)
+(************)
+(** 习题：  *)
+(************)
 
-Fixpoint fold_constants (e : expr_int) : expr_int :=
-  match e with
-  | EConst n    => EConst n
-  | EVar x      => EVar x
-  | EAdd e1 e2  =>
-      match fold_constants e1, fold_constants e2 with
-      | EConst n1, EConst n2 => EConst (n1 + n2)
-      | _, _ => EAdd (fold_constants e1) (fold_constants e2)
-      end
-  | ESub e1 e2 =>
-      match fold_constants e1, fold_constants e2 with
-      | EConst n1, EConst n2 => EConst (n1 - n2)
-      | _, _ => ESub (fold_constants e1) (fold_constants e2)
-    end
-  | EMul e1 e2 =>
-      match fold_constants e1, fold_constants e2 with
-      | EConst n1, EConst n2 => EConst (n1 * n2)
-      | _, _ => EMul (fold_constants e1) (fold_constants e2)
-    end
-  end.
+(** 请证明下面SimpleWhile中整数类型表达式的行为等价。*)
 
-(** 这里我们可以看到，Coq中_[match]_的使用是非常灵活的。(1) 我们不仅可以对一个变
-    量的值做分类讨论，还可以对一个复杂的Coq式子的取值做分类讨论；(2) 我们可以对
-    多个值同时做分类讨论；(3) 我们可以用下划线表示_[match]_的缺省情况。下面是两
-    个例子：*)
+Lemma plus_plus_assoc:
+  forall a b c: expr_int,
+    [[ a + (b + c) ]] ~=~ [[ a + b + c ]].
+Admitted. (* 请删除这一行_[Admitted]_并填入你的证明，以_[Qed]_结束。 *)
 
-Example fold_constants_ex1:
-  fold_constants [[(1 + 2) * "k"]] =
-  [[3 * "k"]].
-Proof. intros. reflexivity. Qed.
+Lemma plus_minus_assoc:
+  forall a b c: expr_int,
+    [[ a + (b - c) ]] ~=~ [[ a + b - c ]].
+Admitted. (* 请删除这一行_[Admitted]_并填入你的证明，以_[Qed]_结束。 *)
 
-(** 注意，根据我们的定义，_[fold_constants]_并不会将_[0 + "y"]_中的_[0]_消去。*)
+Lemma minus_plus_assoc:
+  forall a b c: expr_int,
+    [[ a - (b + c) ]] ~=~ [[ a - b - c ]].
+Admitted. (* 请删除这一行_[Admitted]_并填入你的证明，以_[Qed]_结束。 *)
 
-Example fold_expr_int_ex2 :
-  fold_constants [["x" - ((0 * 6) + "y")]] =
-  [["x" - (0 + "y")]].
-Proof. intros. reflexivity. Qed.
-
-(** 下面我们在Coq中证明，_[fold_constants]_保持表达式行为不变。 *)
-
-Theorem fold_constants_sound:
-  forall a, fold_constants a ~=~ a.
-Proof.
-  unfold iequiv. intros.
-  induction a.
-  + (** 常量的情况 *)
-    simpl.
-    reflexivity.
-  + (** 变量的情况 *)
-    simpl.
-    reflexivity.
-  + (** 加号的情况 *)
-    simpl.
-    destruct (fold_constants a1), (fold_constants a2);
-    rewrite <- IHa1, <- IHa2;
-    reflexivity.
-  + (** 减号的情况 *)
-    simpl.
-    destruct (fold_constants a1), (fold_constants a2);
-    rewrite <- IHa1, <- IHa2;
-    reflexivity.
-  + (** 乘号的情况 *)
-    simpl.
-    destruct (fold_constants a1), (fold_constants a2);
-    rewrite <- IHa1, <- IHa2;
-    reflexivity.
-Qed.
+Lemma minus_minus_assoc:
+  forall a b c: expr_int,
+    [[ a - (b - c) ]] ~=~ [[ a - b + c ]].
+Admitted. (* 请删除这一行_[Admitted]_并填入你的证明，以_[Qed]_结束。 *)
 
 
 End DntSem_SimpleWhile1.
@@ -537,32 +492,17 @@ Proof.
   reflexivity.
 Qed.
 
-(** 利用这些代数性质，我们可以重新证明_[fold_constants_sound]_。*)
+(** 利用这些代数性质，我们可以重新证明证明以下命题。*)
 
-Theorem fold_constants_sound_again:
-  forall a, fold_constants a ~=~ a.
+Fact iequiv_ex0:
+  forall (a: expr_int) (n m: Z),
+    [[ a + (EConst n) + (EConst m) ]] ~=~
+    EAdd a (EConst (n + m)).
 Proof.
   intros.
-  induction a.
-  + simpl.
-    reflexivity.
-  + simpl.
-    reflexivity.
-  + simpl.
-    destruct (fold_constants a1), (fold_constants a2);
-    try (simpl; rewrite IHa1, IHa2; reflexivity).
-    rewrite <- IHa1, <- IHa2, const_plus_const.
-    reflexivity.
-  + simpl.
-    destruct (fold_constants a1), (fold_constants a2);
-    try (simpl; rewrite IHa1, IHa2; reflexivity).
-    rewrite <- IHa1, <- IHa2, const_minus_const.
-    reflexivity.
-  + simpl.
-    destruct (fold_constants a1), (fold_constants a2);
-    try (simpl; rewrite IHa1, IHa2; reflexivity).
-    rewrite <- IHa1, <- IHa2, const_mult_const.
-    reflexivity.
+  rewrite <- plus_plus_assoc.
+  rewrite const_plus_const.
+  reflexivity.
 Qed.
 
 
