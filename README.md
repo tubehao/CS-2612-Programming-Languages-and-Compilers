@@ -29,6 +29,8 @@ repo和子模块内提供了相关的Makefile和_CoqProject用于整个项目文
 
 windows需要自行提供CONFIGURE文件用于提供相关依赖的地址，请在cs2612-2024fall目录下新建一个无后缀名文件CONFIGURE，然后将coq安装的路径写入该文件中。
 
+如果你已经把coq的bin加入了环境变量，或者是在wsl下使用opam安装的coq，那么不需要CONFIGURE也可以完成相关的设置。
+
 以cygwin编译环境下的CONFIGURE设置为例：
 
 ```
