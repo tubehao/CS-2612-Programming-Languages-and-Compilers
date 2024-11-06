@@ -12,6 +12,9 @@ Local Open Scope string.
 Local Open Scope Z.
 Local Open Scope sets.
 
+
+
+
 (** * 在Coq中表示集合与二元关系 *)
 
 (** SetsClass拓展库中提供了有关集合的一系列定义。例如：
