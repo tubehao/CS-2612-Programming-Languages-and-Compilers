@@ -11,13 +11,13 @@ COQBIN=
 COQC=$(COQBIN)coqc$(SUF)
 COQDEP=$(COQBIN)coqdep$(SUF)
 
-PL_FLAG = -R $(PL_DIR) PL -R $(SETS_DIR) SetsClass -R $(COMPCERT_DIR) compcert.lib
+PL_FLAG = -R $(PL_DIR) PL -R $(SETS_DIR) SetsClass -R $(COMPCERT_DIR) compcert.lib -R $(ASSIGNMENT_DIR) PL.Assignment
 
 SETS_FLAG = -R $(SETS_DIR) SetsClass
 
 COMPCERT_FLAG = -R $(COMPCERT_DIR) compcert.lib
 
-DEP_FLAG = -R $(PL_DIR) PL -R $(SETS_DIR) SetsClass -R $(COMPCERT_DIR) compcert.lib
+DEP_FLAG = -R $(PL_DIR) PL -R $(SETS_DIR) SetsClass -R $(COMPCERT_DIR) compcert.lib -R $(ASSIGNMENT_DIR) PL.Assignment
 
 SETS_FILE_NAMES = \
    SetsClass.v SetsClass_AxiomFree.v SetsDomain.v SetElement.v SetElementProperties.v RelsDomain.v SetProd.v SetsDomain_Classic.v
@@ -31,7 +31,7 @@ COMPCERT_FILE_NAMES = \
 COMPCERT_FILES=$(COMPCERT_FILE_NAMES:%.v=$(COMPCERT_DIR)/%.v)
 
 PL_FILE_NAMES = \
-	Syntax.v SimpleProofsAndDefs.v InductiveType.v DenotationalBasic.v RecurProp.v BuiltInNat.v DenotationalRels.v
+	Syntax.v SimpleProofsAndDefs.v InductiveType.v DenotationalBasic.v RecurProp.v BuiltInNat.v DenotationalRels.v Logic.v FixedPoint.v
   
 PL_FILES=$(PL_FILE_NAMES:%.v=$(PL_DIR)/%.v)
 
