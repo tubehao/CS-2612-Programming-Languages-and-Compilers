@@ -1,6 +1,7 @@
 Require Import SetsClass.SetsClass.
 Require Import Coq.ZArith.ZArith.
 Require Import Coq.micromega.Psatz.
+Require Import Coq.Classes.Morphisms.
 Require Import PL.FixedPoint.
 Import SetsNotation.
 Import KleeneFix Sets_CPO.
@@ -22,20 +23,27 @@ End Monad.
 
 Import Monad.
 
-(** 我们之后最常常用到的将是集合单子（set monad）：*)
+(** 我们之后最常常用到的将是集合单子（set monad）如下定义。*)
 
 Module SetMonad.
+
 Definition M (A: Type): Type := A -> Prop.
+
+Definition bind: forall (A B: Type) (f: M A) (g: A -> M B), M B :=
+  fun (A B: Type) (f: M A) (g: A -> M B) =>
+    fun b: B => exists a: A, a ∈ f /\ b ∈ g a.
+
+Definition ret: forall (A: Type) (a: A), M A :=
+  fun (A: Type) (a: A) => Sets.singleton a.
+
 End SetMonad.
 
 #[export] Instance set_monad: Monad SetMonad.M := {|
-  bind := fun (A B: Type) (f: SetMonad.M A) (g: A -> SetMonad.M B) =>
-            fun b: B =>
-              exists a: A, a ∈ f /\ b ∈ g a;
-  ret := fun (A: Type) (a: A) => Sets.singleton a
+  bind := SetMonad.bind;
+  ret := SetMonad.ret;
 |}.
 
-(** 下面则是状态单子的定义：*)
+(** 下面是另一个例子状态单子的定义：*)
 
 Module StateMonad.
 
@@ -91,6 +99,88 @@ Definition bind_ex2: SetMonad.M Z :=
   bind any_Z (fun x => bind (multi_two x) plus_one).
 
 End SetMonadExamples0.
+
+(** 以下是一些集合单子的性质：*)
+
+Module SetMonadProperties.
+
+(** 复合算子具有单调性：*)
+
+#[export] Instance bind_mono (A B: Type):
+  Proper (Sets.included ==> Sets.included ==> Sets.included)
+    (@bind _ set_monad A B).
+Proof.
+  unfold Proper, respectful.
+  unfold set_monad, bind, SetMonad.bind;
+  sets_unfold; intros f1 f2 Hf g1 g2 Hg.
+  intros b [a ?]; exists a.
+  specialize (Hf a); specialize (Hg a b).
+  tauto.
+Qed.
+
+(** 复合算子保持集合相等：*)
+
+#[export] Instance bind_congr (A B: Type):
+  Proper (Sets.equiv ==> Sets.equiv ==> Sets.equiv)
+    (@bind _ set_monad A B).
+Proof.
+  unfold Proper, respectful.
+  unfold set_monad, bind, SetMonad.bind;
+  sets_unfold; intros f1 f2 Hf g1 g2 Hg.
+  intros b; split; intros [a ?]; exists a.
+  + specialize (Hf a); specialize (Hg a b).
+    tauto.
+  + specialize (Hf a); specialize (Hg a b).
+    tauto.
+Qed.
+
+(** 复合算子具有对并集的分配律：*)
+
+Lemma bind_union_distr_l:
+  forall A B (f: SetMonad.M A) (g1 g2: A -> SetMonad.M B),
+    bind f (g1 ∪ g2) == bind f g1 ∪ bind f g2.
+Proof.
+  unfold set_monad, bind, SetMonad.bind;
+  intros; sets_unfold; intros.
+  split.
+  + intros [a0 [? [? | ?]]]; [left | right]; exists a0; tauto.
+  + intros [[a0 ?] | [a0 ?]]; exists a0; tauto.
+Qed.
+
+Lemma bind_union_distr_r:
+  forall A B (f1 f2: SetMonad.M A) (g: A -> SetMonad.M B),
+    bind (f1 ∪ f2) g == bind f1 g ∪ bind f2 g.
+Proof.
+  unfold set_monad, bind, SetMonad.bind;
+  intros; sets_unfold; intros.
+  split.
+  + intros [a0 [[? | ?] ?]]; [left | right]; exists a0; tauto.
+  + intros [[a0 ?] | [a0 ?]]; exists a0; tauto.
+Qed.
+
+Lemma bind_indexed_union_distr_l:
+  forall A B I (f: SetMonad.M A) (g: I -> A -> SetMonad.M B),
+    bind f (⋃ g) == ⋃ (fun i: I => bind f (g i)).
+Proof.
+  unfold set_monad, bind, SetMonad.bind;
+  intros; sets_unfold; intros.
+  split.
+  + intros [a0 [? [i ?]]]; exists i, a0; tauto.
+  + intros [i [a0 ?]]; exists a0; split; [| exists i]; tauto.
+Qed.
+
+Lemma bind_indexed_union_distr_r:
+  forall A B I (f: I -> SetMonad.M A) (g: A -> SetMonad.M B),
+    bind (⋃ f) g == ⋃ (fun i: I => bind (f i) g).
+Proof.
+  unfold set_monad, bind, SetMonad.bind;
+  intros; sets_unfold; intros.
+  split.
+  + intros [a0 [[i ?] ?]]; exists i, a0; tauto.
+  + intros [i [a0 ?]]; exists a0; split; [exists i |]; tauto.
+Qed.
+
+End SetMonadProperties.
 
 Module MonadNotation.
 
