@@ -37,7 +37,7 @@ PL_FILE_NAMES = \
 PL_FILES=$(PL_FILE_NAMES:%.v=$(PL_DIR)/%.v)
 
 ASSIGNMENT_FILE_NAMES = \
-	Assignment1018b.v Assignment1023.v Assignment1030b.v Assignment1127b.v
+	Assignment1018b.v Assignment1023.v Assignment1030b.v Assignment1127a.v Assignment1127b.v
 
 ASSIGNMENT_FILES=$(ASSIGNMENT_FILE_NAMES:%.v=$(ASSIGNMENT_DIR)/%.v)
 
