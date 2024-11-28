@@ -31,12 +31,13 @@ COMPCERT_FILE_NAMES = \
 COMPCERT_FILES=$(COMPCERT_FILE_NAMES:%.v=$(COMPCERT_DIR)/%.v)
 
 PL_FILE_NAMES = \
-	Syntax.v SimpleProofsAndDefs.v InductiveType.v DenotationalBasic.v RecurProp.v BuiltInNat.v DenotationalRels.v Logic.v FixedPoint.v Monad.v
+	Syntax.v SimpleProofsAndDefs.v InductiveType.v DenotationalBasic.v RecurProp.v BuiltInNat.v DenotationalRels.v Logic.v FixedPoint.v Monad.v \
+	List.v 
   
 PL_FILES=$(PL_FILE_NAMES:%.v=$(PL_DIR)/%.v)
 
 ASSIGNMENT_FILE_NAMES = \
-	Assignment1018b.v Assignment1023.v Assignment1030b.v
+	Assignment1018b.v Assignment1023.v Assignment1030b.v Assignment1127b.v
 
 ASSIGNMENT_FILES=$(ASSIGNMENT_FILE_NAMES:%.v=$(ASSIGNMENT_DIR)/%.v)
 

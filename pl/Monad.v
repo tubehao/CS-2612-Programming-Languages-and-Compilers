@@ -165,7 +165,6 @@ Definition compute_abs (z: Z): SetMonad.M Z :=
     (test (z >= 0);; ret z)
     (test (z <= 0);; ret (-z)).
 
-
 End SetMonadExamples2.
 
 (** 下面证明一些集合单子算子的性质 *)
@@ -637,6 +636,18 @@ Definition body_merge:
 Definition merge l l0 :=
   repeat_break body_merge (l, l0, nil).
 
+Fixpoint incr_aux (l: list Z) (x: Z): Prop :=
+  match l with
+  | nil => True
+  | y :: l0 => x <= y /\ incr_aux l0 y
+  end.
+
+Definition incr (l: list Z): Prop :=
+  match l with
+  | nil => True
+  | x :: l0 => incr_aux l0 x
+  end.
+
 Theorem merge_perm:
   forall l1 l2,
     Hoare (merge l1 l2) (Permutation (l1 ++ l2)).
@@ -673,18 +684,6 @@ Proof.
       rewrite (Permutation_app_comm _ [y]).
       reflexivity.
 Qed.
-
-Fixpoint incr_aux (l: list Z) (x: Z): Prop :=
-  match l with
-  | nil => True
-  | y :: l0 => x <= y /\ incr_aux l0 y
-  end.
-
-Definition incr (l: list Z): Prop :=
-  match l with
-  | nil => True
-  | x :: l0 => incr_aux l0 x
-  end.
 
 Lemma incr_app_cons: forall l1 x l2,
   incr (l1 ++ [x]) ->
