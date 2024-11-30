@@ -28,19 +28,46 @@ Fixpoint suffixes {A: Type} (l: list A): list (list A) :=
 
 Lemma self_in_suffixes:
   forall A (l: list A), In l (suffixes l).
-Admitted. (* 请删除这一行_[Admitted]_并填入你的证明，以_[Qed]_结束。 *)
+Proof.
+  intros.
+  induction l.
+  - simpl. tauto.
+  - simpl. tauto.
+Qed.  
+
+
 
 Theorem in_suffixes:
   forall A (l1 l2: list A),
     In l2 (suffixes (l1 ++ l2)).
-Admitted. (* 请删除这一行_[Admitted]_并填入你的证明，以_[Qed]_结束。 *)
+Proof.
+  intros.
+  induction l1.
+  - simpl. apply self_in_suffixes.
+  - simpl. tauto.
+Qed.
 
 Theorem in_suffixes_inv:
   forall A (l2 l: list A),
     In l2 (suffixes l) ->
     exists l1, l1 ++ l2 = l.
-Admitted. (* 请删除这一行_[Admitted]_并填入你的证明，以_[Qed]_结束。 *)
-
+Proof.
+  induction l.
+  + intros.
+    inversion H.
+    - exists nil.
+      simpl. rewrite H0. reflexivity.
+    - inversion H0.
+  + intros.
+    simpl in H.
+    destruct H.
+    - exists nil.
+      simpl. rewrite H. reflexivity.
+    - apply IHl in H.
+      destruct H.
+      exists (a :: x).
+      simpl. rewrite H. reflexivity.
+  Qed.
 
 (************)
 (** 习题：  *)
@@ -75,17 +102,50 @@ Fixpoint prefixes {A: Type} (l: list A): list (list A) :=
 
 Lemma nil_in_prefixes:
   forall A (l: list A), In nil (prefixes l).
-Admitted. (* 请删除这一行_[Admitted]_并填入你的证明，以_[Qed]_结束。 *)
+Proof.
+  intros.
+  induction l.
+  - simpl. tauto.
+  - simpl. tauto.
+Qed.
 
 Theorem in_prefixes:
   forall A (l1 l2: list A),
     In l1 (prefixes (l1 ++ l2)).
-Admitted. (* 请删除这一行_[Admitted]_并填入你的证明，以_[Qed]_结束。 *)
+Proof.
+  intros.
+  induction l1.
+  - simpl. apply nil_in_prefixes.
+  - simpl. right. apply in_map. apply IHl1.
+Qed. 
+
 
 Theorem in_prefixes_inv:
   forall A (l1 l: list A),
     In l1 (prefixes l) ->
     exists l2, l1 ++ l2 = l.
-Admitted. (* 请删除这一行_[Admitted]_并填入你的证明，以_[Qed]_结束。 *)
-
-
+Proof.
+  intros.
+  revert l1 H.
+  induction l.
+  + intros.
+    inversion H.
+    - exists nil.
+      simpl. rewrite <- H0. reflexivity.
+    - inversion H0.
+  + intros.
+    simpl in H.
+    destruct H.
+    - exists (a::l).
+      simpl. rewrite <- H. reflexivity.
+    - apply in_map_iff in H.
+      destruct H.
+      destruct H.
+      specialize (IHl x).
+      apply IHl in H0.
+      rewrite <- H.
+      destruct H0.
+      exists x0.
+      rewrite <- H0.
+      reflexivity.
+Qed.
