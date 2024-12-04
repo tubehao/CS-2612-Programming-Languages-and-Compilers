@@ -329,4 +329,48 @@ Theorem Hoare_list_iter {A B: Type}:
     (forall b l, P nil b -> Hoare (list_iter f l b) (fun b0 => P l b0)).
 Admitted. (* 请删除这一行_[Admitted]_并填入你的证明，以_[Qed]_结束。 *)
 
+Import SetMonadExamples4.
+
+
+Definition insertion (x: Z) (l: list Z): SetMonad.M (list Z) :=
+  fun l' => exists l1 l2,
+    l = l1 ++ l2 /\ l' = l1 ++ x :: l2 /\ incr l'.
+
+Definition ins_sort (l: list Z) :=
+  list_iter insertion l nil.
+
+(************)
+(** 习题：  *)
+(************)
+
+Theorem ins_sort_perm:
+  forall L,
+    Hoare
+      (ins_sort L)
+      (fun l => Permutation L l).
+Admitted. (* 请删除这一行_[Admitted]_并填入你的证明，以_[Qed]_结束。 *)
+
+(************)
+(** 习题：  *)
+(************)
+
+Theorem ins_sort_incr:
+  forall L,
+    Hoare
+      (ins_sort L)
+      (fun l => incr l).
+Admitted. (* 请删除这一行_[Admitted]_并填入你的证明，以_[Qed]_结束。 *)
+
+Theorem functional_correctness_ins_sort:
+  forall L,
+    Hoare
+      (ins_sort L)
+      (fun l => Permutation L l /\ incr l).
+Proof.
+  intros.
+  apply Hoare_conjunct.
+  + apply ins_sort_perm.
+  + apply ins_sort_incr.
+Qed.
+
 End SetMonadOperator2.
