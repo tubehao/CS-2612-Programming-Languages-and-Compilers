@@ -686,6 +686,324 @@ Proof.
 Qed.
 
 
+Lemma e_step_union_preserves :
+forall T (g0 g: pg_nfa T) g1 x y (s: state),
+  (s, g1,s) ∈ (G_add_graph g0 g).(nrm) -> 
+  e_step g x y ->
+  e_step g1 x y.
+Proof.
+  intros.
+  unfold StateRelMonad.nrm in H.
+  destruct H.
+  destruct H.
+  destruct union_pg0.
+  unfold e_step in H0.
+  destruct H0.
+  destruct H.
+  destruct H.
+  unfold e_step.
+  exists x0.
+  split.
+  - split.
+    + unfold Sets_disjoint_union in union_edge.
+      destruct union_edge.
+      sets_unfold in H2.
+      specialize (H2 x0).
+      destruct H2.
+      assert (H_or : (g0.(pg)).(evalid) x0 \/ (g.(pg)).(evalid) x0).
+      {
+        right.
+        exact step_evalid.
+      }
+      apply H2 in H_or.
+      tauto.
+    + unfold Sets_disjoint_union in union_vertex.
+      destruct union_vertex.
+      sets_unfold in H2.
+      specialize (H2 x).
+      destruct H2.
+      assert (H_or : (g0.(pg)).(vvalid) x \/ (g.(pg)).(vvalid) x).
+      {
+        right. 
+        exact step_src_valid.
+      }
+      apply H2 in H_or.
+      tauto.
+    + unfold Sets_disjoint_union in union_vertex.
+      destruct union_vertex.
+      sets_unfold in H2.
+      specialize (H2 y).
+      destruct H2.
+      assert (H_or : (g0.(pg)).(vvalid) y \/ (g.(pg)).(vvalid) y).
+      {
+        right. 
+        exact step_dst_valid.
+      }
+      apply H2 in H_or.
+      tauto.
+    + specialize (union_src2 x0).
+      sets_unfold in union_src2.
+      apply union_src2 in step_evalid.
+      rewrite <- step_evalid in step_src.
+      tauto.
+    + specialize (union_dst2 x0).
+      sets_unfold in union_dst2.
+      apply union_dst2 in step_evalid.
+      rewrite <- step_evalid in step_dst.
+      tauto.
+  - specialize (union_symbol4 x0).
+    sets_unfold in union_symbol4.
+    apply union_symbol4 in step_evalid.
+    rewrite <- step_evalid in H0.
+    tauto.
+Qed.
+
+Lemma c_step_union_preserves :
+forall T (g0 g: pg_nfa T) g1 x y (s: state) (c: T),
+  (s,g1,s) ∈ (G_add_graph g0 g).(nrm) -> 
+  c_step g c x y ->
+  c_step g1 c x y.
+Proof.
+  intros.
+  unfold StateRelMonad.nrm in H.
+  destruct H.
+  destruct H.
+  destruct union_pg0.
+  unfold c_step in H0.
+  destruct H0.
+  destruct H.
+  destruct H.
+  unfold c_step.
+  exists x0.
+  exists x1.
+  split.
+  - destruct H.
+    split.
+    + unfold Sets_disjoint_union in union_edge.
+      destruct union_edge.
+      sets_unfold in H2.
+      specialize (H2 x0).
+      destruct H2.
+      assert (H_or : (g0.(pg)).(evalid) x0 \/ (g.(pg)).(evalid) x0).
+      {
+        right.
+        exact step_evalid.
+      }
+      apply H2 in H_or.
+      tauto.
+    + unfold Sets_disjoint_union in union_vertex.
+      destruct union_vertex.
+      sets_unfold in H2.
+      specialize (H2 x).
+      destruct H2.
+      assert (H_or : (g0.(pg)).(vvalid) x \/ (g.(pg)).(vvalid) x).
+      {
+        right. 
+        exact step_src_valid.
+      }
+      apply H2 in H_or.
+      tauto.
+    + unfold Sets_disjoint_union in union_vertex.
+      destruct union_vertex.
+      sets_unfold in H2.
+      specialize (H2 y).
+      destruct H2.
+      assert (H_or : (g0.(pg)).(vvalid) y \/ (g.(pg)).(vvalid) y).
+      {
+        right. 
+        exact step_dst_valid.
+      }
+      apply H2 in H_or.
+      tauto.
+    + specialize (union_src2 x0).
+      sets_unfold in union_src2.
+      apply union_src2 in step_evalid.
+      rewrite <- step_evalid in step_src.
+      tauto.
+    + specialize (union_dst2 x0).
+      sets_unfold in union_dst2.
+      apply union_dst2 in step_evalid.
+      rewrite <- step_evalid in step_dst.
+      tauto.
+  - destruct H.
+    specialize (union_symbol4 x0).
+    sets_unfold in union_symbol4.
+    apply union_symbol4 in step_evalid.
+    rewrite <- step_evalid in H0.
+    tauto.
+Qed.
+      
+Lemma derive_false :
+  forall (T : Type) (r1 : reg_exp T)  ,
+    forall (s1:state), s1 ∈ (regexToNFA r1).(err) ->
+    False.
+Proof.
+  intros.
+  induction r1.
+  - unfold StateRelMonad.err in H.
+    sets_unfold in H.
+    unfold regexToNFA in H.
+    destruct H.
+    + unfold StateRelMonad.err in H.
+      destruct H.
+    + destruct H.
+      destruct H.
+      destruct H.
+      unfold StateRelMonad.err in H0.
+      destruct H0.
+      unfold StateRelMonad.err in H0.
+      destruct H0.
+      destruct H0.
+      destruct H0.
+      destruct H0.
+      unfold StateRelMonad.err in H1.
+      destruct H1.
+      * unfold StateRelMonad.err in H1.
+        destruct H1.
+        destruct H1.
+        destruct H1.
+        destruct H1.
+        destruct H1.
+        destruct H2.
+        --  unfold StateRelMonad.err in H2.
+            simpl in H2.
+            sets_unfold in H2.
+            destruct H1.
+            destruct H1.
+            destruct add_vertex_pg0.
+            unfold Sets_disjoint_union in add_vertex_vertex;destruct add_vertex_vertex.
+            unfold empty_nfa in H4.
+            simpl in H4.
+            apply H4 in H2.
+            unfold Sets.singleton in H2.
+            sets_unfold in H2.
+            destruct H0.
+            destruct H.
+            destruct H5.
+            rewrite H0 in H7.
+            destruct H6.
+            rewrite <- H8 in H7.
+            destruct H2.
+            ++  tauto.
+            ++  lia.
+        --  destruct H2.
+            destruct H2.
+            destruct H2.
+            destruct H3.
+            ++  destruct H3.
+            ++  destruct H3.
+                destruct H3.
+                destruct H3.
+                destruct H4.
+                **  unfold StateRelMonad.err in H4.
+                    simpl in H4.
+                    sets_unfold in H4.
+                    destruct H1.
+                    destruct H2.
+                    destruct H1.
+                    destruct H2.
+                    destruct add_vertex_pg0.
+                    destruct add_vertex_pg1.
+                    apply add_vertex_edge0 in H4.
+                    apply add_vertex_edge in H4.
+                    unfold empty_nfa in H4.
+                    simpl in H4.
+                    tauto.
+                **  destruct H4.
+                    destruct H4.
+                    destruct H4.
+                    tauto.
+      * destruct H1.
+        destruct H1.
+        destruct H1.
+        destruct H2.
+  - unfold StateRelMonad.err in H.
+    sets_unfold in H.
+    unfold regexToNFA in H.
+    destruct H.
+    + unfold StateRelMonad.err in H.
+      destruct H.
+    + destruct H.
+      destruct H.
+      destruct H.
+      unfold StateRelMonad.err in H0.
+      destruct H0.
+      unfold StateRelMonad.err in H0.
+      destruct H0.
+      destruct H0.
+      destruct H0.
+      destruct H0.
+      unfold StateRelMonad.err in H1.
+      destruct H1.
+      * unfold StateRelMonad.err in H1.
+        destruct H1.
+        destruct H1.
+        destruct H1.
+        destruct H1.
+        destruct H1.
+        destruct H2.
+        --  unfold StateRelMonad.err in H2.
+            simpl in H2.
+            sets_unfold in H2.
+            destruct H1.
+            destruct H1.
+            destruct add_vertex_pg0.
+            unfold Sets_disjoint_union in add_vertex_vertex;destruct add_vertex_vertex.
+            unfold empty_nfa in H4.
+            simpl in H4.
+            apply H4 in H2.
+            unfold Sets.singleton in H2.
+            sets_unfold in H2.
+            destruct H0.
+            destruct H.
+            destruct H5.
+            rewrite H0 in H7.
+            destruct H6.
+            rewrite <- H8 in H7.
+            destruct H2.
+            ++  tauto.
+            ++  lia.
+        --  destruct H2.
+            destruct H2.
+            destruct H2.
+            destruct H3.
+            ++  destruct H3.
+            ++  destruct H3.
+                destruct H3.
+                destruct H3.
+                destruct H4.
+                **  unfold StateRelMonad.err in H4.
+                    simpl in H4.
+                    sets_unfold in H4.
+                    destruct H1.
+                    destruct H2.
+                    destruct H1.
+                    destruct H2.
+                    destruct add_vertex_pg0.
+                    destruct add_vertex_pg1.
+                    apply add_vertex_edge0 in H4.
+                    apply add_vertex_edge in H4.
+                    unfold empty_nfa in H4.
+                    simpl in H4.
+                    tauto.
+                **  destruct H4.
+                    destruct H4.
+                    destruct H4.
+                    tauto.
+      * destruct H1.
+        destruct H1.
+        destruct H1.
+        destruct H2.
+  - unfold StateRelMonad.err in H.
+    sets_unfold in H.
+    unfold regexToNFA in H.
+    destruct H.
+    + apply IHr1_1 in H.
+      tauto.
+    + destruct H.
+      destruct H.
+      destruct H.
+      Admitted.
     + unfold StateRelMonad.nrm in H0.
       unfold state.
       destruct H0.
