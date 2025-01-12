@@ -832,14 +832,210 @@ Proof.
     rewrite <- step_evalid in H0.
     tauto.
 Qed.
-      
+
+Lemma after_G_add_graph_all_edge_number_become_larger :
+forall {T: Type} (pg1 pg2: pg_nfa T) (s1 s2: state) (g: pg_nfa T),
+  (s1, g, s2) ∈ (G_add_graph pg1 pg2).(nrm) ->
+  forall gv, gv ∈ g.(pg).(evalid) -> gv <= s2.(max_e).
+Admitted.
+
+
+Lemma vvalid_range :
+  forall {T: Type} (elem1: elem T) (s1 s2: state) (r: reg_exp T),
+  (s1, elem1, s2) ∈ (regexToNFA r).(nrm) ->
+  forall gv, gv ∈ elem1.(graph).(pg).(vvalid) -> s1.(max_v) < gv <= s2.(max_v).
+Proof.
+  intros.
+  induction r.
+Admitted.
+
+Lemma evalid_range :
+  forall {T: Type} (elem1: elem T) (s1 s2: state) (r: reg_exp T),
+  (s1, elem1, s2) ∈ (regexToNFA r).(nrm) ->
+  forall ge, ge ∈ elem1.(graph).(pg).(evalid) -> s1.(max_e) < ge <= s2.(max_e).
+Proof.
+  intros.
+  induction r.
+Admitted.
+
+Lemma no_overlap_between_two_nfa_if_they_are_from_same_state_series :
+  forall {T: Type} (r1 r2: reg_exp T) (s1 s2 s3: state) (elem1 elem2: elem T),
+  (s1, elem1, s2) ∈ (regexToNFA r1).(nrm) ->
+  (s2, elem2, s3) ∈ (regexToNFA r2).(nrm) ->
+  ~ Sets_overlap (elem1.(graph).(pg)).(vvalid) (elem2.(graph).(pg)).(vvalid) /\
+  ~ Sets_overlap (elem1.(graph).(pg)).(evalid) (elem2.(graph).(pg)).(evalid).
+Proof.
+  intros.
+  unfold Sets_overlap.
+  unfold not.
+  split.
+  - intros Hcontra1.
+    destruct Hcontra1 as [v [Hcontra1 Hcontra2]].
+    pose proof (vvalid_range elem1 s1 s2 r1 H v Hcontra1).
+    pose proof (vvalid_range elem2 s2 s3 r2 H0 v Hcontra2).
+    lia.
+  - intros Hcontra2.
+    destruct Hcontra2 as [e [Hcontra1 Hcontra2]].
+    pose proof (evalid_range elem1 s1 s2 r1 H e Hcontra1).
+    pose proof (evalid_range elem2 s2 s3 r2 H0 e Hcontra2).
+    lia.    
+Qed.
+        
 Lemma derive_false :
   forall (T : Type) (r1 : reg_exp T)  ,
     forall (s1:state), s1 ∈ (regexToNFA r1).(err) ->
     False.
 Proof.
   intros.
+  revert s1 H.
   induction r1.
+  3:{
+    intros s.
+    intros.
+    unfold StateRelMonad.err in H.
+    sets_unfold in H.
+    destruct H.
+    pose proof IHr1_1 s.
+    tauto.
+    destruct H.
+    destruct H.
+    destruct H.
+    unfold StateRelMonad.err in H0.
+    sets_unfold in H0.
+    destruct H0.
+    pose proof IHr1_2 x0.
+    tauto.
+    destruct H0.
+    destruct H0.
+    destruct H0.
+    unfold StateRelMonad.err in H1.
+    sets_unfold in H1.
+    destruct H1.
+    unfold StateRelMonad.err in H1.
+    sets_unfold in H1.
+    destruct H1.
+    unfold StateRelMonad.err in H1.
+    sets_unfold in H1.
+    destruct H1.
+    unfold Sets_overlap in H1.
+    unfold empty_nfa in H1.
+    destruct H1.
+    simpl in H1.
+    tauto.
+    unfold Sets_overlap in H1.
+    simpl in H1.
+    destruct H1.
+    tauto.
+    destruct H1.
+    destruct H1.
+    destruct H1.
+    unfold StateRelMonad.err in H2.
+    sets_unfold in H2.
+    destruct H2.
+    unfold StateRelMonad.err in H2.
+    sets_unfold in H2.
+    destruct H2.
+    3:{
+      destruct H2.
+      destruct H2.
+      destruct H2.
+      unfold StateRelMonad.err in H3.
+      sets_unfold in H3.
+      destruct H3.
+      unfold StateRelMonad.err in H3.
+      sets_unfold in H3.
+      destruct H3.
+      destruct H3.
+      destruct H3.
+      destruct H3.
+      unfold StateRelMonad.err in H4.
+      sets_unfold in H4.
+      destruct H4.
+      unfold StateRelMonad.err in H4.
+      sets_unfold in H4.
+      unfold G_add_edge in H4.
+      unfold StateRelMonad.nrm in H3.
+      sets_unfold in H3.
+      unfold get_new_edge in H3.
+      destruct H3.
+      destruct H5.
+      2:{
+        destruct H4.
+        destruct H4.
+        destruct H4.
+        unfold StateRelMonad.err in H5.
+        sets_unfold in H5.
+        destruct H5.
+      }
+      pose proof after_G_add_graph_all_edge_number_become_larger x3 x1.(graph) x4 x6 x5 H2.
+      pose proof H7 x7.
+      pose proof H8 H4.
+      rewrite H5 in H6.
+      rewrite H6 in H9.
+      lia.
+    }
+    3:{
+      destruct H1.
+      destruct H1.
+      destruct H1.
+      unfold StateRelMonad.err in H2.
+      sets_unfold in H2.
+      destruct H2.
+    }
+    unfold StateRelMonad.nrm in H1.
+    sets_unfold in H1.
+    destruct H1.
+    destruct H1.
+    unfold Sets_overlap in H2.
+    destruct H2.
+    destruct H1.
+    destruct union_pg0.
+    unfold empty_nfa in union_vertex.
+    simpl in union_vertex.
+    unfold Sets_disjoint_union in union_vertex.
+    sets_unfold in union_vertex.
+    destruct union_vertex.
+    pose proof H5 x5.
+    destruct H6.
+    pose proof H7 H1.
+    pose proof no_overlap_between_two_nfa_if_they_are_from_same_state_series r1_1 r1_2 s x0 x2 x x1.
+    pose proof H9 H H0.
+    destruct H10.
+    unfold Sets_overlap in H10.
+    unfold not in H10.
+    apply H10.
+    exists x5.
+    tauto.
+    unfold StateRelMonad.nrm in H1.
+    sets_unfold in H1.
+    destruct H1.
+    destruct H1.
+    unfold Sets_overlap in H2.
+    destruct H2.
+    destruct H1.
+    destruct union_pg0.
+    unfold empty_nfa in union_edge.
+    simpl in union_edge.
+    unfold Sets_disjoint_union in union_edge.
+    sets_unfold in union_edge.
+    destruct union_edge.
+    pose proof H5 x5.
+    destruct H6.
+    pose proof H7 H1.
+    pose proof no_overlap_between_two_nfa_if_they_are_from_same_state_series r1_1 r1_2 s x0 x2 x x1.
+    pose proof H9 H H0.
+    destruct H10.
+    unfold Sets_overlap in H11.
+    unfold not in H11.
+    apply H11.
+    exists x5.
+    tauto.
+  }
+      
+
+
+
+        
   - unfold StateRelMonad.err in H.
     sets_unfold in H.
     unfold regexToNFA in H.
