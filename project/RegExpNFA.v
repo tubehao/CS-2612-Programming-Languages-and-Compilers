@@ -839,6 +839,159 @@ forall {T: Type} (pg1 pg2: pg_nfa T) (s1 s2: state) (g: pg_nfa T),
   forall gv, gv ∈ g.(pg).(evalid) -> gv <= s2.(max_e).
 Admitted.
 
+Lemma get_new_vertex_num :
+  forall (s1 s2: state) (x: Z),
+    (s1, x, s2) ∈ get_new_vertex.(nrm) ->
+    max_v s2 = max_v s1 + 1 /\ max_e s2 = max_e s1 /\ x = max_v s2.
+Proof.
+  intros.
+  unfold StateRelMonad.nrm in H.
+  sets_unfold in H.
+  destruct H.
+  tauto.
+Qed.
+
+Lemma get_new_edge_num :
+  forall (s1 s2: state) (x: Z),
+    (s1, x, s2) ∈ get_new_edge.(nrm) ->
+    max_v s2 = max_v s1 /\ max_e s2 = max_e s1 + 1 /\ x = max_e s2.
+Proof.
+  intros.
+  unfold StateRelMonad.nrm in H.
+  sets_unfold in H.
+  destruct H.
+  tauto.
+Qed.
+
+Lemma add_graph_num :
+  forall {T: Type} (s1 s2: state) (x x1 x2: pg_nfa T),
+    (s1, x, s2) ∈ (G_add_graph x1 x2).(nrm) ->
+    (forall a : Z,
+    (x1.(pg)).(vvalid) a \/ (x2.(pg)).(vvalid) a <->
+    (x.(pg)).(vvalid) a) /\
+    (forall a : Z,
+    (x1.(pg)).(evalid) a \/ (x2.(pg)).(evalid) a <->
+    (x.(pg)).(evalid) a).
+Proof.
+  intros.
+  unfold StateRelMonad.nrm in H.
+  sets_unfold in H.
+  destruct H.
+  destruct H.
+  destruct union_pg0.
+  unfold Sets_disjoint_union in union_vertex, union_edge.
+  sets_unfold in union_vertex.
+  sets_unfold in union_edge.
+  destruct union_vertex.
+  destruct union_edge.
+  tauto.
+Qed.
+
+Lemma add_graph_num_vertex1 :
+  forall {T: Type} (s1 s2: state) (x x1 x2: pg_nfa T),
+    (s1, x, s2) ∈ (G_add_graph x1 x2).(nrm) ->
+    (forall a : Z,
+    (x1.(pg)).(vvalid) a \/ (x2.(pg)).(vvalid) a ->
+    (x.(pg)).(vvalid) a).
+Proof.
+  intros.
+  pose proof add_graph_num s1 s2 x x1 x2 H.
+  destruct H1.
+  pose proof H1 a.
+  destruct H3.
+  pose proof H3 H0.
+  tauto.
+Qed.
+
+Lemma add_graph_num_vertex2 :
+  forall {T: Type} (s1 s2: state) (x x1 x2: pg_nfa T),
+    (s1, x, s2) ∈ (G_add_graph x1 x2).(nrm) ->
+    (forall a : Z,
+    (x.(pg)).(vvalid) a ->
+    (x1.(pg)).(vvalid) a \/ (x2.(pg)).(vvalid) a).
+Proof.
+  intros.
+  pose proof add_graph_num s1 s2 x x1 x2 H.
+  destruct H1.
+  pose proof H1 a.
+  destruct H3.
+  pose proof H4 H0.
+  tauto.
+Qed.
+
+Lemma add_graph_num_edge1 :
+  forall {T: Type} (s1 s2: state) (x x1 x2: pg_nfa T),
+    (s1, x, s2) ∈ (G_add_graph x1 x2).(nrm) ->
+    (forall a : Z,
+    (x1.(pg)).(evalid) a \/ (x2.(pg)).(evalid) a ->
+    (x.(pg)).(evalid) a).
+Proof.
+  intros.
+  pose proof add_graph_num s1 s2 x x1 x2 H.
+  destruct H1.
+  pose proof H2 a.
+  destruct H3.
+  pose proof H3 H0.
+  tauto.
+Qed.
+
+Lemma add_graph_num_edge2 :
+  forall {T: Type} (s1 s2: state) (x x1 x2: pg_nfa T),
+    (s1, x, s2) ∈ (G_add_graph x1 x2).(nrm) ->
+    (forall a : Z,
+    (x.(pg)).(evalid) a ->
+    (x1.(pg)).(evalid) a \/ (x2.(pg)).(evalid) a).
+Proof.
+  intros.
+  pose proof add_graph_num s1 s2 x x1 x2 H.
+  destruct H1.
+  pose proof H2 a.
+  destruct H3.
+  pose proof H4 H0.
+  tauto.
+Qed.
+
+Lemma add_vertex_state_equal :
+  forall {T: Type} (s1 s2: state) (x x1: pg_nfa T) (v: Z),
+    (s1, x, s2) ∈ (G_add_vertex x1 v).(nrm) ->
+      s1 = s2.
+Proof.
+  intros.
+  unfold StateRelMonad.nrm in H.
+  sets_unfold in H.
+  destruct H.
+  tauto.
+Qed.
+
+Lemma add_graph_state_equal :
+  forall {T: Type} (s1 s2: state) (x x1 x2: pg_nfa T),
+    (s1, x, s2) ∈ (G_add_graph x1 x2).(nrm) ->
+      s1 = s2.
+Proof.
+  intros.
+  unfold StateRelMonad.nrm in H.
+  sets_unfold in H.
+  destruct H.
+  tauto.
+Qed.
+
+Lemma add_vertex_edge_equal :
+  forall {T: Type} (s1 s2: state) (x x1: pg_nfa T) (v: Z),
+    (s1, x, s2) ∈ (G_add_vertex x1 v).(nrm) ->
+    (forall a : Z,
+    (x1.(pg)).(evalid) a <-> (x.(pg)).(evalid) a).
+Proof.
+  intros.
+  unfold StateRelMonad.nrm in H.
+  sets_unfold in H.
+  destruct H.
+  destruct H.
+  destruct add_vertex_pg0.
+  sets_unfold in add_vertex_edge.
+  pose proof add_vertex_edge a.
+  tauto.
+Qed.
+
 
 Lemma vvalid_range :
   forall {T: Type} (elem1: elem T) (s1 s2: state) (r: reg_exp T),
