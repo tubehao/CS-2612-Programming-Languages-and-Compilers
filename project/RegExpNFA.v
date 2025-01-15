@@ -963,6 +963,63 @@ Proof.
   tauto.
 Qed.
 
+Lemma add_vertex_maxv_equal :
+  forall {T: Type} (s1 s2: state) (x x1: pg_nfa T) (v: Z),
+    (s1, x, s2) ∈ (G_add_vertex x1 v).(nrm) ->
+      max_v s1 = max_v s2.
+Proof.
+  intros.
+  pose proof add_vertex_state_equal s1 s2 x x1 v H.
+  rewrite H0.
+  tauto.
+Qed.
+
+Lemma add_vertex_maxe_equal :
+  forall {T: Type} (s1 s2: state) (x x1: pg_nfa T) (v: Z),
+    (s1, x, s2) ∈ (G_add_vertex x1 v).(nrm) ->
+      max_e s1 = max_e s2.
+Proof.
+  intros.
+  pose proof add_vertex_state_equal s1 s2 x x1 v H.
+  rewrite H0.
+  tauto.
+Qed.
+
+Lemma add_edge_state_equal :
+  forall {T: Type} (s1 s2: state) (x x1: pg_nfa T) (e v1 v2: Z) t,
+    (s1, x, s2) ∈ (G_add_edge x1 e v1 v2 t).(nrm) ->
+      s1 = s2.
+Proof.
+  intros.
+  unfold StateRelMonad.nrm in H.
+  sets_unfold in H.
+  destruct H.
+  tauto.
+Qed.
+
+Lemma add_edge_maxv_equal :
+  forall {T: Type} (s1 s2: state) (x x1: pg_nfa T) (e v1 v2: Z) t,
+    (s1, x, s2) ∈ (G_add_edge x1 e v1 v2 t).(nrm) ->
+      max_v s1 = max_v s2.
+Proof.
+  intros.
+  pose proof add_edge_state_equal s1 s2 x x1 e v1 v2 t H.
+  rewrite H0.
+  tauto.
+Qed.
+
+
+Lemma add_edge_maxe_equal :
+  forall {T: Type} (s1 s2: state) (x x1: pg_nfa T) (e v1 v2: Z) t,
+    (s1, x, s2) ∈ (G_add_edge x1 e v1 v2 t).(nrm) ->
+      max_e s1 = max_e s2.
+Proof.
+  intros.
+  pose proof add_edge_state_equal s1 s2 x x1 e v1 v2 t H.
+  rewrite H0.
+  tauto.
+Qed.
+
 Lemma add_graph_state_equal :
   forall {T: Type} (s1 s2: state) (x x1 x2: pg_nfa T),
     (s1, x, s2) ∈ (G_add_graph x1 x2).(nrm) ->
@@ -972,6 +1029,28 @@ Proof.
   unfold StateRelMonad.nrm in H.
   sets_unfold in H.
   destruct H.
+  tauto.
+Qed.
+
+Lemma add_graph_maxv_equal :
+  forall {T: Type} (s1 s2: state) (x x1 x2: pg_nfa T),
+    (s1, x, s2) ∈ (G_add_graph x1 x2).(nrm) ->
+      max_v s1 = max_v s2.
+Proof.
+  intros.
+  pose proof add_graph_state_equal s1 s2 x x1 x2 H.
+  rewrite H0.
+  tauto.
+Qed.
+
+Lemma add_graph_maxe_equal :
+  forall {T: Type} (s1 s2: state) (x x1 x2: pg_nfa T),
+    (s1, x, s2) ∈ (G_add_graph x1 x2).(nrm) ->
+      max_e s1 = max_e s2.
+Proof.
+  intros.
+  pose proof add_graph_state_equal s1 s2 x x1 x2 H.
+  rewrite H0.
   tauto.
 Qed.
 
@@ -989,6 +1068,42 @@ Proof.
   destruct add_vertex_pg0.
   sets_unfold in add_vertex_edge.
   pose proof add_vertex_edge a.
+  tauto.
+Qed.
+
+Lemma add_edge_edge_equal :
+  forall {T: Type} (s1 s2: state) (x x1: pg_nfa T) (e v1 v2: Z) t,
+    (s1, x, s2) ∈ (G_add_edge x1 e v1 v2 t).(nrm) ->
+    (forall a : Z, (x1.(pg)).(evalid) a \/ e = a <-> (x.(pg)).(evalid) a).
+Proof.
+  intros.
+  unfold StateRelMonad.nrm in H.
+  sets_unfold in H.
+  destruct H.
+  destruct H.
+  destruct add_edge_pg0.
+  unfold Sets_disjoint_union in add_edge_edge.
+  sets_unfold in add_edge_edge.
+  destruct add_edge_edge.
+  pose proof H1 a.
+  tauto.
+Qed.
+
+Lemma add_vertex_in_graph :
+  forall {T: Type} (s1 s2: state) (x x1: pg_nfa T) (v: Z),
+    (s1, x, s2) ∈ (G_add_vertex x1 v).(nrm) ->
+    (forall a : Z, (x1.(pg)).(vvalid) a \/ v = a <-> (x.(pg)).(vvalid) a).
+Proof.
+  intros.
+  unfold StateRelMonad.nrm in H.
+  sets_unfold in H.
+  destruct H.
+  destruct H.
+  destruct add_vertex_pg0.
+  unfold Sets_disjoint_union in add_vertex_vertex.
+  sets_unfold in add_vertex_vertex.
+  destruct add_vertex_vertex.
+  pose proof H1 a.
   tauto.
 Qed.
 
@@ -1184,279 +1299,947 @@ Proof.
     exists x5.
     tauto.
   }
-      
-
-
-
-        
-  - unfold StateRelMonad.err in H.
-    sets_unfold in H.
-    unfold regexToNFA in H.
-    destruct H.
-    + unfold StateRelMonad.err in H.
-      destruct H.
-    + destruct H.
-      destruct H.
-      destruct H.
-      unfold StateRelMonad.err in H0.
-      destruct H0.
-      unfold StateRelMonad.err in H0.
-      destruct H0.
-      destruct H0.
-      destruct H0.
-      destruct H0.
-      unfold StateRelMonad.err in H1.
-      destruct H1.
-      * unfold StateRelMonad.err in H1.
-        destruct H1.
-        destruct H1.
-        destruct H1.
-        destruct H1.
-        destruct H1.
-        destruct H2.
-        --  unfold StateRelMonad.err in H2.
-            simpl in H2.
-            sets_unfold in H2.
-            destruct H1.
-            destruct H1.
-            destruct add_vertex_pg0.
-            unfold Sets_disjoint_union in add_vertex_vertex;destruct add_vertex_vertex.
-            unfold empty_nfa in H4.
-            simpl in H4.
-            apply H4 in H2.
-            unfold Sets.singleton in H2.
-            sets_unfold in H2.
-            destruct H0.
-            destruct H.
-            destruct H5.
-            rewrite H0 in H7.
-            destruct H6.
-            rewrite <- H8 in H7.
-            destruct H2.
-            ++  tauto.
-            ++  lia.
-        --  destruct H2.
-            destruct H2.
-            destruct H2.
-            destruct H3.
-            ++  destruct H3.
-            ++  destruct H3.
-                destruct H3.
-                destruct H3.
-                destruct H4.
-                **  unfold StateRelMonad.err in H4.
-                    simpl in H4.
-                    sets_unfold in H4.
-                    destruct H1.
-                    destruct H2.
-                    destruct H1.
-                    destruct H2.
-                    destruct add_vertex_pg0.
-                    destruct add_vertex_pg1.
-                    apply add_vertex_edge0 in H4.
-                    apply add_vertex_edge in H4.
-                    unfold empty_nfa in H4.
-                    simpl in H4.
-                    tauto.
-                **  destruct H4.
-                    destruct H4.
-                    destruct H4.
-                    tauto.
-      * destruct H1.
-        destruct H1.
-        destruct H1.
-        destruct H2.
-  - unfold StateRelMonad.err in H.
-    sets_unfold in H.
-    unfold regexToNFA in H.
-    destruct H.
-    + unfold StateRelMonad.err in H.
-      destruct H.
-    + destruct H.
-      destruct H.
-      destruct H.
-      unfold StateRelMonad.err in H0.
-      destruct H0.
-      unfold StateRelMonad.err in H0.
-      destruct H0.
-      destruct H0.
-      destruct H0.
-      destruct H0.
-      unfold StateRelMonad.err in H1.
-      destruct H1.
-      * unfold StateRelMonad.err in H1.
-        destruct H1.
-        destruct H1.
-        destruct H1.
-        destruct H1.
-        destruct H1.
-        destruct H2.
-        --  unfold StateRelMonad.err in H2.
-            simpl in H2.
-            sets_unfold in H2.
-            destruct H1.
-            destruct H1.
-            destruct add_vertex_pg0.
-            unfold Sets_disjoint_union in add_vertex_vertex;destruct add_vertex_vertex.
-            unfold empty_nfa in H4.
-            simpl in H4.
-            apply H4 in H2.
-            unfold Sets.singleton in H2.
-            sets_unfold in H2.
-            destruct H0.
-            destruct H.
-            destruct H5.
-            rewrite H0 in H7.
-            destruct H6.
-            rewrite <- H8 in H7.
-            destruct H2.
-            ++  tauto.
-            ++  lia.
-        --  destruct H2.
-            destruct H2.
-            destruct H2.
-            destruct H3.
-            ++  destruct H3.
-            ++  destruct H3.
-                destruct H3.
-                destruct H3.
-                destruct H4.
-                **  unfold StateRelMonad.err in H4.
-                    simpl in H4.
-                    sets_unfold in H4.
-                    destruct H1.
-                    destruct H2.
-                    destruct H1.
-                    destruct H2.
-                    destruct add_vertex_pg0.
-                    destruct add_vertex_pg1.
-                    apply add_vertex_edge0 in H4.
-                    apply add_vertex_edge in H4.
-                    unfold empty_nfa in H4.
-                    simpl in H4.
-                    tauto.
-                **  destruct H4.
-                    destruct H4.
-                    destruct H4.
-                    tauto.
-      * destruct H1.
-        destruct H1.
-        destruct H1.
-        destruct H2.
-  - unfold StateRelMonad.err in H.
-    sets_unfold in H.
-    unfold regexToNFA in H.
-    destruct H.
-    + apply IHr1_1 in H.
-      tauto.
-    + destruct H.
-      destruct H.
-      destruct H.
-      Admitted.
-    + unfold StateRelMonad.nrm in H0.
-      unfold state.
-      destruct H0.
-      destruct H0.
-      destruct H0.
-      destruct H1.
-      destruct H1.
-      destruct H1.
-      destruct H2.
-      destruct H2.
-      destruct H2.
- 
-      destruct H0.
-      destruct H4.
-      destruct H1.
-      destruct H6.
-      destruct H2.
-      destruct H2.
-      destruct H2.
-      destruct H2.
-      destruct H8.
-      destruct H8.
-      destruct H8.
-      destruct H8.
-      destruct H10.
-      destruct H10.
-      destruct H10.
-      destruct H10.
-      destruct H10.
-      destruct H12.
-      destruct H10.
-      destruct H10.
-      destruct H10.
-      destruct H12.
-      destruct H3.
-      destruct H13.
-
-      unfold Rels.concat.
-      simpl.
-
-      apply rt_trans_n1.
-      subst.
-      
-      
-      unfold Sets.indexed_union.
-      unfold nsteps.
-      simpl.
-      
-      
-      
-
-      
-      
-      
-      
-
-      
-
-
-      rewrite H6.
-      destruct H5.
-      destruct H5.
-      destruct add_vertex_pg0.
-      apply add
-
-      unfold string_step.
-      unfold e_steps.
-      
-                    
-                     
-                       
-                 
-              tauto.
-
-        tauto. 
-      tauto.
-
-      intros contra.
-      destruct contra.
-      tauto.
-      case H1.
-      * intros.
-      unfold graph_constr in H0.
-      unfold StateRelMonad.err in H0.
-      tauto.
-    
-    + destruct H0.
-      unfold get_new_vertex in
-    destruct.
+  3:{
+    intros s.
     intros.
-    simpl.
-    inversion H0; subst.
-    unfold ret_nfa in H2.
+    unfold StateRelMonad.err in H.
+    sets_unfold in H.
+    destruct H.
+    pose proof IHr1_1 s.
+    tauto.
+    destruct H.
+    destruct H.
+    destruct H.
+    unfold StateRelMonad.err in H0.
+    sets_unfold in H0.
+    destruct H0.
+    pose proof IHr1_2 x0.
+    tauto.
+    destruct H0.
+    destruct H0.
+    destruct H0.
+    unfold StateRelMonad.err in H1.
+    sets_unfold in H1.
+    destruct H1.
+    unfold StateRelMonad.err in H1.
+    sets_unfold in H1.
+    destruct H1.
+    unfold StateRelMonad.err in H1.
+    sets_unfold in H1.
+    destruct H1.
+    destruct H1.
+    destruct H1.
+    destruct H2.
+    unfold StateRelMonad.err in H2.
+    sets_unfold in H2.
+    destruct H2.
+    destruct H2.
+    destruct H2.
+    destruct H2.
+    unfold StateRelMonad.err in H3.
+    sets_unfold in H3.
+    destruct H3.
+    unfold StateRelMonad.err in H3.
+    sets_unfold in H3.
+    destruct H3.
+    unfold StateRelMonad.err in H3.
+    sets_unfold in H3.
+    destruct H3.
+    unfold Sets_overlap in H3.
+    destruct H3.
+    destruct H3.
+    unfold empty_nfa in H3.
+    simpl in H3.
+    tauto.
+    unfold Sets_overlap in H3.
+    destruct H3.
+    destruct H3.
+    unfold empty_nfa in H3.
+    simpl in H3.
+    tauto.
+    destruct H3.
+    destruct H3.
+    destruct H3.
+    unfold StateRelMonad.err in H4.
+    sets_unfold in H4.
+    destruct H4.
+    unfold StateRelMonad.err in H4.
+    sets_unfold in H4.
+    destruct H4.
+    unfold Sets_overlap in H4.
+    destruct H4.
+    destruct H4.
+    unfold StateRelMonad.nrm in H3.
+    sets_unfold in H3.
+    destruct H3.
+    destruct H3.
+    destruct union_pg0.
+    unfold empty_nfa in union_vertex.
+    simpl in union_vertex.
+    unfold Sets_disjoint_union in union_vertex.
+    sets_unfold in union_vertex.
+    destruct union_vertex.
+    pose proof H7 x9.
+    destruct H8.
+    pose proof H9 H4.
+    pose proof no_overlap_between_two_nfa_if_they_are_from_same_state_series r1_1 r1_2 s x0 x2 x x1.
+    pose proof H11 H H0.
+    destruct H12.
+    unfold Sets_overlap in H12.
+    unfold not in H12.
+    apply H12.
+    exists x9.
+    tauto.
+    unfold Sets_overlap in H4.
+    destruct H4.
+    destruct H4.
+    unfold StateRelMonad.nrm in H3.
+    sets_unfold in H3.
+    destruct H3.
+    destruct H3.
+    destruct union_pg0.
+    unfold empty_nfa in union_edge.
+    simpl in union_edge.
+    unfold Sets_disjoint_union in union_edge.
+    sets_unfold in union_edge.
+    destruct union_edge.
+    pose proof H7 x9.
+    destruct H8.
+    pose proof H9 H4.
+    pose proof no_overlap_between_two_nfa_if_they_are_from_same_state_series r1_1 r1_2 s x0 x2 x x1.
+    pose proof H11 H H0.
+    destruct H12.
+    unfold Sets_overlap in H13.
+    unfold not in H13.
+    apply H13.
+    exists x9.
+    tauto.
+    destruct H4.
+    destruct H4.
+    destruct H4.
+    unfold StateRelMonad.err in H5.
+    sets_unfold in H5.
+    destruct H5.
+    unfold StateRelMonad.err in H5.
+    sets_unfold in H5.
+    simpl in H5.
+    pose proof add_graph_num_vertex2 x8 x10 x9 x7 x1.(graph) H4 x3 H5.
+    pose proof add_graph_num_vertex2 x6 x8 x7 empty_nfa x.(graph) H3 x3.
+    unfold empty_nfa in H7.
+    simpl in H7.
+    pose proof get_new_vertex_num x2 x4 x3 H1.
+    destruct H8.
+    destruct H9.
+    destruct H6.
+    pose proof H7 H6.
+    destruct H11.
+    tauto.
+    pose proof vvalid_range x s x0 r1_1 H.
+    destruct H12.
+    pose proof H12 x3 H11.
+    pose proof vvalid_range x1 x0 x2 r1_2 H0.
+    destruct H15.
+    lia.
+    pose proof vvalid_range x1 x0 x2 r1_2 H0.
+    destruct H11.
+    pose proof H11 x3 H6.
+    lia.
+    destruct H5.
+    destruct H5.
+    destruct H5.
+    unfold StateRelMonad.err in H6.
+    sets_unfold in H6.
+    destruct H6.
+    unfold StateRelMonad.err in H6.
+    sets_unfold in H6.
+    simpl in H6.
+    unfold StateRelMonad.nrm in H5.
+    sets_unfold in H5.
+    destruct H5.
+    destruct H5.
+    destruct add_vertex_pg0.
+    unfold Sets_disjoint_union in add_vertex_vertex.
+    sets_unfold in add_vertex_vertex.
+    destruct add_vertex_vertex.
+    pose proof H8 x5.
+    destruct H9.
+    pose proof H10 H6.
+    destruct H11.
+    pose proof add_graph_num_vertex2 x8 x10 x9 x7 x1.(graph) H4 x5 H11.
+    pose proof add_graph_num_vertex2 x6 x8 x7 empty_nfa x.(graph) H3 x5.
+    unfold empty_nfa in H13.
+    simpl in H13.
+    pose proof get_new_vertex_num x4 x6 x5 H2.
+    pose proof get_new_vertex_num x2 x4 x3 H1.
+    destruct H14.
+    destruct H16.
+    destruct H15.
+    destruct H18.
+    destruct H12.
+    pose proof H13 H12.
+    destruct H20.
+    tauto.
+    pose proof vvalid_range x s x0 r1_1 H.
+    destruct H21.
+    pose proof H21 x5 H20.
+    pose proof vvalid_range x1 x0 x2 r1_2 H0.
+    destruct H24.
+    lia.
+    pose proof vvalid_range x1 x0 x2 r1_2 H0.
+    destruct H20.
+    pose proof H20 x5 H12.
+    lia.
+    pose proof get_new_vertex_num x4 x6 x5 H2.
+    pose proof get_new_vertex_num x2 x4 x3 H1.
+    lia.
+    destruct H6.
+    destruct H6.
+    destruct H6.
+    unfold StateRelMonad.err in H7.
+    sets_unfold in H7.
+    destruct H7.
+    unfold StateRelMonad.err in H7.
+    sets_unfold in H7.
+    simpl in H7.
+    tauto.
+    destruct H7.
+    destruct H7.
+    destruct H7.
+    unfold StateRelMonad.err in H8.
+    sets_unfold in H8.
+    destruct H8.
+    unfold StateRelMonad.err in H8.
+    sets_unfold in H8.
+    simpl in H8.
+    pose proof get_new_edge_num x14 x16 x15 H7.
+    destruct H9.
+    destruct H10.
+    pose proof add_vertex_maxe_equal x12 x14 x13 x11 x5 H6.
+    pose proof add_vertex_maxe_equal x10 x12 x11 x9 x3 H5.
+    pose proof add_graph_maxe_equal x8 x10 x9 x7 x1.(graph) H4.
+    pose proof add_graph_maxe_equal x6 x8 x7 empty_nfa x.(graph) H3.
+    pose proof get_new_vertex_num x4 x6 x5 H2.
+    destruct H16.
+    destruct H17.
+    pose proof get_new_vertex_num x2 x4 x3 H1.
+    destruct H19.
+    destruct H20.
+    pose proof add_vertex_edge_equal x12 x14 x13 x11 x5 H6 x15.
+    destruct H22.
+    pose proof H23 H8.
+    pose proof add_vertex_edge_equal x10 x12 x11 x9 x3 H5 x15.
+    destruct H25.
+    pose proof H26 H24.
+    pose proof add_graph_num_edge2 x8 x10 x9 x7 x1.(graph) H4 x15.
+    pose proof H28 H27.
+    destruct H29.
+    pose proof add_graph_num_edge2 x6 x8 x7 empty_nfa x.(graph) H3 x15.
+    pose proof H30 H29.
+    unfold empty_nfa in H31.
+    simpl in H31.
+    destruct H31.
+    tauto.
+    pose proof evalid_range x s x0 r1_1 H.
+    destruct H32.
+    pose proof H32 x15 H31.
+    pose proof evalid_range x1 x0 x2 r1_2 H0.
+    destruct H35.
+    lia.
+    pose proof evalid_range x1 x0 x2 r1_2 H0.
+    destruct H30.
+    pose proof H30 x15 H29.
+    lia.
+    destruct H8.
+    destruct H8.
+    destruct H8.
+    unfold StateRelMonad.err in H9.
+    sets_unfold in H9.
+    destruct H9.
+    unfold StateRelMonad.err in H9.
+    sets_unfold in H9.
+    simpl in H9.
+    tauto.
+    destruct H9.
+    destruct H9.
+    destruct H9.
+    unfold StateRelMonad.err in H10.
+    sets_unfold in H10.
+    destruct H10.
+    unfold StateRelMonad.err in H10.
+    sets_unfold in H10.
+    simpl in H10.
+    pose proof get_new_edge_num x18 x20 x19 H9.
+    destruct H11.
+    destruct H12.
+    pose proof add_edge_maxe_equal x16 x18 x17 x13 x15 x3 x.(startVertex) epsilon H8.
+    pose proof get_new_edge_num x14 x16 x15 H7.
+    destruct H15.
+    destruct H16.
+    pose proof add_vertex_maxe_equal x12 x14 x13 x11 x5 H6.
+    pose proof add_vertex_maxe_equal x10 x12 x11 x9 x3 H5.
+    pose proof add_graph_maxe_equal x8 x10 x9 x7 x1.(graph) H4.
+    pose proof add_graph_maxe_equal x6 x8 x7 empty_nfa x.(graph) H3.
+    pose proof get_new_vertex_num x4 x6 x5 H2.
+    destruct H22.
+    destruct H23.
+    pose proof get_new_vertex_num x2 x4 x3 H1.
+    destruct H25.
+    destruct H26.
+    pose proof add_edge_edge_equal x16 x18 x17 x13 x15 x3 x.(startVertex) epsilon H8 x19.
+    destruct H28.
+    pose proof H29 H10.
+    destruct H30.
+    pose proof add_vertex_edge_equal x12 x14 x13 x11 x5 H6 x19.
+    destruct H31.
+    pose proof H32 H30.
+    pose proof add_vertex_edge_equal x10 x12 x11 x9 x3 H5 x19.
+    destruct H34.
+    pose proof H35 H33.
+    pose proof add_graph_num_edge2 x8 x10 x9 x7 x1.(graph) H4 x19.
+    pose proof H37 H36.
+    destruct H38.
+    pose proof add_graph_num_edge2 x6 x8 x7 empty_nfa x.(graph) H3 x19.
+    pose proof H39 H38.
+    unfold empty_nfa in H40.
+    simpl in H40.
+    destruct H40.
+    tauto.
+    pose proof evalid_range x s x0 r1_1 H.
+    destruct H41.
+    pose proof H41 x19 H40.
+    pose proof evalid_range x1 x0 x2 r1_2 H0.
+    destruct H44.
+    lia.
+    pose proof evalid_range x1 x0 x2 r1_2 H0.
+    destruct H39.
+    pose proof H39 x19 H38.
+    lia.
+    lia.
+    destruct H10.
+    destruct H10.
+    destruct H10.
+    unfold StateRelMonad.err in H11.
+    sets_unfold in H11.
+    destruct H11.
+    simpl in H11.
+    tauto.
+    destruct H11.
+    destruct H11.
+    destruct H11.
+    unfold StateRelMonad.err in H12.
+    sets_unfold in H12.
+    destruct H12.
+    unfold StateRelMonad.err in H12.
+    sets_unfold in H12.
+    simpl in H12.
+    pose proof get_new_edge_num x22 x24 x23 H11.
+    destruct H13.
+    destruct H14.
+    pose proof add_edge_edge_equal x20 x22 x21 x17 x19 x3 x1.(startVertex) epsilon H10 x23.
+    destruct H16.
+    pose proof H17 H12.
+    pose proof get_new_edge_num x18 x20 x19 H9.
+    destruct H19.
+    destruct H20.
+    pose proof add_edge_maxe_equal x20 x22 x21 x17 x19 x3 x1.(startVertex) epsilon H10.
+    destruct H18.
+    pose proof add_edge_edge_equal x16 x18 x17 x13 x15 x3 x.(startVertex) epsilon H8 x23.
+    destruct H23.
+    pose proof H24 H18.
+    pose proof add_edge_maxe_equal x16 x18 x17 x13 x15 x3 x.(startVertex) epsilon H8.
+    pose proof get_new_edge_num x14 x16 x15 H7.
+    destruct H27.
+    destruct H28.
+    destruct H25.
+    pose proof add_vertex_maxe_equal x12 x14 x13 x11 x5 H6.
+    pose proof add_vertex_maxe_equal x10 x12 x11 x9 x3 H5.
+    pose proof add_graph_maxe_equal x8 x10 x9 x7 x1.(graph) H4.
+    pose proof add_graph_maxe_equal x6 x8 x7 empty_nfa x.(graph) H3.
+    pose proof get_new_vertex_num x4 x6 x5 H2.
+    destruct H34.
+    destruct H35.
+    pose proof add_vertex_edge_equal x12 x14 x13 x11 x5 H6 x23.
+    destruct H37.
+    pose proof H38 H25.
+    pose proof add_vertex_edge_equal x10 x12 x11 x9 x3 H5 x23.
+    destruct H40.
+    pose proof H41 H39.
+    pose proof get_new_vertex_num x2 x4 x3 H1.
+    destruct H43.
+    destruct H44.
+    pose proof add_graph_num_edge2 x8 x10 x9 x7 x1.(graph) H4 x23.
+    pose proof H46 H42.
+    destruct H47.
+    pose proof add_graph_num_edge2 x6 x8 x7 empty_nfa x.(graph) H3 x23.
+    pose proof H48 H47.
+    unfold empty_nfa in H49.
+    simpl in H49.
+    destruct H49.
+    tauto.
+    pose proof evalid_range x s x0 r1_1 H.
+    destruct H50.
+    pose proof H50 x23 H49.
+    pose proof evalid_range x1 x0 x2 r1_2 H0.
+    destruct H53.
+    lia.
+    pose proof evalid_range x1 x0 x2 r1_2 H0.
+    destruct H48.
+    pose proof H48 x23 H47.
+    lia.
+    lia.
+    lia.
+    destruct H12.
+    destruct H12.
+    destruct H12.
+    unfold StateRelMonad.err in H13.
+    sets_unfold in H13.
+    destruct H13.
+    simpl in H13.
+    tauto.
+    destruct H13.
+    destruct H13.
+    destruct H13.
+    unfold StateRelMonad.err in H14.
+    sets_unfold in H14.
+    destruct H14.
+    unfold StateRelMonad.err in H14.
+    sets_unfold in H14.
+    simpl in H14.
+    pose proof get_new_edge_num x26 x28 x27 H13.
+    destruct H15.
+    destruct H16.
+    pose proof add_edge_maxe_equal x24 x26 x25 x21 x23 x.(endVertex) x5 epsilon H12.
+    pose proof get_new_edge_num x22 x24 x23 H11.
+    destruct H19.
+    destruct H20.
+    pose proof add_edge_maxe_equal x20 x22 x21 x17 x19 x3 x1.(startVertex) epsilon H10.
+    pose proof get_new_edge_num x18 x20 x19 H9.
+    destruct H23.
+    destruct H24.
+    pose proof add_edge_maxe_equal x16 x18 x17 x13 x15 x3 x.(startVertex) epsilon H8.
+    pose proof get_new_edge_num x14 x16 x15 H7.
+    destruct H27.
+    destruct H28.
+    pose proof add_vertex_maxe_equal x12 x14 x13 x11 x5 H6.
+    pose proof add_vertex_maxe_equal x10 x12 x11 x9 x3 H5.
+    pose proof add_graph_maxe_equal x8 x10 x9 x7 x1.(graph) H4.
+    pose proof add_graph_maxe_equal x6 x8 x7 empty_nfa x.(graph) H3.
+    pose proof get_new_vertex_num x4 x6 x5 H2.
+    destruct H34.
+    destruct H35.
+    pose proof get_new_vertex_num x2 x4 x3 H1.
+    destruct H37.
+    destruct H38.
+    pose proof add_edge_edge_equal x24 x26 x25 x21 x23 x.(endVertex) x5 epsilon H12 x27.
+    destruct H40.
+    pose proof H41 H14.
+    destruct H42.
+    pose proof add_edge_edge_equal x20 x22 x21 x17 x19 x3 x1.(startVertex) epsilon H10 x27.
+    destruct H43.
+    pose proof H44 H42.
+    destruct H45.
+    pose proof add_edge_edge_equal x16 x18 x17 x13 x15 x3 x.(startVertex) epsilon H8 x27.
+    destruct H46.
+    pose proof H47 H45.
+    destruct H48.
+    pose proof add_vertex_edge_equal x12 x14 x13 x11 x5 H6 x27.
+    destruct H49.
+    pose proof H50 H48.
+    pose proof add_vertex_edge_equal x10 x12 x11 x9 x3 H5 x27.
+    destruct H52.
+    pose proof H53 H51.
+    pose proof add_graph_num_edge2 x8 x10 x9 x7 x1.(graph) H4 x27 H54.
+    destruct H55.
+    pose proof add_graph_num_edge2 x6 x8 x7 empty_nfa x.(graph) H3 x27 H55.
+    unfold empty_nfa in H56.
+    simpl in H56.
+    destruct H56.
+    tauto.
+    pose proof evalid_range x s x0 r1_1 H.
+    destruct H57.
+    pose proof H57 x27 H56.
+    pose proof evalid_range x1 x0 x2 r1_2 H0.
+    destruct H60.
+    lia.
+    pose proof evalid_range x1 x0 x2 r1_2 H0.
+    destruct H56.
+    pose proof H56 x27 H55.
+    lia.
+    lia.
+    lia.
+    lia.
+    destruct H14.
+    destruct H14.
+    destruct H14.
+    unfold StateRelMonad.err in H15.
+    sets_unfold in H15.
+    destruct H15.
+    destruct H3.
+    destruct H3.
+    destruct H3.
+    unfold StateRelMonad.err in H4.
+    sets_unfold in H4.
+    destruct H4.
+  }
+  3:{
+    intros.
+    unfold StateRelMonad.err in H.
+    sets_unfold in H.
+    destruct H.
+    pose proof IHr1 s1 H.
+    tauto.
+    destruct H.
+    destruct H.
+    destruct H.
+    unfold StateRelMonad.err in H0.
+    sets_unfold in H0.
+    destruct H0.
+    simpl in H0.
+    tauto.
+    destruct H0.
+    destruct H0.
+    destruct H0.
+    unfold StateRelMonad.err in H1.
+    sets_unfold in H1.
+    destruct H1.
+    simpl in H1.
+    tauto.
+    destruct H1.
+    destruct H1.
+    destruct H1.
+    unfold StateRelMonad.err in H2.
+    sets_unfold in H2.
+    destruct H2.
+    unfold StateRelMonad.err in H2.
+    sets_unfold in H2.
+    destruct H2.
+    unfold StateRelMonad.err in H2.
+    sets_unfold in H2.
+    destruct H2.
+    unfold Sets_overlap in H2.
+    destruct H2.
+    destruct H2.
+    unfold empty_nfa in H2.
     simpl in H2.
-    inversion H2; subst.
-    repeat match goal with
-            | H : context [bind _ _] |- _ => simpl in H
-            | H : context [get_new_vertex] |- _ => simpl in H
-            | H : context [graph_constr _] |- _ => simpl in H
-            end.
-    subst.
-    split.
-    + simpl. reflexivity.
-    + reflexivity.
+    tauto.
+    unfold Sets_overlap in H2.
+    destruct H2.
+    destruct H2.
+    unfold empty_nfa in H2.
+    simpl in H2.
+    tauto.
+    destruct H2.
+    destruct H2.
+    destruct H2.
+    unfold StateRelMonad.err in H3.
+    sets_unfold in H3.
+    destruct H3.
+    unfold StateRelMonad.err in H3.
+    sets_unfold in H3.
+    simpl in H3.
+    pose proof add_graph_num_vertex2 x4 x6 x5 empty_nfa x.(graph) H2 x1 H3.
+    unfold empty_nfa in H4.
+    simpl in H4.
+    destruct H4.
+    tauto.
+    pose proof get_new_vertex_num x0 x2 x1 H0.
+    destruct H5.
+    destruct H6.
+    pose proof vvalid_range x s1 x0 r1 H.
+    destruct H8.
+    pose proof H8 x1 H4.
+    lia.
+    destruct H3.
+    destruct H3.
+    destruct H3.
+    unfold StateRelMonad.err in H4.
+    sets_unfold in H4.
+    destruct H4.
+    unfold StateRelMonad.err in H4.
+    sets_unfold in H4.
+    simpl in H4.
+    pose proof add_vertex_in_graph x6 x8 x7 x5 x1 H3 x3.
+    destruct H5.
+    pose proof H6 H4.
+    pose proof add_vertex_maxv_equal x6 x8 x7 x5 x1 H3.
+    pose proof add_graph_maxv_equal x4 x6 x5 empty_nfa x.(graph) H2.
+    pose proof get_new_vertex_num x2 x4 x3 H1.
+    destruct H10.
+    destruct H11.
+    pose proof get_new_vertex_num x0 x2 x1 H0.
+    destruct H13.
+    destruct H14.
+    destruct H7.
+    pose proof add_graph_num_vertex2 x4 x6 x5 empty_nfa x.(graph) H2 x3 H7.
+    unfold empty_nfa in H16.
+    simpl in H16.
+    destruct H16.
+    tauto.
+    pose proof vvalid_range x s1 x0 r1 H.
+    destruct H17.
+    pose proof H17 x3 H16.
+    lia.
+    lia.
+    destruct H4.
+    destruct H4.
+    destruct H4.
+    unfold StateRelMonad.err in H5.
+    sets_unfold in H5.
+    destruct H5.
+    simpl in H5.
+    tauto.
+    destruct H5.
+    destruct H5.
+    destruct H5.
+    unfold StateRelMonad.err in H6.
+    sets_unfold in H6.
+    destruct H6.
+    unfold StateRelMonad.err in H6.
+    sets_unfold in H6.
+    simpl in H6.
+    pose proof get_new_edge_num x10 x12 x11 H5.
+    destruct H7.
+    destruct H8.
+    pose proof add_vertex_maxe_equal x8 x10 x9 x7 x3 H4.
+    pose proof add_vertex_maxe_equal x6 x8 x7 x5 x1 H3.
+    pose proof add_graph_maxe_equal x4 x6 x5 empty_nfa x.(graph) H2.
+    pose proof get_new_vertex_num x2 x4 x3 H1.
+    destruct H13.
+    destruct H14.
+    pose proof get_new_vertex_num x0 x2 x1 H0.
+    destruct H16.
+    destruct H17.
+    pose proof add_vertex_edge_equal x8 x10 x9 x7 x3 H4 x11.
+    destruct H19.
+    pose proof H20 H6.
+    pose proof add_vertex_edge_equal x6 x8 x7 x5 x1 H3 x11.
+    destruct H22.
+    pose proof H23 H21.
+    pose proof add_graph_num_edge2 x4 x6 x5 empty_nfa x.(graph) H2 x11 H24.
+    unfold empty_nfa in H25.
+    simpl in H25.
+    destruct H25.
+    tauto.
+    pose proof evalid_range x s1 x0 r1 H.
+    destruct H26.
+    pose proof H26 x11 H25.
+    lia.
+    destruct H6.
+    destruct H6.
+    destruct H6.
+    unfold StateRelMonad.err in H7.
+    sets_unfold in H7.
+    destruct H7.
+    simpl in H7.
+    tauto.
+    destruct H7.
+    destruct H7.
+    destruct H7.
+    unfold StateRelMonad.err in H8.
+    sets_unfold in H8.
+    destruct H8.
+    unfold StateRelMonad.err in H8.
+    sets_unfold in H8.
+    simpl in H8.
+    pose proof get_new_edge_num x14 x16 x15 H7.
+    destruct H9.
+    destruct H10.
+    pose proof add_edge_maxe_equal x12 x14 x13 x9 x11 x1 x.(endVertex) epsilon H6.
+    pose proof get_new_edge_num x10 x12 x11 H5.
+    destruct H13.
+    destruct H14.
+    pose proof add_vertex_maxe_equal x8 x10 x9 x7 x3 H4.
+    pose proof add_vertex_maxe_equal x6 x8 x7 x5 x1 H3.
+    pose proof add_graph_maxe_equal x4 x6 x5 empty_nfa x.(graph) H2.
+    pose proof get_new_vertex_num x2 x4 x3 H1.
+    destruct H19.
+    destruct H20.
+    pose proof get_new_vertex_num x0 x2 x1 H0.
+    destruct H22.
+    destruct H23.
+    pose proof add_edge_edge_equal x12 x14 x13 x9 x11 x1 x.(endVertex) epsilon H6 x15.
+    destruct H25.
+    pose proof H26 H8.
+    destruct H27.
+    pose proof add_vertex_edge_equal x8 x10 x9 x7 x3 H4 x15.
+    destruct H28.
+    pose proof H29 H27.
+    pose proof add_vertex_edge_equal x6 x8 x7 x5 x1 H3 x15.
+    destruct H31.
+    pose proof H32 H30.
+    pose proof add_graph_num_edge2 x4 x6 x5 empty_nfa x.(graph) H2 x15 H33.
+    unfold empty_nfa in H34.
+    simpl in H34.
+    destruct H34.
+    tauto.
+    pose proof evalid_range x s1 x0 r1 H.
+    destruct H35.
+    pose proof H35 x15 H34.
+    lia.
+    lia.
+    destruct H8.
+    destruct H8.
+    destruct H8.
+    unfold StateRelMonad.err in H9.
+    sets_unfold in H9.
+    destruct H9.
+    simpl in H9.
+    tauto.
+    destruct H9.
+    destruct H9.
+    destruct H9.
+    unfold StateRelMonad.err in H10.
+    sets_unfold in H10.
+    destruct H10.
+    unfold StateRelMonad.err in H10.
+    sets_unfold in H10.
+    simpl in H10.
+    pose proof get_new_edge_num x18 x20 x19 H9.
+    destruct H11.
+    destruct H11.
+    pose proof add_edge_maxe_equal x16 x18 x17 x13 x15 x.(endVertex) x3 epsilon H8.
+    pose proof get_new_edge_num x14 x16 x15 H7.
+    destruct H13.
+    destruct H14.
+    pose proof add_edge_maxe_equal x12 x14 x13 x9 x11 x1 x.(endVertex) epsilon H6.
+    pose proof get_new_edge_num x10 x12 x11 H5.
+    destruct H17.
+    destruct H18.
+    pose proof add_vertex_maxe_equal x8 x10 x9 x7 x3 H4.
+    pose proof add_vertex_maxe_equal x6 x8 x7 x5 x1 H3.
+    pose proof add_graph_maxe_equal x4 x6 x5 empty_nfa x.(graph) H2.
+    pose proof get_new_vertex_num x2 x4 x3 H1.
+    destruct H23.
+    destruct H24.
+    pose proof get_new_vertex_num x0 x2 x1 H0.
+    destruct H26.
+    destruct H27.
+    pose proof add_edge_edge_equal x16 x18 x17 x13 x15 x.(endVertex) x3 epsilon H8 x19.
+    destruct H29.
+    pose proof H30 H10.
+    destruct H31.
+    pose proof add_edge_edge_equal x12 x14 x13 x9 x11 x1 x.(endVertex) epsilon H6 x19.
+    destruct H32.
+    pose proof H33 H31.
+    destruct H34.
+    pose proof add_vertex_edge_equal x8 x10 x9 x7 x3 H4 x19.
+    destruct H35.
+    pose proof H36 H34.
+    pose proof add_vertex_edge_equal x6 x8 x7 x5 x1 H3 x19.
+    destruct H38.
+    pose proof H39 H37.
+    pose proof add_graph_num_edge2 x4 x6 x5 empty_nfa x.(graph) H2 x19 H40.
+    unfold empty_nfa in H41.
+    simpl in H41.
+    destruct H41.
+    tauto.
+    pose proof evalid_range x s1 x0 r1 H.
+    destruct H42.
+    pose proof H42 x19 H41.
+    lia.
+    lia.
+    lia.
+    destruct H10.
+    destruct H10.
+    destruct H10.
+    unfold StateRelMonad.err in H11.
+    sets_unfold in H11.
+    destruct H11.
+    destruct H2.
+    destruct H2.
+    destruct H2.
+    unfold StateRelMonad.err in H3.
+    sets_unfold in H3.
+    destruct H3.
+  }
+  + intros.
+    unfold StateRelMonad.err in H.
+    sets_unfold in H.
+    unfold regexToNFA in H.
+    destruct H.
+    simpl in H.
+    tauto.
+    destruct H.
+    destruct H.
+    destruct H.
+    unfold StateRelMonad.err in H0.
+    sets_unfold in H0.
+    destruct H0.
+    simpl in H0.
+    tauto.
+    destruct H0.
+    destruct H0.
+    destruct H0.
+    unfold StateRelMonad.err in H1.
+    destruct H1.
+    unfold StateRelMonad.err in H1.
+    sets_unfold in H1.
+    destruct H1.
+    unfold StateRelMonad.err in H1.
+    sets_unfold in H1.
+    destruct H1.
+    destruct H1.
+    destruct H1.
+    destruct H1.
+    unfold StateRelMonad.err in H2.
+    sets_unfold in H2.
+    destruct H2.
+    unfold StateRelMonad.err in H2.
+    sets_unfold in H2.
+    simpl in H2.
+    pose proof add_vertex_in_graph x2 x4 x3 empty_nfa x H1 x1.
+    destruct H3.
+    pose proof H4 H2.
+    unfold empty_nfa in H5.
+    simpl in H5.
+    destruct H5.
+    tauto.
+    pose proof get_new_vertex_num s1 x0 x H.
+    destruct H6.
+    destruct H7.
+    pose proof get_new_vertex_num x0 x2 x1 H0.
+    destruct H9.
+    destruct H10.
+    lia.
+    destruct H2.
+    destruct H2.
+    destruct H2.
+    unfold StateRelMonad.err in H3.
+    sets_unfold in H3.
+    destruct H3.
+    simpl in H3.
+    tauto.
+    destruct H3.
+    destruct H3.
+    destruct H3.
+    unfold StateRelMonad.err in H4.
+    sets_unfold in H4.
+    destruct H4.
+    unfold StateRelMonad.err in H4.
+    sets_unfold in H4.
+    simpl in H4.
+    pose proof get_new_edge_num x6 x8 x7 H3.
+    destruct H5.
+    destruct H6.
+    pose proof add_vertex_maxe_equal x4 x6 x5 x3 x1 H2.
+    pose proof add_vertex_maxe_equal x2 x4 x3 empty_nfa x H1.
+    pose proof add_vertex_edge_equal x4 x6 x5 x3 x1 H2 x7.
+    destruct H10.
+    pose proof H11 H4.
+    pose proof add_vertex_edge_equal x2 x4 x3 empty_nfa x H1 x7.
+    destruct H13.
+    pose proof H14 H12.
+    unfold empty_nfa in H15.
+    simpl in H15.
+    tauto.
+    destruct H4.
+    destruct H4.
+    destruct H4.
+    unfold StateRelMonad.err in H5.
+    sets_unfold in H5.
+    simpl in H5.
+    tauto.
+    destruct H1.
+    destruct H1.
+    destruct H1.
+    unfold StateRelMonad.err in H2.
+    sets_unfold in H2.
+    simpl in H2.
+    tauto.
+  + intros.
+    unfold StateRelMonad.err in H.
+    sets_unfold in H.
+    unfold regexToNFA in H.
+    destruct H.
+    simpl in H.
+    tauto.
+    destruct H.
+    destruct H.
+    destruct H.
+    unfold StateRelMonad.err in H0.
+    sets_unfold in H0.
+    destruct H0.
+    simpl in H0.
+    tauto.
+    destruct H0.
+    destruct H0.
+    destruct H0.
+    unfold StateRelMonad.err in H1.
+    destruct H1.
+    unfold StateRelMonad.err in H1.
+    sets_unfold in H1.
+    destruct H1.
+    unfold StateRelMonad.err in H1.
+    sets_unfold in H1.
+    destruct H1.
+    destruct H1.
+    destruct H1.
+    destruct H1.
+    unfold StateRelMonad.err in H2.
+    sets_unfold in H2.
+    destruct H2.
+    unfold StateRelMonad.err in H2.
+    sets_unfold in H2.
+    simpl in H2.
+    pose proof add_vertex_in_graph x2 x4 x3 empty_nfa x H1 x1.
+    destruct H3.
+    pose proof H4 H2.
+    unfold empty_nfa in H5.
+    simpl in H5.
+    destruct H5.
+    tauto.
+    pose proof get_new_vertex_num s1 x0 x H.
+    destruct H6.
+    destruct H7.
+    pose proof get_new_vertex_num x0 x2 x1 H0.
+    destruct H9.
+    destruct H10.
+    lia.
+    destruct H2.
+    destruct H2.
+    destruct H2.
+    unfold StateRelMonad.err in H3.
+    sets_unfold in H3.
+    destruct H3.
+    simpl in H3.
+    tauto.
+    destruct H3.
+    destruct H3.
+    destruct H3.
+    unfold StateRelMonad.err in H4.
+    sets_unfold in H4.
+    destruct H4.
+    unfold StateRelMonad.err in H4.
+    sets_unfold in H4.
+    simpl in H4.
+    pose proof get_new_edge_num x6 x8 x7 H3.
+    destruct H5.
+    destruct H6.
+    pose proof add_vertex_maxe_equal x4 x6 x5 x3 x1 H2.
+    pose proof add_vertex_maxe_equal x2 x4 x3 empty_nfa x H1.
+    pose proof add_vertex_edge_equal x4 x6 x5 x3 x1 H2 x7.
+    destruct H10.
+    pose proof H11 H4.
+    pose proof add_vertex_edge_equal x2 x4 x3 empty_nfa x H1 x7.
+    destruct H13.
+    pose proof H14 H12.
+    unfold empty_nfa in H15.
+    simpl in H15.
+    tauto.
+    destruct H4.
+    destruct H4.
+    destruct H4.
+    unfold StateRelMonad.err in H5.
+    sets_unfold in H5.
+    simpl in H5.
+    tauto.
+    destruct H1.
+    destruct H1.
+    destruct H1.
+    unfold StateRelMonad.err in H2.
+    sets_unfold in H2.
+    simpl in H2.
+    tauto.
 Qed.
     
 
