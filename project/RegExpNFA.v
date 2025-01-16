@@ -2062,14 +2062,22 @@ Proof.
   split.
   - intros Hcontra1.
     destruct Hcontra1 as [v [Hcontra1 Hcontra2]].
-    pose proof (vvalid_range elem1 s1 s2 r1 H v Hcontra1).
-    pose proof (vvalid_range elem2 s2 s3 r2 H0 v Hcontra2).
+    pose proof (vvalid_range elem1 s1 s2 r1 H).
+    destruct H1.
+    apply H1 in Hcontra1.
+    pose proof (vvalid_range elem2 s2 s3 r2 H0).
+    destruct H3.
+    apply H3 in Hcontra2.
     lia.
-  - intros Hcontra2.
-    destruct Hcontra2 as [e [Hcontra1 Hcontra2]].
-    pose proof (evalid_range elem1 s1 s2 r1 H e Hcontra1).
-    pose proof (evalid_range elem2 s2 s3 r2 H0 e Hcontra2).
-    lia.    
+  - intros Hcontra1.
+    destruct Hcontra1 as [v [Hcontra1 Hcontra2]].
+    pose proof (evalid_range elem1 s1 s2 r1 H).
+    destruct H1.
+    apply H1 in Hcontra1.
+    pose proof (evalid_range elem2 s2 s3 r2 H0).
+    destruct H3.
+    apply H3 in Hcontra2.
+    lia.
 Qed.
         
 Lemma derive_false :
