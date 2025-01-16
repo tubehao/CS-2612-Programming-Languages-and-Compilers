@@ -2880,6 +2880,21 @@ Qed.
 
 
 
-
-
+Lemma concat_hoare_backward {T: Type}:
+  forall (str : list T) (s: state) (r1:reg_exp T)(r2: reg_exp T),
+  Hoare
+    (fun s1 => s1 = s)                  
+    (regexToNFA (Concat_r r1 r2))                           
+    (fun (e : elem T) (s2 : state) =>                          
+    exp_match (Concat_r r1 r2) str ->match_str e.(graph) e.(startVertex) e.(endVertex) str).
+Proof.
+  intros.
+  unfold Hoare.
+  split.
+  - intros.
+    intros contra.
+    apply derive_false in contra.
+    tauto.
+  - intros.
+  
 
