@@ -4291,13 +4291,118 @@ Proof.
 Abort.
 
 
+Definition MatchR {T} (r1 : reg_exp T) :=
+  forall (str:list T) (s1 s2 s: state) (a: elem T),
+  exp_match r1 str ->
+  s1 = s->
+  (s1, a, s2) ∈ (regexToNFA r1).(nrm) ->
+  match_str a.(graph) a.(startVertex) a.(endVertex) str.
+
+
+    
+
+Lemma RexMatch_ConcatR {T} :
+  forall (str: list T)(r1 r2: reg_exp T),
+  exp_match (Concat_r r1 r2) str ->
+  exists str1 str2: list T,
+  exp_match r1 str1 /\ exp_match r2 str2 /\ str = str2 ++ str1.
+Proof.
+  intros.
+  revert str r2 H. 
+  destruct r1.
+  3:{
+    intros.
+    repeat destruct H.
+    destruct H1, H0.
+    exists x, x0.
+    split.
+    - unfold exp_match.
+      unfold set_prod.
+      exists x1,x2.
+      split.
+      + tauto.
+      + tauto.
+    - split.
+      + tauto.
+      + tauto. 
+  }
+  3:{
+    intros.
+    unfold exp_match in H.
+    unfold set_prod in H.
+    repeat destruct H.
+    - exists x, x0.
+      split.
+      + unfold exp_match.
+        sets_unfold.
+        left;tauto.
+      + split.
+        tauto.
+        tauto.
+    - exists x,x0.
+      split.
+      + unfold exp_match.
+        sets_unfold.
+        right;tauto.
+      + split.
+        tauto.
+        tauto.
+  }
+  3:{
+    intros.
+    unfold exp_match in H.
+    unfold set_prod in H.
+    destruct H.
+    destruct H.
+    destruct H.
+    exists x,x0.
+    split.
+    - tauto.
+    - tauto.
+  }
+  - intros.
+    unfold exp_match in H.
+    unfold set_prod in H.
+    repeat destruct H.
+    destruct H0.
+    exists nil, x0.
+    split.
+    + unfold exp_match.
+      sets_unfold.
+      tauto.
+    + split.
+      * tauto.
+      * tauto.
+  - intros.
+    unfold exp_match in H.
+    unfold set_prod in H.
+    destruct H.
+    destruct H.
+    destruct H.
+    destruct H0.
+    destruct H.
+    destruct H.
+    exists x ,x0.
+    split.
+    + unfold exp_match.
+      exists x1.
+      tauto.
+    + split.
+      * tauto.
+      * tauto.
+Qed.
+
+
+      
+ 
+
 Lemma concat_hoare_backward {T: Type}:
   forall (str : list T) (s: state) (r1:reg_exp T)(r2: reg_exp T),
   Hoare
     (fun s1 => s1 = s)                  
     (regexToNFA (Concat_r r1 r2))                           
     (fun (e : elem T) (s2 : state) =>                          
-    exp_match (Concat_r r1 r2) str ->match_str e.(graph) e.(startVertex) e.(endVertex) str).
+    exp_match (Concat_r r1 r2) str ->MatchR r1/\MatchR r2->match_str e.(graph) e.(startVertex) e.(endVertex) str).
 Proof.
   intros.
   unfold Hoare.
@@ -4307,5 +4412,52 @@ Proof.
     apply derive_false in contra.
     tauto.
   - intros.
-  
+    apply RexMatch_ConcatR in H1.
+    destruct H1.
+    destruct H1.
+    destruct H1.
+    destruct H3.
+    destruct H2.
+    repeat destruct H0.
+    repeat destruct H6.
+    unfold MatchR in H2.
+    specialize (H2 x s1 x2 s x1).
+    apply H2 in H1.
+    2:{
+      tauto.
+    }
+    2:{
+       tauto. 
+    }
+    specialize (H5 x0 x2 x4 x2 x3).
+    apply H5 in H3.
+    2:{
+      tauto.
+    }
+    2:{
+       tauto. 
+    }
+    destruct H7.
+    destruct H7.
+    destruct H7.
+    destruct H7.
+    destruct H7.
+    destruct H7.
+    destruct H7.
+    destruct H9.
+    destruct H9.
+    destruct H9.
+    clear H2.
+    clear H5.
+    (*unfold match_str.
+    unfold match_str in H1,H3.
+    unfold string_step.
+    unfold string_step in H1,H3.
+    sets_unfold.*)
+    revert x0 H4 H3.
+    induction str.
+    2:{
+      simpl.
+    }
+    Admitted.
 
