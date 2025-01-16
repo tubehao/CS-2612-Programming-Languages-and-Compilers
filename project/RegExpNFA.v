@@ -34,7 +34,7 @@ Arguments Union_r {T} _ _.
 Arguments Star_r {T} _.
 
 Definition set_prod {T} (A B : list T -> Prop) : list T -> Prop :=
-  fun s => exists s1 s2, s1 ∈ A /\ s2 ∈ B /\ s = s1 ++ s2.
+  fun s => exists s1 s2, s1 ∈ A /\ s2 ∈ B /\ s = s2 ++ s1.
 
 Fixpoint star_r_indexed {T} (n : nat) (s : list T -> Prop) : list T -> Prop :=
   match n with
