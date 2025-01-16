@@ -1216,7 +1216,7 @@ Lemma v_range_graph_constr_singleton:
     (s3, g, s4) ∈ (graph_constr [V v1; V v2; E v1 v2 t]).(nrm) ->
     forall gv, gv ∈ g.(pg).(vvalid) -> s1.(max_v) < gv <= s4.(max_v).
 *)
-Lemma vvalid_range :
+Lemma another_order_vvalid_range :
 	forall {T: Type} (elem1: elem T) (s1 s2: state) (r: reg_exp T),
 	(s1, elem1, s2) ∈ (regexToNFA r).(nrm) -> s1.(max_v) <= s2.(max_v) /\
 	forall gv, gv ∈ elem1.(graph).(pg).(vvalid) -> s1.(max_v) < gv <= s2.(max_v).
@@ -2021,12 +2021,33 @@ Proof.
     lia.
 Qed.
 
+Lemma vvalid_range :
+	forall {T: Type} (elem1: elem T) (s1 s2: state) (r: reg_exp T),
+	(s1, elem1, s2) ∈ (regexToNFA r).(nrm) ->
+	(forall gv, gv ∈ elem1.(graph).(pg).(vvalid) -> s1.(max_v) < gv <= s2.(max_v)) /\ s1.(max_v) <= s2.(max_v).
+Proof.
+  intros.
+  pose proof another_order_vvalid_range elem1 s1 s2 r.
+  tauto.
+Qed.
+
+
+Lemma another_order_evalid_range :
+	forall {T: Type} (elem1: elem T) (s1 s2: state) (r: reg_exp T),
+	(s1, elem1, s2) ∈ (regexToNFA r).(nrm) -> s1.(max_e) <= s2.(max_e) /\
+	forall ge, ge ∈ elem1.(graph).(pg).(evalid) -> s1.(max_e) < ge <= s2.(max_e).
+Proof.
+Admitted.
+
 Lemma evalid_range :
   forall {T: Type} (elem1: elem T) (s1 s2: state) (r: reg_exp T),
   (s1, elem1, s2) ∈ (regexToNFA r).(nrm) ->
-  forall ge, ge ∈ elem1.(graph).(pg).(evalid) -> s1.(max_e) < ge <= s2.(max_e).
+  (forall ge, ge ∈ elem1.(graph).(pg).(evalid) -> s1.(max_e) < ge <= s2.(max_e)) /\ s1.(max_e) <= s2.(max_e).
 Proof.
-Admitted.
+  intros.
+  pose proof another_order_evalid_range elem1 s1 s2 r H.
+  tauto.
+Qed.
 
 Lemma no_overlap_between_two_nfa_if_they_are_from_same_state_series :
   forall {T: Type} (r1 r2: reg_exp T) (s1 s2 s3: state) (elem1 elem2: elem T),
