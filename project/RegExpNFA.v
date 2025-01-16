@@ -895,6 +895,12 @@ Proof.
   tauto.
 Qed.
 
+Lemma add_edge_in_graph :
+  forall {T: Type} (s1 s2: state) (x x1: pg_nfa T) (e v1 v2: Z) t,
+    (s1, x, s2) ∈ (G_add_edge x1 e v1 v2 t).(nrm) ->
+    (forall a : Z, (x1.(pg)).(vvalid) a <-> (x.(pg)).(vvalid) a).
+Admitted.
+
 
 Lemma after_G_add_edge:
   forall {T: Type} (g1 g2: pg_nfa T) (s1 s2: state) (e x y: Z) (t: option (T -> Prop)),
@@ -3980,7 +3986,309 @@ Proof.
         tauto.
 Qed.
       
+Lemma add_edge_e_step :
+  forall {T: Type} (s1 s2: state) (x x1: pg_nfa T) (e v1 v2: Z),
+  v1 ∈ (x1.(pg)).(vvalid) -> v2 ∈ (x1.(pg)).(vvalid) ->
+  (s1, x, s2) ∈ (G_add_edge x1 e v1 v2 epsilon).(nrm) ->
+  e_step x v1 v2.
+Proof.
+  intros.
+  unfold StateRelMonad.nrm in H.
+  sets_unfold in H.
+  simpl in H.
+  destruct H1.
+  destruct H1.
+  unfold e_step.
+  exists e.
+  split.
+  + destruct add_edge_pg0.
+    split.
+    unfold Sets_disjoint_union in add_edge_edge.
+    sets_unfold in add_edge_edge.
+    destruct add_edge_edge.
+    pose proof H3 e.
+    destruct H4.
+    assert (e = e).
+    reflexivity.
+    tauto.
+    sets_unfold in add_edge_vertex.
+    pose proof add_edge_vertex v1.
+    destruct H1.
+    pose proof H1 H.
+    tauto.
+    sets_unfold in add_edge_vertex.
+    pose proof add_edge_vertex v2.
+    destruct H1.
+    pose proof H1 H0.
+    tauto.
+    apply add_edge_src_new.
+    apply add_edge_dst_new.
+  + unfold epsilon in add_edge_symbol_new0.
+    tauto.
+Qed. 
 
+Lemma start_end_in_graph :
+  forall {T: Type} (x: elem T) (s1 s2: state) (r: reg_exp T),
+  (s1, x, s2) ∈ (regexToNFA r).(nrm) ->
+    (((x.(graph)).(pg)).(vvalid) x.(startVertex)) /\ (((x.(graph)).(pg)).(vvalid) x.(endVertex)).
+Admitted.
+
+Lemma add_edge_preserve_e_step :
+  forall {T: Type} (s1 s2: state) (x x1: pg_nfa T) (e v1 v2 u1 u2: Z),
+  e_step x1 u1 u2 ->
+  (s1, x, s2) ∈ (G_add_edge x1 e v1 v2 epsilon).(nrm) ->
+  e_step x u1 u2.
+Admitted.
+
+Lemma add_empty_edge_extend_string_step1:
+  forall {T: Type} (s1 s2: state) (x x1: pg_nfa T) (e v1 v2 v3: Z) (str: list T),
+  v1 ∈ (x1.(pg)).(vvalid) -> v2 ∈ (x1.(pg)).(vvalid) ->
+  (s1, x, s2) ∈ (G_add_edge x1 e v1 v2 epsilon).(nrm) ->
+  string_step x str v2 v3 ->
+  string_step x str v1 v3.
+Admitted.
+(* Proof.
+  intros.
+  assert (exists (t: T) (str_: list T), [t] = [] /\ (t :: str_) = str).
+  
+
+  destruct str.
+  + unfold string_step.
+    unfold e_steps.
+    unfold clos_refl_trans.
+    unfold Sets.indexed_union.
+    simpl.
+    unfold string_step in H2.
+    unfold e_steps in H2.
+    unfold clos_refl_trans in H2.
+    unfold Sets.indexed_union in H2.
+    simpl in H2.
+    destruct H2.
+    exists (S x0).
+    simpl.
+    sets_unfold.
+    exists v2.
+    split.
+    2:{
+      apply H2.
+    }
+    pose proof add_edge_e_step s1 s2 x x1 e v1 v2 H H0 H1.
+    apply H3.
+  + unfold string_step.
+    sets_unfold. *)
+    
+Lemma add_empty_edge_extend_string_step2:
+  forall {T: Type} (s1 s2: state) (x x1: pg_nfa T) (e v1 v2 v3: Z) (str: list T),
+  v2 ∈ (x1.(pg)).(vvalid) -> v3 ∈ (x1.(pg)).(vvalid) ->
+  (s1, x, s2) ∈ (G_add_edge x1 e v2 v3 epsilon).(nrm) ->
+  string_step x str v1 v2 ->
+  string_step x str v1 v3.
+Admitted.
+
+Lemma add_vertex_preserve_string_step:
+forall {T: Type} (s1 s2: state) (x x1: pg_nfa T) (v u1 u2: Z) (str: list T),
+  (s1, x, s2) ∈ (G_add_vertex x1 v).(nrm) ->
+  string_step x1 str u1 u2 ->
+  string_step x str u1 u2.
+Admitted.
+
+Lemma add_edge_preserve_string_step:
+forall {T: Type} (s1 s2: state) (x x1: pg_nfa T) (e v1 v2 u1 u2: Z) t (str: list T),
+  (s1, x, s2) ∈ (G_add_edge x1 e v1 v2 t).(nrm) ->
+  string_step x1 str u1 u2 ->
+  string_step x str u1 u2.
+Admitted.
+
+Lemma add_graph_preserve_string_step1:
+  forall {T: Type} (s1 s2: state) (x x1 x2: pg_nfa T) (v1 v2: Z) (str: list T),
+  (s1, x, s2) ∈ (G_add_graph x1 x2).(nrm) ->
+  string_step x1 str v1 v2 ->
+  string_step x str v1 v2.
+Admitted.
+
+Lemma add_graph_preserve_string_step2:
+  forall {T: Type} (s1 s2: state) (x x1 x2: pg_nfa T) (v1 v2: Z) (str: list T),
+  (s1, x, s2) ∈ (G_add_graph x1 x2).(nrm) ->
+  string_step x2 str v1 v2 ->
+  string_step x str v1 v2.
+Admitted.
+
+Theorem union_hoare_backward {T: Type}:
+forall (s: state) (r1 r2: reg_exp T) (str: list T),
+(forall (s0: state),
+Hoare 
+  (fun s1 : state => s1 = s0) 
+  (regexToNFA r1)
+  (fun (e : elem T) (_ : state) =>
+    exp_match r1 str ->
+    match_str e.(graph) e.(startVertex) e.(endVertex) str)) ->
+(forall (s0: state),
+Hoare 
+  (fun s1 : state => s1 = s0) 
+  (regexToNFA r2)
+  (fun (e : elem T) (_ : state) =>
+    exp_match r2 str ->
+    match_str e.(graph) e.(startVertex) e.(endVertex) str)) ->
+
+Hoare
+  (fun s1 => s1 = s)
+  (regexToNFA (Union_r r1 r2))
+  (fun(e : elem T) (s2 : state) =>
+  exp_match (Union_r r1 r2) str -> match_str e.(graph) e.(startVertex) e.(endVertex) str).
+Proof.
+  intros.
+  unfold Hoare.
+  split.
+  + intros.
+    unfold not.
+    intros.
+    pose proof derive_false T (Union_r r1 r2) s1 H2.
+    tauto.
+  + intros.
+    destruct H2.
+    destruct H2.
+    destruct H2.
+    destruct H4.
+    destruct H4.
+    destruct H4.
+    destruct H5.
+    destruct H5.
+    destruct H5.
+    destruct H6.
+    destruct H6.
+    destruct H6.
+    destruct H7.
+    destruct H7.
+    destruct H7.
+    destruct H7.
+    destruct H7.
+    destruct H7.
+    destruct H9.
+    destruct H9.
+    destruct H9.
+    destruct H10.
+    destruct H10.
+    destruct H10.
+    destruct H11.
+    destruct H11.
+    destruct H11.
+    destruct H12.
+    destruct H12.
+    destruct H12.
+    destruct H13.
+    destruct H13.
+    destruct H13.
+    destruct H14.
+    destruct H14.
+    destruct H14.
+    destruct H15.
+    destruct H15.
+    destruct H15.
+    destruct H16.
+    destruct H16.
+    destruct H16.
+    destruct H17.
+    destruct H17.
+    destruct H17.
+    destruct H18.
+    destruct H18.
+    destruct H18.
+    destruct H19.
+    destruct H19.
+    destruct H19.
+    destruct H20.
+    destruct H8.
+    rewrite H8.
+    simpl.
+    pose proof H s1.
+    pose proof H0 x0.
+    unfold Hoare in H23, H24.
+    destruct H23.
+    destruct H24.
+    pose proof H25 s1 x x0.
+    assert (s1 = s1).
+    reflexivity.
+    pose proof H27 H28 H2.
+    pose proof H26 x0 x1 x2.
+    assert (x0 = x0).
+    reflexivity.
+    pose proof H30 H31 H4.
+    destruct H3.
+    - pose proof H29 H3.
+      unfold match_str.
+      clear H32 H31 H30 H29 H28 H27 H26 H24 H25 H23 H8 H H0.
+      unfold match_str in H33.
+      pose proof add_vertex_in_graph x12 x14 x13 x11 x3 H10 x3.
+      destruct H.
+      assert (x3 = x3).
+      reflexivity.
+      assert ((x13.(pg)).(vvalid) x3).
+      tauto.
+      pose proof add_vertex_in_graph x14 x16 x15 x13 x5 H11 x3.
+      destruct H24.
+      assert ((x15.(pg)).(vvalid) x3).
+      tauto.
+      pose proof start_end_in_graph x s1 x0 r1 H2.
+      destruct H27.
+      pose proof add_graph_num_vertex1 x6 x10 x9 empty_nfa x.(graph) H7 x.(startVertex).
+      assert ((x9.(pg)).(vvalid) x.(startVertex)).
+      tauto.
+      pose proof add_graph_num_vertex1 x10 x12 x11 x9 x1.(graph) H9 x.(startVertex).
+      assert ((x11.(pg)).(vvalid) x.(startVertex)).
+      tauto.
+      pose proof add_vertex_in_graph x12 x14 x13 x11 x3 H10 x.(startVertex).
+      destruct H34.
+      assert ((x13.(pg)).(vvalid) x.(startVertex)).
+      tauto.
+      pose proof add_vertex_in_graph x14 x16 x15 x13 x5 H11 x.(startVertex).
+      destruct H37.
+      assert ((x15.(pg)).(vvalid) x.(startVertex)).
+      tauto.
+      pose proof add_graph_preserve_string_step2 x6 x10 x9 empty_nfa x.(graph) x.(startVertex) x.(endVertex) str H7 H33.
+      pose proof add_graph_preserve_string_step1 x10 x12 x11 x9 x1.(graph) x.(startVertex) x.(endVertex) str H9 H40.
+      pose proof add_vertex_preserve_string_step x12 x14 x13 x11 x3 x.(startVertex) x.(endVertex) str H10 H41.
+      pose proof add_vertex_preserve_string_step x14 x16 x15 x13 x5 x.(startVertex) x.(endVertex) str H11 H42.
+      pose proof add_edge_preserve_string_step x18 x20 x19 x15 x17 x3 x.(startVertex) x.(startVertex) x.(endVertex) epsilon str H13 H43.
+      pose proof add_empty_edge_extend_string_step1 x18 x20 x19 x15 x17 x3 x.(startVertex) x.(endVertex) str H26 H39 H13 H44.
+      pose proof add_edge_preserve_string_step x22 x24 x23 x19 x21 x3 x1.(startVertex) x3 x.(endVertex) epsilon str H15 H45.
+      pose proof add_edge_preserve_string_step x26 x28 x27 x23 x25 x.(endVertex) x5 x3 x.(endVertex) epsilon str H17 H46.
+      pose proof add_graph_num_vertex1 x6 x10 x9 empty_nfa x.(graph) H7 x.(endVertex).
+      assert ((x9.(pg)).(vvalid) x.(endVertex)).
+      tauto.
+      pose proof add_graph_num_vertex1 x10 x12 x11 x9 x1.(graph) H9 x.(endVertex).
+      assert ((x11.(pg)).(vvalid) x.(endVertex)).
+      tauto.
+      pose proof add_vertex_in_graph x12 x14 x13 x11 x3 H10 x.(endVertex).
+      assert ((x13.(pg)).(vvalid) x.(endVertex)).
+      tauto.
+      pose proof add_vertex_in_graph x14 x16 x15 x13 x5 H11 x.(endVertex).
+      assert ((x15.(pg)).(vvalid) x.(endVertex)).
+      tauto.
+      clear H54 H52 H50 H48 H38 H37 H36 H35 H34 H31 H29 H25 H24.
+      pose proof add_edge_in_graph x18 x20 x19 x15 x17 x3 x.(startVertex) epsilon H13 x.(endVertex).
+      assert ((x19.(pg)).(vvalid) x.(endVertex)).
+      tauto.
+      pose proof add_edge_in_graph x22 x24 x23 x19 x21 x3 x1.(startVertex) epsilon H15 x.(endVertex).
+      assert ((x23.(pg)).(vvalid) x.(endVertex)).
+      tauto.
+      pose proof add_vertex_in_graph x14 x16 x15 x13 x5 H11 x5.
+      assert ((x15.(pg)).(vvalid) x5).
+      tauto.
+      pose proof add_edge_in_graph x18 x20 x19 x15 x17 x3 x.(startVertex) epsilon H13 x5.
+      assert ((x19.(pg)).(vvalid) x5).
+      tauto.
+      pose proof add_edge_in_graph x22 x24 x23 x19 x21 x3 x1.(startVertex) epsilon H15 x5.
+      assert ((x23.(pg)).(vvalid) x5).
+      tauto.
+      clear H H0 H24 H29 H34 H36 H38.
+      pose proof add_empty_edge_extend_string_step2 x26 x28 x27 x23 x25 x3 x.(endVertex) x5 str H31 H48 H17 H47.
+      pose proof add_edge_preserve_string_step x30 x32 x31 x27 x29 x1.(endVertex) x5 x3 x5 epsilon str H19 H.
+      rewrite H20.
+      tauto.
+    - pose proof H32 H3.
+      unfold match_str.
+      clear H32 H31 H30 H29 H28 H27 H26 H24 H25 H23 H8 H H0.
+Abort.
 
 
 
