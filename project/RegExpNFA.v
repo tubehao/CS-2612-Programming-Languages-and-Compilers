@@ -4069,42 +4069,178 @@ Lemma add_edge_preserve_e_step :
   e_step x u1 u2.
 Admitted.
 
+Lemma e_step_extend_string_step1:
+    forall {T: Type} (x: pg_nfa T) (v1 v2 v3: Z) (str: list T),
+      e_step x v1 v2 ->
+      string_step x str v2 v3 ->
+      string_step x str v1 v3.
+Proof.
+  intros.
+  revert H0.
+  revert v3.
+  induction str.
+  + intros.
+    unfold string_step in H0.
+    unfold e_steps in H0.
+    unfold clos_refl_trans in H0.
+    unfold Sets.indexed_union in H0.
+    simpl in H0.
+    destruct H0.
+    unfold string_step.
+    unfold e_steps.
+    unfold clos_refl_trans.
+    unfold Sets.indexed_union.
+    simpl.
+    exists (S x0).
+    simpl.
+    sets_unfold.
+    exists v2.
+    split.
+    apply H.
+    apply H0.
+  + intros.
+    unfold string_step in H0.
+    sets_unfold in H0.
+    destruct H0.
+    destruct H0.
+    unfold string_step.
+    sets_unfold.
+    exists x0.
+    split.
+    2:{
+      apply H1.
+    }
+    unfold string_step in IHstr.
+    pose proof IHstr x0.
+    sets_unfold in H2.
+    pose proof H2 H0.
+    tauto.
+Qed.
+
+Lemma e_step_extend_string_step2:
+    forall {T: Type} (x: pg_nfa T) (v1 v2 v3: Z) (str: list T),
+      e_step x v2 v3 ->
+      string_step x str v1 v2 ->
+      string_step x str v1 v3.
+Proof.
+  intros.
+  destruct str.
+  2:{
+    unfold string_step in H0.
+    destruct H0.
+    simpl in H0.
+    sets_unfold in H0.
+    destruct H0.
+    unfold string_step.
+    sets_unfold.
+    exists x0.
+    split.
+    apply H0.
+    unfold char_step in H1.
+    sets_unfold in H1.
+    destruct H1.
+    destruct H1.
+    unfold char_step.
+    sets_unfold.
+    exists x1.
+    split.
+    apply H1.
+    unfold e_steps in H2.
+    unfold clos_refl_trans in H2.
+    unfold Sets.indexed_union in H2.
+    simpl in H2.
+    destruct H2.
+    unfold e_steps.
+    unfold clos_refl_trans.
+    unfold Sets.indexed_union.
+    simpl.
+    clear H1.
+    revert x1 H2.
+    induction x2.
+    2:{
+      intros.
+      simpl in H2.
+      sets_unfold in H2.
+      destruct H2.
+      destruct H1.
+      apply IHx2 in H2.
+      destruct H2.
+      exists (S x4).
+      simpl.
+      sets_unfold.
+      exists x3.
+      split.
+      - tauto.
+      - tauto.
+    }
+    intros.
+    simpl in H2.
+    unfold Rels.id in H2.
+    simpl in H2.
+    exists Nat.one.
+    simpl.
+    sets_unfold.
+    exists v3.
+    split.
+    rewrite H2.
+    tauto.
+    tauto.
+  }
+  simpl in H0.
+  simpl.
+  unfold e_steps in H0.
+  unfold e_steps.
+  unfold clos_refl_trans in H0.
+  unfold clos_refl_trans.
+  sets_unfold in H0.
+  sets_unfold.
+  destruct H0.
+  revert v1 H0.
+  induction x0.
+  2:{
+    intros.
+    simpl in H0.
+    sets_unfold in H0.
+    destruct H0.
+    destruct H0.
+    apply IHx0 in H1.
+    destruct H1.
+    exists (S x2).
+    simpl.
+    sets_unfold.
+    exists x1.
+    split.
+    - tauto.
+    - tauto.
+  }
+  intros.
+  exists Nat.one.
+  simpl.
+  sets_unfold.
+  exists v3.
+  split.
+  - simpl in H0.
+    unfold Rels.id in H0.
+    simpl in H0.
+    rewrite H0.
+    tauto.
+  - tauto.
+Qed.
+
+    
+
 Lemma add_empty_edge_extend_string_step1:
   forall {T: Type} (s1 s2: state) (x x1: pg_nfa T) (e v1 v2 v3: Z) (str: list T),
   v1 ∈ (x1.(pg)).(vvalid) -> v2 ∈ (x1.(pg)).(vvalid) ->
   (s1, x, s2) ∈ (G_add_edge x1 e v1 v2 epsilon).(nrm) ->
   string_step x str v2 v3 ->
   string_step x str v1 v3.
-Admitted.
-(* Proof.
+Proof.
   intros.
-  assert (exists (t: T) (str_: list T), [t] = [] /\ (t :: str_) = str).
-  
-
-  destruct str.
-  + unfold string_step.
-    unfold e_steps.
-    unfold clos_refl_trans.
-    unfold Sets.indexed_union.
-    simpl.
-    unfold string_step in H2.
-    unfold e_steps in H2.
-    unfold clos_refl_trans in H2.
-    unfold Sets.indexed_union in H2.
-    simpl in H2.
-    destruct H2.
-    exists (S x0).
-    simpl.
-    sets_unfold.
-    exists v2.
-    split.
-    2:{
-      apply H2.
-    }
-    pose proof add_edge_e_step s1 s2 x x1 e v1 v2 H H0 H1.
-    apply H3.
-  + unfold string_step.
-    sets_unfold. *)
+  pose proof add_edge_e_step s1 s2 x x1 e v1 v2 H H0 H1.
+  pose proof e_step_extend_string_step1 x v1 v2 v3 str H3 H2.
+  tauto.
+Qed.
     
 Lemma add_empty_edge_extend_string_step2:
   forall {T: Type} (s1 s2: state) (x x1: pg_nfa T) (e v1 v2 v3: Z) (str: list T),
@@ -4112,7 +4248,12 @@ Lemma add_empty_edge_extend_string_step2:
   (s1, x, s2) ∈ (G_add_edge x1 e v2 v3 epsilon).(nrm) ->
   string_step x str v1 v2 ->
   string_step x str v1 v3.
-Admitted.
+Proof.
+  intros.
+  pose proof add_edge_e_step s1 s2 x x1 e v2 v3 H H0 H1.
+  pose proof e_step_extend_string_step2 x v1 v2 v3 str H3 H2.
+  tauto.
+Qed.
 
 Lemma add_vertex_preserve_string_step:
 forall {T: Type} (s1 s2: state) (x x1: pg_nfa T) (v u1 u2: Z) (str: list T),
@@ -4318,6 +4459,292 @@ Proof.
       unfold match_str.
       clear H32 H31 H30 H29 H28 H27 H26 H24 H25 H23 H8 H H0.
 Abort.
+
+Lemma act_union_err {T: Type}:
+  forall (A B: elem T) (s: state),
+  ~s ∈ (act_union A B).(err).
+Admitted.
+
+Lemma act_union_vrel {T: Type}:
+forall (A B a: elem T) (s1 s2: state),
+  (s1, a, s2) ∈ (act_union A B).(nrm) ->
+    (e_step a.(graph) a.(startVertex) A.(startVertex) /\
+    e_step a.(graph) a.(startVertex) B.(startVertex) /\
+    e_step a.(graph) A.(endVertex) a.(endVertex) /\
+    e_step a.(graph) B.(endVertex) a.(endVertex)).
+Admitted.
+
+Lemma act_union_non_vrel {T: Type}:
+forall (A B a: elem T) (s1 s2: state),
+  (s1, a, s2) ∈ (act_union A B).(nrm) ->
+    (~e_steps a.(graph) A.(startVertex) B.(endVertex) /\
+    ~e_steps a.(graph) B.(startVertex) A.(endVertex)).
+Admitted.
+
+Lemma no_e_infer_no_string {T: Type}:
+  forall (l: list T) (G: pg_nfa T) (x y: Z),
+    ~e_steps G x y -> 
+    ~string_step G l x y.
+Admitted.
+
+Lemma act_union_reverse_correctness_aux {T: Type}:
+forall (A B e: elem T) (s1 s2: state) (l: list T),
+  (s1, e, s2) ∈ (act_union A B).(nrm) ->
+    match_str e.(graph) e.(startVertex) e.(endVertex) l ->
+    ((match_str e.(graph) A.(startVertex) A.(endVertex) l) \/ 
+    (match_str e.(graph) B.(startVertex) B.(endVertex) l) \/
+    (match_str e.(graph) A.(startVertex) B.(endVertex) l) \/
+    (match_str e.(graph) B.(startVertex) A.(endVertex) l)).
+Admitted.
+  
+
+
+
+Lemma act_union_same_vertex_graph_A {T: Type}:
+forall (A B e: elem T) (s1 s2: state) (l: list T),
+  (s1, e, s2) ∈ (act_union A B).(nrm) ->
+  match_str e.(graph) A.(startVertex) A.(endVertex) l ->
+  match_str A.(graph) A.(startVertex) A.(endVertex) l.
+Admitted.
+
+Lemma act_union_same_vertex_graph_B {T: Type}:
+forall (A B e: elem T) (s1 s2: state) (l: list T),
+  (s1, e, s2) ∈ (act_union A B).(nrm) ->
+  match_str e.(graph) B.(startVertex) B.(endVertex) l ->
+  match_str B.(graph) B.(startVertex) B.(endVertex) l.
+Admitted.
+
+Lemma act_union_reverse_correctness {T: Type}:
+  forall (A B: elem T) (s1 s2: state) (l: list T),
+  Hoare
+  (fun s1 => True)
+  (act_union A B)
+  (fun (e: elem T) (s2: state) =>
+    (match_str e.(graph) e.(startVertex) e.(endVertex) l ->
+    (match_str A.(graph) A.(startVertex) A.(endVertex) l) \/ 
+    (match_str B.(graph) B.(startVertex) B.(endVertex) l))).
+Proof.
+  intros.
+  unfold match_str.
+  unfold Hoare.
+  split.
+  + intros.
+    pose proof act_union_err A B s0.
+    apply H0.
+  + intros.
+    pose proof act_union_reverse_correctness_aux A B a s0 s3 l H0.
+    unfold match_str in H2.
+    pose proof H2 H1.
+    pose proof act_union_non_vrel A B a s0 s3 H0.
+    destruct H4.
+    pose proof no_e_infer_no_string l a.(graph) A.(startVertex) B.(endVertex) H4.
+    pose proof no_e_infer_no_string l a.(graph) B.(startVertex) A.(endVertex) H5.
+    destruct H3.
+    pose proof act_union_same_vertex_graph_A A B a s0 s3 l H0 H3.
+    tauto.
+    destruct H3.
+    pose proof act_union_same_vertex_graph_B A B a s0 s3 l H0 H3.
+    tauto.
+    destruct H3.
+    tauto.
+    tauto.
+Qed.
+
+Theorem union_hoare_forward {T: Type}:
+  forall (s: state) (r1 r2: reg_exp T) (str: list T),
+  (forall (s0: state),
+  Hoare 
+    (fun s1 : state => s1 = s0) 
+    (regexToNFA r1)
+    (fun (e : elem T) (_ : state) =>
+      match_str e.(graph) e.(startVertex) e.(endVertex) str ->
+      exp_match r1 str)) ->
+  (forall (s0: state),
+  Hoare 
+    (fun s1 : state => s1 = s0) 
+    (regexToNFA r2)
+    (fun (e : elem T) (_ : state) =>
+      match_str e.(graph) e.(startVertex) e.(endVertex) str ->
+      exp_match r2 str)) ->
+  
+  Hoare
+    (fun s1 => s1 = s)
+    (regexToNFA (Union_r r1 r2))
+    (fun(e : elem T) (s2 : state) =>
+    match_str e.(graph) e.(startVertex) e.(endVertex) str -> exp_match (Union_r r1 r2) str).
+Proof.
+  intros.
+  unfold Hoare.
+  split.
+  + intros.
+    unfold not.
+    intros.
+    pose proof derive_false T (Union_r r1 r2) s1 H2.
+    tauto.
+  + intros.
+    destruct H2.
+    destruct H2.
+    destruct H2.
+    destruct H4.
+    destruct H4.
+    destruct H4.
+    destruct H5.
+    destruct H5.
+    destruct H5.
+    destruct H6.
+    destruct H6.
+    destruct H6.
+    destruct H7.
+    destruct H7.
+    destruct H7.
+    destruct H7.
+    destruct H7.
+    destruct H7.
+    destruct H9.
+    destruct H9.
+    destruct H9.
+    destruct H10.
+    destruct H10.
+    destruct H10.
+    destruct H11.
+    destruct H11.
+    destruct H11.
+    destruct H12.
+    destruct H12.
+    destruct H12.
+    destruct H13.
+    destruct H13.
+    destruct H13.
+    destruct H14.
+    destruct H14.
+    destruct H14.
+    destruct H15.
+    destruct H15.
+    destruct H15.
+    destruct H16.
+    destruct H16.
+    destruct H16.
+    destruct H17.
+    destruct H17.
+    destruct H17.
+    destruct H18.
+    destruct H18.
+    destruct H18.
+    destruct H19.
+    destruct H19.
+    destruct H19.
+    destruct H20.
+    destruct H8.
+    rewrite H8 in H3.
+    simpl in H3.
+    simpl.
+    sets_unfold.
+    unfold match_str in H3.
+    pose proof act_union_reverse_correctness x x1 s s2 str.
+    unfold Hoare in H23.
+    destruct H23.
+    pose proof H24 x2 a s2.
+    assert True.
+    tauto.
+    pose proof H25 H26.
+    clear H23 H24 H25.
+    assert ((x2, a, s2) ∈ (act_union x x1).(nrm)).
+    simpl.
+    pose proof get_new_vertex_num x2 x4 x3 H5.
+    exists x3.
+    exists x4.
+    split.
+    apply H23.
+    pose proof get_new_vertex_num x4 x6 x5 H6.
+    exists x5.
+    exists x6.
+    split.
+    apply H24.
+    exists x7.
+    exists x8.
+    split.
+    exists x9.
+    exists x10.
+    split.
+    destruct H7.
+    tauto.
+    exists x11.
+    exists x12.
+    split.
+    destruct H9.
+    tauto.
+    exists x13.
+    exists x14.
+    split.
+    destruct H10.
+    tauto.
+    exists x15.
+    exists x16.
+    split.
+    destruct H11.
+    tauto.
+    exists x17.
+    exists x18.
+    split.
+    destruct H12.
+    tauto.
+    exists x19.
+    exists x20.
+    split.
+    destruct H13.
+    tauto.
+    exists x21.
+    exists x22.
+    split.
+    destruct H14.
+    tauto.
+    exists x23.
+    exists x24.
+    split.
+    destruct H15.
+    tauto.
+    exists x25.
+    exists x26.
+    split.
+    destruct H16.
+    tauto.
+    exists x27.
+    exists x28.
+    split.
+    destruct H17.
+    tauto.
+    exists x29.
+    exists x30.
+    split.
+    destruct H18.
+    tauto.
+    exists x31.
+    exists x32.
+    destruct H19.
+    tauto.
+    tauto.
+    pose proof H27 H23.
+    assert (match_str a.(graph) a.(startVertex) a.(endVertex) str).
+    unfold match_str.
+    rewrite H8.
+    simpl.
+    apply H3.
+    pose proof H24 H25.
+    clear H27 H23 H24 H25 H26.
+    destruct H28.
+    - pose proof H s1.
+      unfold Hoare in H24.
+      destruct H24.
+      pose proof H25 s1 x x0.
+      left.
+      tauto.
+    - pose proof H0 x0.
+      unfold Hoare in H24.
+      destruct H24.
+      pose proof H25 x0 x1 x2.
+      right.
+      tauto.
+Qed. 
 
 
 Definition MatchR {T} (r1 : reg_exp T) :=
