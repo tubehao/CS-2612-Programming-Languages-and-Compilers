@@ -4460,11 +4460,6 @@ Proof.
       clear H32 H31 H30 H29 H28 H27 H26 H24 H25 H23 H8 H H0.
 Abort.
 
-Lemma act_union_err {T: Type}:
-  forall (A B: elem T) (s: state),
-  ~s ∈ (act_union A B).(err).
-Admitted.
-
 Lemma act_union_vrel {T: Type}:
 forall (A B a: elem T) (s1 s2: state),
   (s1, a, s2) ∈ (act_union A B).(nrm) ->
@@ -4515,39 +4510,30 @@ forall (A B e: elem T) (s1 s2: state) (l: list T),
 Admitted.
 
 Lemma act_union_reverse_correctness {T: Type}:
-  forall (A B: elem T) (s1 s2: state) (l: list T),
-  Hoare
-  (fun s1 => True)
-  (act_union A B)
-  (fun (e: elem T) (s2: state) =>
-    (match_str e.(graph) e.(startVertex) e.(endVertex) l ->
-    (match_str A.(graph) A.(startVertex) A.(endVertex) l) \/ 
-    (match_str B.(graph) B.(startVertex) B.(endVertex) l))).
+forall (s1 s2: state) (A B: elem T) (a : elem T) (l: list T),
+ (s1, a, s2) ∈ (act_union A B).(nrm) ->
+ string_step a.(graph) l a.(startVertex) a.(endVertex) ->
+ string_step A.(graph) l A.(startVertex) A.(endVertex) \/
+ string_step B.(graph) l B.(startVertex) B.(endVertex).
 Proof.
   intros.
   unfold match_str.
-  unfold Hoare.
-  split.
-  + intros.
-    pose proof act_union_err A B s0.
-    apply H0.
-  + intros.
-    pose proof act_union_reverse_correctness_aux A B a s0 s3 l H0.
-    unfold match_str in H2.
-    pose proof H2 H1.
-    pose proof act_union_non_vrel A B a s0 s3 H0.
-    destruct H4.
-    pose proof no_e_infer_no_string l a.(graph) A.(startVertex) B.(endVertex) H4.
-    pose proof no_e_infer_no_string l a.(graph) B.(startVertex) A.(endVertex) H5.
-    destruct H3.
-    pose proof act_union_same_vertex_graph_A A B a s0 s3 l H0 H3.
-    tauto.
-    destruct H3.
-    pose proof act_union_same_vertex_graph_B A B a s0 s3 l H0 H3.
-    tauto.
-    destruct H3.
-    tauto.
-    tauto.
+  pose proof act_union_reverse_correctness_aux A B a s1 s2 l H.
+  unfold match_str in H1.
+  pose proof H1 H0.
+  pose proof act_union_non_vrel A B a s1 s2 H.
+  destruct H3.
+  pose proof no_e_infer_no_string l a.(graph) A.(startVertex) B.(endVertex) H3.
+  pose proof no_e_infer_no_string l a.(graph) B.(startVertex) A.(endVertex) H4.
+  destruct H2.
+  pose proof act_union_same_vertex_graph_A A B a s1 s2 l H H2.
+  tauto.
+  destruct H2.
+  pose proof act_union_same_vertex_graph_B A B a s1 s2 l H H2.
+  tauto.
+  destruct H2.
+  tauto.
+  tauto.
 Qed.
 
 Theorem union_hoare_forward {T: Type}:
@@ -4640,26 +4626,19 @@ Proof.
     simpl.
     sets_unfold.
     unfold match_str in H3.
-    pose proof act_union_reverse_correctness x x1 s s2 str.
-    unfold Hoare in H23.
-    destruct H23.
-    pose proof H24 x2 a s2.
-    assert True.
-    tauto.
-    pose proof H25 H26.
-    clear H23 H24 H25.
+    pose proof act_union_reverse_correctness x2 s2 x x1 a str.
     assert ((x2, a, s2) ∈ (act_union x x1).(nrm)).
     simpl.
     pose proof get_new_vertex_num x2 x4 x3 H5.
     exists x3.
     exists x4.
     split.
-    apply H23.
+    apply H24.
     pose proof get_new_vertex_num x4 x6 x5 H6.
     exists x5.
     exists x6.
     split.
-    apply H24.
+    apply H25.
     exists x7.
     exists x8.
     split.
@@ -4723,15 +4702,15 @@ Proof.
     destruct H19.
     tauto.
     tauto.
-    pose proof H27 H23.
+    pose proof H23 H24.
     assert (match_str a.(graph) a.(startVertex) a.(endVertex) str).
     unfold match_str.
     rewrite H8.
     simpl.
     apply H3.
-    pose proof H24 H25.
-    clear H27 H23 H24 H25 H26.
-    destruct H28.
+    pose proof H25 H26.
+    clear H23 H24 H25 H26.
+    destruct H27.
     - pose proof H s1.
       unfold Hoare in H24.
       destruct H24.
