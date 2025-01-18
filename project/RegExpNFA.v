@@ -474,8 +474,8 @@ Qed.
 
 
 
-Lemma e_step_union_preserves :
-forall T (g0 g: pg_nfa T) g1 x y (s: state),
+Lemma e_step_add_graph_preserves1 :
+forall {T} (g0 g: pg_nfa T) g1 x y (s: state),
   (s, g1,s) ∈ (G_add_graph g0 g).(nrm) -> 
   e_step g x y ->
   e_step g1 x y.
@@ -546,8 +546,181 @@ Proof.
     tauto.
 Qed.
 
-Lemma c_step_union_preserves :
-forall T (g0 g: pg_nfa T) g1 x y (s: state) (c: T),
+Lemma e_step_add_edge_preserves :
+forall {T} (g0  g1: pg_nfa T) (s1 s2: state)(e x1 y1 x y :Z),
+  (s1, e, s2) ∈ get_new_edge.(nrm)->
+  (s2, g1 ,s2) ∈ (G_add_edge g0 e x1 y1 epsilon).(nrm) -> 
+  e_step g0 x y ->
+  e_step g1 x y.
+Proof.
+  intros.
+  unfold StateRelMonad.nrm in H.
+  destruct H.
+  destruct H.
+  destruct H0.
+  destruct H.
+  destruct add_edge_pg0.
+  unfold e_step in H1.
+  destruct H1.
+  destruct H.
+  destruct H.
+  unfold e_step.
+  exists x0.
+  split.
+  - split.
+    + unfold Sets_disjoint_union in add_edge_edge.
+      destruct add_edge_edge.
+      sets_unfold in H3.
+      specialize (H3 x0).
+      destruct H3.
+      assert (H_or : (g0.(pg)).(evalid) x0 \/ e = x0).
+      {
+        left.
+        exact step_evalid.
+      }
+      apply H3 in H_or.
+      tauto.
+    + apply add_edge_vertex in step_src_valid.
+      tauto.
+    + apply add_edge_vertex in step_dst_valid.
+      tauto.
+    + apply add_edge_src_old in step_evalid.
+      rewrite step_evalid.
+      tauto.
+    + apply add_edge_dst_old in step_evalid.
+      rewrite step_evalid.
+      tauto.
+  - apply add_edge_symbol_old0 in step_evalid.
+    rewrite step_evalid.
+    tauto.
+Qed.
+
+Lemma c_step_add_edge_preserves :
+forall {T} (g0  g1: pg_nfa T) (s1 s2: state)(e x1 y1 x y :Z)(a :T),
+  (s1, e, s2) ∈ get_new_edge.(nrm)->
+  (s2, g1 ,s2) ∈ (G_add_edge g0 e x1 y1 epsilon).(nrm) -> 
+  c_step g0 a x y ->
+  c_step g1 a x y .
+Proof.
+  intros.
+  unfold StateRelMonad.nrm in H.
+  destruct H.
+  destruct H.
+  destruct H0.
+  destruct H.
+  destruct add_edge_pg0.
+  unfold e_step in H1.
+  destruct H1.
+  destruct H.
+  destruct H.
+  destruct H.
+  unfold e_step.
+  exists x0.
+  exists x2.
+  split.
+  - split.
+    + unfold Sets_disjoint_union in add_edge_edge.
+      destruct add_edge_edge.
+      sets_unfold in H3.
+      specialize (H3 x0).
+      destruct H3.
+      assert (H_or : (g0.(pg)).(evalid) x0 \/ e = x0).
+      {
+        left.
+        exact step_evalid.
+      }
+      apply H3 in H_or.
+      tauto.
+    + apply add_edge_vertex in step_src_valid.
+      tauto.
+    + apply add_edge_vertex in step_dst_valid.
+      tauto.
+    + apply add_edge_src_old in step_evalid.
+      rewrite step_evalid.
+      tauto.
+    + apply add_edge_dst_old in step_evalid.
+      rewrite step_evalid.
+      tauto.
+  - apply add_edge_symbol_old0 in step_evalid.
+    rewrite step_evalid.
+    tauto.
+Qed.
+
+Lemma e_step_add_graph_preserves2 :
+forall {T} (g0 g: pg_nfa T) g1 x y (s: state),
+  (s, g1,s) ∈ (G_add_graph g0 g).(nrm) -> 
+  e_step g0 x y ->
+  e_step g1 x y.
+Proof.
+  intros.
+  unfold StateRelMonad.nrm in H.
+  destruct H.
+  destruct H.
+  destruct union_pg0.
+  unfold e_step in H0.
+  destruct H0.
+  destruct H.
+  destruct H.
+  unfold e_step.
+  exists x0.
+  split.
+  - split.
+    + unfold Sets_disjoint_union in union_edge.
+      destruct union_edge.
+      sets_unfold in H2.
+      specialize (H2 x0).
+      destruct H2.
+      assert (H_or : (g0.(pg)).(evalid) x0 \/ (g.(pg)).(evalid) x0).
+      {
+        left.
+        exact step_evalid.
+      }
+      apply H2 in H_or.
+      tauto.
+    + unfold Sets_disjoint_union in union_vertex.
+      destruct union_vertex.
+      sets_unfold in H2.
+      specialize (H2 x).
+      destruct H2.
+      assert (H_or : (g0.(pg)).(vvalid) x \/ (g.(pg)).(vvalid) x).
+      {
+        left. 
+        exact step_src_valid.
+      }
+      apply H2 in H_or.
+      tauto.
+    + unfold Sets_disjoint_union in union_vertex.
+      destruct union_vertex.
+      sets_unfold in H2.
+      specialize (H2 y).
+      destruct H2.
+      assert (H_or : (g0.(pg)).(vvalid) y \/ (g.(pg)).(vvalid) y).
+      {
+        left. 
+        exact step_dst_valid.
+      }
+      apply H2 in H_or.
+      tauto.
+    + specialize (union_src1 x0).
+      sets_unfold in union_src1.
+      apply union_src1 in step_evalid.
+      rewrite <- step_evalid in step_src.
+      tauto.
+    + specialize (union_dst1 x0).
+      sets_unfold in union_dst1.
+      apply union_dst1 in step_evalid.
+      rewrite <- step_evalid in step_dst.
+      tauto.
+  - specialize (union_symbol3 x0).
+    sets_unfold in union_symbol3.
+    apply union_symbol3 in step_evalid.
+    rewrite <- step_evalid in H0.
+    tauto.
+Qed.
+
+
+Lemma c_step_add_graph_preserves1 :
+forall {T} (g0 g: pg_nfa T) g1 x y (s: state) (c: T),
   (s,g1,s) ∈ (G_add_graph g0 g).(nrm) -> 
   c_step g c x y ->
   c_step g1 c x y.
@@ -620,6 +793,83 @@ Proof.
     rewrite <- step_evalid in H0.
     tauto.
 Qed.
+
+
+Lemma c_step_add_graph_preserves2 :
+forall {T} (g0 g: pg_nfa T) g1 x y (s: state) (c: T),
+  (s,g1,s) ∈ (G_add_graph g0 g).(nrm) -> 
+  c_step g0 c x y ->
+  c_step g1 c x y.
+  Proof.
+  intros.
+  unfold StateRelMonad.nrm in H.
+  destruct H.
+  destruct H.
+  destruct union_pg0.
+  unfold c_step in H0.
+  destruct H0.
+  destruct H.
+  destruct H.
+  unfold c_step.
+  exists x0.
+  exists x1.
+  split.
+  - destruct H.
+    split.
+    + unfold Sets_disjoint_union in union_edge.
+      destruct union_edge.
+      sets_unfold in H2.
+      specialize (H2 x0).
+      destruct H2.
+      assert (H_or : (g0.(pg)).(evalid) x0 \/ (g.(pg)).(evalid) x0).
+      {
+        left.
+        exact step_evalid.
+      }
+      apply H2 in H_or.
+      tauto.
+    + unfold Sets_disjoint_union in union_vertex.
+      destruct union_vertex.
+      sets_unfold in H2.
+      specialize (H2 x).
+      destruct H2.
+      assert (H_or : (g0.(pg)).(vvalid) x \/ (g.(pg)).(vvalid) x).
+      {
+        left. 
+        exact step_src_valid.
+      }
+      apply H2 in H_or.
+      tauto.
+    + unfold Sets_disjoint_union in union_vertex.
+      destruct union_vertex.
+      sets_unfold in H2.
+      specialize (H2 y).
+      destruct H2.
+      assert (H_or : (g0.(pg)).(vvalid) y \/ (g.(pg)).(vvalid) y).
+      {
+        left. 
+        exact step_dst_valid.
+      }
+      apply H2 in H_or.
+      tauto.
+    + specialize (union_src1 x0).
+      sets_unfold in union_src1.
+      apply union_src1 in step_evalid.
+      rewrite <- step_evalid in step_src.
+      tauto.
+    + specialize (union_dst1 x0).
+      sets_unfold in union_dst1.
+      apply union_dst1 in step_evalid.
+      rewrite <- step_evalid in step_dst.
+      tauto.
+  - destruct H.
+    specialize (union_symbol3 x0).
+    sets_unfold in union_symbol3.
+    apply union_symbol3 in step_evalid.
+    rewrite <- step_evalid in H0.
+    tauto.
+Qed.
+
 
 Lemma after_G_add_graph_all_edge_number_become_larger :
 forall {T: Type} (pg1 pg2: pg_nfa T) (s1 s2: state) (g: pg_nfa T),
@@ -5804,175 +6054,8 @@ Proof.
 Qed. 
 
 
-Definition MatchR {T} (r1 : reg_exp T) :=
-  forall (str:list T) (s1 s2 s: state) (a: elem T),
-  exp_match r1 str ->
-  s1 = s->
-  (s1, a, s2) ∈ (regexToNFA r1).(nrm) ->
-  match_str a.(graph) a.(startVertex) a.(endVertex) str.
 
-
-    
-
-Lemma RexMatch_ConcatR {T} :
-  forall (str: list T)(r1 r2: reg_exp T),
-  exp_match (Concat_r r1 r2) str ->
-  exists str1 str2: list T,
-  exp_match r1 str1 /\ exp_match r2 str2 /\ str = str2 ++ str1.
-Proof.
-  intros.
-  revert str r2 H. 
-  destruct r1.
-  3:{
-    intros.
-    repeat destruct H.
-    destruct H1, H0.
-    exists x, x0.
-    split.
-    - unfold exp_match.
-      unfold set_prod.
-      exists x1,x2.
-      split.
-      + tauto.
-      + tauto.
-    - split.
-      + tauto.
-      + tauto. 
-  }
-  3:{
-    intros.
-    unfold exp_match in H.
-    unfold set_prod in H.
-    repeat destruct H.
-    - exists x, x0.
-      split.
-      + unfold exp_match.
-        sets_unfold.
-        left;tauto.
-      + split.
-        tauto.
-        tauto.
-    - exists x,x0.
-      split.
-      + unfold exp_match.
-        sets_unfold.
-        right;tauto.
-      + split.
-        tauto.
-        tauto.
-  }
-  3:{
-    intros.
-    unfold exp_match in H.
-    unfold set_prod in H.
-    destruct H.
-    destruct H.
-    destruct H.
-    exists x,x0.
-    split.
-    - tauto.
-    - tauto.
-  }
-  - intros.
-    unfold exp_match in H.
-    unfold set_prod in H.
-    repeat destruct H.
-    destruct H0.
-    exists nil, x0.
-    split.
-    + unfold exp_match.
-      sets_unfold.
-      tauto.
-    + split.
-      * tauto.
-      * tauto.
-  - intros.
-    unfold exp_match in H.
-    unfold set_prod in H.
-    destruct H.
-    destruct H.
-    destruct H.
-    destruct H0.
-    destruct H.
-    destruct H.
-    exists x ,x0.
-    split.
-    + unfold exp_match.
-      exists x1.
-      tauto.
-    + split.
-      * tauto.
-      * tauto.
-Qed.
-
-
-      
- 
-
-Lemma concat_hoare_backward {T: Type}:
-  forall (str : list T) (s: state) (r1:reg_exp T)(r2: reg_exp T),
-  Hoare
-    (fun s1 => s1 = s)                  
-    (regexToNFA (Concat_r r1 r2))                           
-    (fun (e : elem T) (s2 : state) =>                          
-    exp_match (Concat_r r1 r2) str ->MatchR r1/\MatchR r2->match_str e.(graph) e.(startVertex) e.(endVertex) str).
-Proof.
-  intros.
-  unfold Hoare.
-  split.
-  - intros.
-    intros contra.
-    apply derive_false in contra.
-    tauto.
-  - intros.
-    apply RexMatch_ConcatR in H1.
-    destruct H1.
-    destruct H1.
-    destruct H1.
-    destruct H3.
-    destruct H2.
-    repeat destruct H0.
-    repeat destruct H6.
-    unfold MatchR in H2.
-    specialize (H2 x s1 x2 s x1).
-    apply H2 in H1.
-    2:{
-      tauto.
-    }
-    2:{
-       tauto. 
-    }
-    specialize (H5 x0 x2 x4 x2 x3).
-    apply H5 in H3.
-    2:{
-      tauto.
-    }
-    2:{
-       tauto. 
-    }
-    destruct H7.
-    destruct H7.
-    destruct H7.
-    destruct H7.
-    destruct H7.
-    destruct H7.
-    destruct H7.
-    destruct H9.
-    destruct H9.
-    destruct H9.
-    clear H2.
-    clear H5.
-    (*unfold match_str.
-    unfold match_str in H1,H3.
-    unfold string_step.
-    unfold string_step in H1,H3.
-    sets_unfold.*)
-    revert x0 H4 H3.
-    induction str.
-    2:{
-      simpl.
-    }
-    Admitted.
+  
 
 Lemma string_step_concat {T: Type}:
 forall (x: pg_nfa T) (s1 s2: list T) (v1 v2 v3: Z),
@@ -6185,4 +6268,1307 @@ Proof.
       rewrite H15.
       apply H32.
     * reflexivity.
+Qed.
+
+
+Definition MatchR {T} (r1 : reg_exp T) :=
+  forall (str:list T) (s1 s2 s: state) (a: elem T),
+  exp_match r1 str ->
+  s1 = s->
+  (s1, a, s2) ∈ (regexToNFA r1).(nrm) ->
+  match_str a.(graph) a.(startVertex) a.(endVertex) str.
+
+    
+
+Lemma RexMatch_ConcatR {T} :
+  forall (str: list T)(r1 r2: reg_exp T),
+  exp_match (Concat_r r1 r2) str ->
+  exists str1 str2: list T,
+  exp_match r1 str1 /\ exp_match r2 str2 /\ str = str2 ++ str1.
+Proof.
+  intros.
+  revert str r2 H. 
+  destruct r1.
+  3:{
+    intros.
+    repeat destruct H.
+    destruct H1, H0.
+    exists x, x0.
+    split.
+    - unfold exp_match.
+      unfold set_prod.
+      exists x1,x2.
+      split.
+      + tauto.
+      + tauto.
+    - split.
+      + tauto.
+      + tauto. 
+  }
+  3:{
+    intros.
+    unfold exp_match in H.
+    unfold set_prod in H.
+    repeat destruct H.
+    - exists x, x0.
+      split.
+      + unfold exp_match.
+        sets_unfold.
+        left;tauto.
+      + split.
+        tauto.
+        tauto.
+    - exists x,x0.
+      split.
+      + unfold exp_match.
+        sets_unfold.
+        right;tauto.
+      + split.
+        tauto.
+        tauto.
+  }
+  3:{
+    intros.
+    unfold exp_match in H.
+    unfold set_prod in H.
+    destruct H.
+    destruct H.
+    destruct H.
+    exists x,x0.
+    split.
+    - tauto.
+    - tauto.
+  }
+  - intros.
+    unfold exp_match in H.
+    unfold set_prod in H.
+    repeat destruct H.
+    destruct H0.
+    exists nil, x0.
+    split.
+    + unfold exp_match.
+      sets_unfold.
+      tauto.
+    + split.
+      * tauto.
+      * tauto.
+  - intros.
+    unfold exp_match in H.
+    unfold set_prod in H.
+    destruct H.
+    destruct H.
+    destruct H.
+    destruct H0.
+    destruct H.
+    destruct H.
+    exists x ,x0.
+    split.
+    + unfold exp_match.
+      exists x1.
+      tauto.
+    + split.
+      * tauto.
+      * tauto.
+Qed.
+Lemma add_edge_match_preserve:
+  forall {T: Type}(str: list T) (x1 x2: pg_nfa T)(s1 s2:state) (e v1 v2 v3 v4:Z),
+  match_str x1 v1 v2 str->
+  (s1, x2, s2) ∈ (G_add_edge x1 e v3 v4 epsilon).(nrm)->
+  match_str x2 v1 v2 (str).
+Admitted.
+
+Lemma match_str_graph_constr_rec:
+  forall  {T :Type} (str1 str2: list T)(a : elem T) (x1 x2: pg_nfa T)(s1 s2 s3:state) (v1 v2 v3 v4 :Z),
+  match_str x1 v1 v2 str1->
+  match_str x1 v3 v4 str2->
+  x1.(pg).(vvalid) v2 /\ x1.(pg).(vvalid) v3->
+  (s1, x2, s2)
+  ∈ (graph_constr_rec x1 [E v2 v3 epsilon]).(nrm)->
+  match_str x2 v1 v4 (str2 ++ str1).
+Proof.
+  intros.
+  pose proof H1 as Hh.
+  clear H1.
+  pose proof H2 as H1.
+  clear H2.
+  unfold match_str.
+  unfold match_str in H, H0.
+  revert v4 s1 s2 H0 H1.
+  induction str2.
+  2:{
+    intros.
+    simpl.
+    sets_unfold.
+    simpl in H0.
+    sets_unfold in H0.
+    destruct H0.
+    destruct H0.
+    exists x.
+    split.
+    - specialize (IHstr2 x s1 s2).
+      apply IHstr2 in H0.
+      + tauto.
+      + tauto.
+    - unfold char_step.
+      unfold char_step in H2.
+      sets_unfold in H2.
+      sets_unfold.
+      destruct H2.
+      destruct H2.
+      exists x0.
+      split.
+      2:{
+        unfold e_steps.
+        unfold e_steps in H3.
+        unfold clos_refl_trans in H3.
+        unfold clos_refl_trans.
+        sets_unfold.
+        sets_unfold in H3.
+        destruct H3.
+        exists x3.
+        clear H2.
+        revert x0 H3.
+        induction x3.
+        2:{
+          intros.
+          simpl.
+          sets_unfold.
+          simpl in H3.
+          sets_unfold in H3.
+          destruct H3.
+          exists x4.
+          destruct H2.
+          split.
+          2:{
+            apply IHx3 in H3.
+            tauto.
+          }
+          destruct H1.
+          destruct H1.
+          destruct H1.
+          destruct H4.
+          destruct H4.
+          destruct H4.
+          pose proof e_step_add_edge_preserves(T:=T).
+          specialize (H6 x1 x7 s1 x6 x5 v2 v3 x0 x4).
+          apply H6 in H1.
+          2:{
+            pose proof H4.
+            destruct H4.
+            rewrite <- H8 in H7.
+            tauto.
+          }
+          2:{
+            tauto.
+          }
+          destruct H5.
+          rewrite H5.
+          tauto.
+      }
+      intros.
+      simpl.
+      simpl in H3.
+      unfold Rels.id in H3.
+      unfold Rels.id.
+      simpl.
+      simpl in H3.
+      tauto.
+    }
+    specialize (IHstr2 x s1 s2).
+    apply IHstr2 in H0.
+    2:{
+      tauto.
+    }
+    pose proof c_step_add_edge_preserves(T:=T).
+    destruct H1.
+    destruct H1.
+    destruct H1.
+    destruct H5.
+    destruct H5.
+    destruct H5.
+    specialize (H4 x1 x5 s1 x4 x3 v2 v3 x x0 a0).
+    apply H4 in H1.
+    2:{
+      pose proof H5.
+      destruct H5.
+      rewrite <- H8 in H7.
+      tauto.
+    }
+    2:{
+      tauto.
+    }
+    destruct H6.
+    rewrite H6.
+    tauto.
+  }
+  intros.
+  simpl.
+  simpl in H0.
+  destruct H1.
+  destruct H1.
+  destruct H1.
+  destruct H2.
+  destruct H2.
+  destruct H2.
+  pose proof add_edge_match_preserve(T:=T).
+  specialize (H4 str1 x1 x3 x0 x4 x v1 v2 v2 v3).
+  apply H4 in H.
+  2:{
+    tauto.
+  }
+  assert (H5: e_step x3 v2 v3).
+  {
+    destruct H2.
+    destruct H2.
+    destruct add_edge_pg0.
+    unfold e_step.
+    exists x.
+    split.
+    - split.
+      + unfold Sets_disjoint_union in add_edge_edge.
+        sets_unfold in add_edge_edge.
+        destruct add_edge_edge.
+        assert (H7 : (x1.(pg)).(evalid) x \/ x = x).
+        {
+          tauto.
+        }
+        apply H6 in H7.
+        tauto.
+      + unfold string_step in H.
+        apply add_edge_vertex.
+        tauto.
+      + unfold string_step in H.
+        apply add_edge_vertex.
+        tauto.
+      + tauto.
+      + tauto.
+    - tauto.
+  }
+  pose proof e_step_extend_string_step2(T:=T).
+  specialize (H6 x3 v1 v2 v3 str1).
+  pose proof H5.
+  apply H6 in H5.
+  2:{
+    tauto.
+  }
+  destruct H3.
+  rewrite H3.
+  pose proof e_step_extend_string_step2(T:=T).
+  specialize (H9 x3 v1 v2 v3 str1).
+  apply H9 in H7.
+  2:{
+    tauto.
+  }
+  destruct H0.
+  assert (H10 : e_steps x3 v3 v4).
+  {
+    unfold e_steps.
+    unfold clos_refl_trans.
+    sets_unfold.
+    exists x5.
+    destruct H2.
+    destruct H2.
+    destruct add_edge_pg0.
+    clear Hh add_edge_dst_new H4 H5 H7 H9 H6.
+    revert v3 H0.
+    induction x5.
+    2:{
+      intros.
+      destruct H0.
+      sets_unfold in H0.
+      destruct H0.
+      apply IHx5 in H2.
+      exists x6.
+      sets_unfold.
+      split.
+      2:{
+        tauto.
+      }
+      unfold e_step.
+      destruct H0.
+      destruct H0.
+      exists x7.
+      split.
+      - split.
+        destruct H0.
+        destruct add_edge_edge.
+        sets_unfold in H5.
+        assert (H6: (x1.(pg)).(evalid) x7 \/ x = x7).
+        {
+          left;tauto. 
+        }
+        apply H5 in H6.
+        tauto.
+        apply add_edge_vertex.
+        destruct H0.
+        tauto.
+        apply add_edge_vertex.
+        destruct H0.
+        tauto.
+        destruct H0.
+        apply add_edge_src_old in step_evalid.
+        rewrite step_evalid.
+        tauto.
+        destruct H0.
+        apply add_edge_dst_old in step_evalid.
+        rewrite step_evalid.
+        tauto.
+      - destruct H0.
+        apply add_edge_symbol_old0 in step_evalid.
+        rewrite step_evalid.
+        tauto.
+    }
+    intros.
+    simpl in H0.
+    simpl.
+    unfold Rels.id in H0.
+    unfold Rels.id.
+    tauto. 
+  }
+  destruct H2.
+  destruct H2.
+  destruct add_edge_pg0.
+  clear add_edge_dst_new H4 H5 H6 H9.
+  revert v3 H0 Hh H7 H10.
+  induction x5.
+  2:{
+    intros.
+    simpl in H0.
+    sets_unfold in H0.
+    destruct H0.
+    destruct H0.
+    apply IHx5 in H2.
+    2:{
+      destruct H0.
+      destruct H0.
+      destruct H0.
+      tauto.
+    }
+    tauto.
+    assert (H12 :  e_step x3 v3 x6).
+    {
+      unfold e_step.
+      destruct H0.
+      destruct H0.
+      exists x7.
+      split.
+      - split.
+        destruct H0.
+        destruct add_edge_edge.
+        sets_unfold in H5.
+        assert (H6: (x1.(pg)).(evalid) x7 \/ x = x7).
+        {
+          left;tauto. 
+        }
+        apply H5 in H6.
+        tauto.
+        apply add_edge_vertex.
+        destruct H0.
+        tauto.
+        apply add_edge_vertex.
+        destruct H0.
+        tauto.
+        destruct H0.
+        apply add_edge_src_old in step_evalid.
+        rewrite step_evalid.
+        tauto.
+        destruct H0.
+        apply add_edge_dst_old in step_evalid.
+        rewrite step_evalid.
+        tauto.
+      - destruct H0.
+        apply add_edge_symbol_old0 in step_evalid.
+        rewrite step_evalid.
+        tauto.
+    }
+    pose proof e_step_extend_string_step2(T:=T).
+    specialize (H4 x3 v1 v3 x6 str1).
+    apply H4 in H12.
+    tauto.
+    tauto.
+    exists x5.
+    clear H0.
+    revert x6 H2.
+    induction x5.
+    2:{
+      intros.
+      destruct H2.
+      sets_unfold in H0.
+      destruct H0.
+      exists x7.
+      sets_unfold.
+      split.
+      - unfold e_step.
+        destruct H0.
+        destruct H0.
+        exists x8.
+        split.
+        + split.
+          destruct H0.
+          destruct add_edge_edge.
+          sets_unfold in H5.
+          assert (H6: (x1.(pg)).(evalid) x8 \/ x = x8).
+          {
+            left;tauto. 
+          }
+          apply H5 in H6.
+          tauto.
+          apply add_edge_vertex.
+          destruct H0.
+          tauto.
+          apply add_edge_vertex.
+          destruct H0.
+          tauto.
+          destruct H0.
+          apply add_edge_src_old in step_evalid.
+          rewrite step_evalid.
+          tauto.
+          destruct H0.
+          apply add_edge_dst_old in step_evalid.
+          rewrite step_evalid.
+          tauto.
+        + destruct H0.
+          apply add_edge_symbol_old0 in step_evalid.
+          rewrite step_evalid.
+          tauto.
+      - clear H0 IHx5 IHx0.
+        revert x7 H2.
+        induction x5.
+        2:{
+          intros.
+          destruct H2.
+          sets_unfold in H0.
+          destruct H0.
+          exists x8.
+          sets_unfold.
+          split.
+          2:{
+            apply IHx5 in H2.
+            tauto.
+          }
+          unfold e_step.
+          destruct H0.
+          destruct H0.
+          exists x9.
+          split.
+          + split.
+            destruct H0.
+            destruct add_edge_edge.
+            sets_unfold in H5.
+            assert (H6: (x1.(pg)).(evalid) x9 \/ x = x9).
+            {
+              left;tauto. 
+            }
+            apply H5 in H6.
+            tauto.
+            apply add_edge_vertex.
+            destruct H0.
+            tauto.
+            apply add_edge_vertex.
+            destruct H0.
+            tauto.
+            destruct H0.
+            apply add_edge_src_old in step_evalid.
+            rewrite step_evalid.
+            tauto.
+            destruct H0.
+            apply add_edge_dst_old in step_evalid.
+            rewrite step_evalid.
+            tauto.
+          + destruct H0.
+            apply add_edge_symbol_old0 in step_evalid.
+            rewrite step_evalid.
+            tauto.
+        }
+        intros.
+        simpl.
+        unfold Rels.id.
+        simpl in H2.
+        unfold Rels.id in H2.
+        tauto.
+    }
+    tauto.
+  }
+  intros.
+  simpl in H0.
+  unfold Rels.id in H0.
+  simpl in H0.
+  rewrite <- H0.
+  tauto.
+Qed.
+  
+
+
+
+Lemma match_str_concat:
+  forall  {T :Type} (str1 str2: list T)(a : elem T) (x1 x2: pg_nfa T)(s1 s2 s3:state) (v1 v2 v3 v4 :Z),
+  match_str x1 v1 v2 str1->
+  match_str x1 v3 v4 str2->
+  x1.(pg).(vvalid) v2 /\ x1.(pg).(vvalid) v3->
+  (s1, x2, s2)
+  ∈ (graph_constr_rec x1 [E v2 v3 epsilon]).(nrm)->
+  match_str x2 v1 v4 (str2 ++ str1).
+Proof. 
+  intros.
+  unfold match_str.
+  unfold match_str in H, H0.
+  revert v4 H0 H1 H2.
+  induction str2.
+  2:{
+    intros.
+    simpl.
+    sets_unfold.
+    destruct H0.
+    sets_unfold in H0.
+    destruct H0.
+    exists x.
+    split.
+    - apply IHstr2 in H0.
+      + tauto.
+      + tauto.
+      + tauto.
+    - unfold char_step.
+      sets_unfold.
+      destruct H3.
+      sets_unfold in H3.
+      destruct H3.
+      exists x0.
+      split.
+      + pose proof c_step_add_edge_preserves(T:=T).
+        destruct H2.
+        destruct H2.
+        destruct H2.
+        destruct H6.
+        destruct H6.
+        destruct H6.
+        specialize (H5 x1 x5 s1 x4 x3 v2 v3 x x0 a0).
+        pose proof H6.
+        destruct H8.
+        rewrite <- H9 in H6.
+        apply H5 in H2.
+        * destruct H7.
+          rewrite H7.
+          tauto.
+        * tauto.
+        * tauto.
+      + clear H3.
+        destruct H4.
+        exists x3.
+        revert x0 H3.
+        induction x3.
+        2:{
+          intros.
+          destruct H3.
+          sets_unfold in H3.
+          destruct H3.
+          apply IHx3 in H4.
+          exists x4.
+          sets_unfold.
+          split.
+          - pose proof e_step_add_edge_preserves(T:=T).
+            destruct H2.
+            destruct H2.
+            destruct H2.
+            destruct H6.
+            destruct H6.
+            destruct H6.
+            specialize (H5 x1 x7 s1 x6 x5 v2 v3 x0 x4).
+            pose proof H6.
+            destruct H6.
+            rewrite <- H9 in H8.
+            apply H5 in H2.
+            + destruct H7.
+              rewrite H7.
+              tauto.
+            + tauto.
+            + tauto.
+          - tauto.
+        }
+        intros.
+        simpl.
+        unfold Rels.id.
+        simpl.
+        simpl in H3.
+        unfold Rels.id in H3.
+        simpl in H3.
+        tauto.
+  }
+  intros.
+  destruct H0.
+  destruct H2.
+  destruct H2.
+  destruct H2.
+  destruct H3.
+  destruct H3.
+  destruct H3.
+  pose proof app_nil_l.
+  specialize (H5 T str1).
+  rewrite H5.
+  pose proof add_edge_match_preserve(T:=T).
+  specialize (H6 str1 x1 x4 x3 x5 x0 v1 v2 v2 v3).
+  apply H6 in H.
+  2:{
+    tauto.
+  }
+  destruct H4.
+  rewrite H4.
+  unfold match_str in H.
+  pose proof e_step_extend_string_step2(T:=T).
+  assert (H9 : e_step x4 v2 v3).
+  {
+    unfold e_step.
+    exists x0.
+    split.
+    - split.
+      destruct H3.
+      destruct H3.
+      destruct add_edge_pg0.
+      unfold Sets_disjoint_union in add_edge_edge.
+      sets_unfold in add_edge_edge.
+      destruct  add_edge_edge.
+      assert (H11: (x1.(pg)).(evalid) x0 \/ x0 = x0).
+      {
+        right;tauto. 
+      }
+      apply H10 in H11.
+      tauto.
+      destruct H3.
+      destruct H3.
+      destruct add_edge_pg0.
+      apply add_edge_vertex.
+      tauto.
+      destruct H3.
+      destruct H3.
+      destruct add_edge_pg0.
+      apply add_edge_vertex.
+      tauto.
+      destruct H3.
+      destruct H3.
+      destruct add_edge_pg0.
+      tauto.
+      destruct H3.
+      destruct H3.
+      destruct add_edge_pg0.
+      tauto.
+    - destruct H3.
+      destruct H3.
+      tauto.
+  }
+  specialize (H8 x4 v1 v2 v3 str1).
+  apply H8 in H9.
+  2:{
+    tauto.
+  }
+  assert (H10: nsteps (e_step x4) x v3 v4 ).
+  {
+    destruct H3.
+    destruct H3.
+    destruct add_edge_pg0.
+    clear H6 H8 H9 add_edge_dst_new.
+    revert v3 H0 H1.
+    induction x.
+    2:{
+      intros.
+      destruct H0.
+      sets_unfold in H0.
+      destruct H0.
+      apply IHx in H3.
+      2:{
+        destruct H0.
+        destruct H0.
+        destruct H0.
+        tauto.
+      }
+      exists x6.
+      sets_unfold.
+      split.
+      - destruct H0.
+        exists x7.
+        destruct H0.
+        split.
+        + split.
+          destruct H0.
+          unfold Sets_disjoint_union in add_edge_edge.
+          sets_unfold in add_edge_edge.
+          destruct  add_edge_edge.
+          assert (H11: (x1.(pg)).(evalid) x7 \/ x0 = x7).
+          {
+            left;tauto. 
+          }
+          apply H8 in H11.
+          tauto.
+          destruct H0.
+          apply add_edge_vertex.
+          tauto.
+          destruct H0.
+          apply add_edge_vertex.
+          tauto.
+          destruct H0.
+          apply add_edge_src_old in step_evalid.
+          rewrite step_evalid.
+          tauto.
+          destruct H0.
+          apply add_edge_dst_old in step_evalid.
+          rewrite step_evalid.
+          tauto.
+        + destruct H0.
+          apply add_edge_symbol_old0 in step_evalid.
+          rewrite step_evalid. 
+          tauto.
+      - tauto.
+    }
+    intros.
+    simpl.
+    unfold Rels.id.
+    simpl in H0.
+    unfold Rels.id in H0.
+    tauto. 
+  }
+  assert (H11 : e_steps x4 v3 v4).
+  {
+    unfold e_steps.
+    unfold clos_refl_trans.
+    sets_unfold.
+    exists x.
+    tauto. 
+  }
+  destruct H3.
+  destruct H3.
+  destruct add_edge_pg0.
+  clear H10 H H0 add_edge_dst_new H6 H8.
+  destruct H11.
+  revert v3 H1 H9 H.
+  induction x6.
+  2:{
+    intros.
+    destruct H.
+    sets_unfold in H.
+    destruct H.
+    apply IHx6 in H0.
+    - tauto.
+    - destruct H.
+      destruct H.
+      destruct H.
+      apply add_edge_vertex in step_dst_valid.
+      tauto.
+    - pose proof e_step_extend_string_step2(T:=T).
+      specialize (H3 x4 v1 v3 x7 str1).
+      apply H3 in H.
+      + tauto.
+      + tauto.
+  }
+  intros.
+  simpl in H.
+  unfold Rels.id in H.
+  simpl in H.
+  rewrite <- H.
+  tauto.
+Qed.
+
+
+Lemma union_rel_e_step_preserves :
+  forall {T} (x1 x2 x3: pg_nfa T) (x y :Z),
+  union_rel x3 x1 x2 -> 
+  e_step x1 x y ->
+  e_step x2 x y.
+Proof.
+  intros.
+  destruct H.
+  destruct H0.
+  destruct H.
+  unfold e_step.
+  exists x0.
+  split.
+  - split.
+    + destruct H.
+      destruct union_pg0.
+      destruct union_edge.
+      sets_unfold in H1.
+      assert (H2 : (x3.(pg)).(evalid) x0 \/ (x1.(pg)).(evalid) x0).
+      {
+        right.
+        tauto. 
+      }
+      apply H1 in H2.
+      tauto.
+    + destruct H.
+      destruct union_pg0.
+      destruct union_vertex.
+      sets_unfold in H1.
+      assert (H2 : (x3 .(pg)).(vvalid) x \/ (x1.(pg)).(vvalid) x).
+      {
+        right.
+        tauto. 
+      }
+      apply H1 in H2.
+      tauto.
+    + destruct H.
+      destruct union_pg0.
+      destruct union_vertex.
+      sets_unfold in H1.
+      assert (H2 : (x3.(pg)).(vvalid) y \/ (x1.(pg)).(vvalid) y).
+      {
+        right.
+        tauto. 
+      }
+      apply H1 in H2.
+      tauto.
+    + destruct H.
+      destruct union_pg0.
+      sets_unfold in union_src2.
+      apply union_src2 in step_evalid.
+      rewrite <- step_evalid in step_src.
+      tauto.
+    + destruct H.
+      destruct union_pg0.
+      sets_unfold in union_dst2.
+      apply union_dst2 in step_evalid.
+      rewrite <- step_evalid in step_dst.
+      tauto.
+  - destruct H.
+    apply union_symbol4 in step_evalid.
+    rewrite step_evalid.
+    tauto.
+Qed.
+      
+    
+
+Lemma union_rel_c_step_preserves :
+  forall {T} (x1 x2 x3: pg_nfa T) (x y :Z) (a: T),
+  union_rel x3 x1 x2 -> 
+  c_step x1 a x y ->
+  c_step x2 a x y.
+Proof.
+  intros.
+  destruct H.
+  destruct H0.
+  destruct H.
+  unfold e_step.
+  exists x0.
+  exists x4.
+  split.
+  - split.
+    + destruct H.
+      destruct H.
+      destruct union_pg0.
+      destruct union_edge.
+      sets_unfold in H1.
+      assert (H2 : (x3.(pg)).(evalid) x0 \/ (x1.(pg)).(evalid) x0).
+      {
+        right.
+        tauto. 
+      }
+      apply H1 in H2.
+      tauto.
+    + destruct H.
+      destruct H.
+      destruct union_pg0.
+      destruct union_vertex.
+      sets_unfold in H1.
+      assert (H2 : (x3 .(pg)).(vvalid) x \/ (x1.(pg)).(vvalid) x).
+      {
+        right.
+        tauto. 
+      }
+      apply H1 in H2.
+      tauto.
+    + destruct H.
+      destruct H.
+      destruct union_pg0.
+      destruct union_vertex.
+      sets_unfold in H1.
+      assert (H2 : (x3.(pg)).(vvalid) y \/ (x1.(pg)).(vvalid) y).
+      {
+        right.
+        tauto. 
+      }
+      apply H1 in H2.
+      tauto.
+    + destruct H.
+      destruct H.
+      destruct union_pg0.
+      sets_unfold in union_src2.
+      apply union_src2 in step_evalid.
+      rewrite <- step_evalid in step_src.
+      tauto.
+    + destruct H.
+      destruct H.
+      destruct union_pg0.
+      sets_unfold in union_dst2.
+      apply union_dst2 in step_evalid.
+      rewrite <- step_evalid in step_dst.
+      tauto.
+  - destruct H.
+    destruct H.
+    apply union_symbol4 in step_evalid.
+    rewrite step_evalid.
+    tauto.
+Qed.
+
+
+Lemma add_graph_match_preserve1 :
+  forall {T: Type}(str: list T) (x1 x2 x3 x4: pg_nfa T)(s1 s2:state) (v1 v2 :Z),
+  match_str x1 v1 v2 str->
+  union_rel empty_nfa x1 x4->
+  (s1, x3, s2) ∈ (G_add_graph x4 x2).(nrm)->
+  match_str x3 v1 v2 (str).
+Proof.
+  intros.
+  unfold match_str in H.
+  unfold match_str.
+  revert v2 H.
+  induction str.
+  2:{
+    intros.
+    unfold match_str in H.
+    simpl in H.
+    sets_unfold in H.
+    destruct H.
+    simpl.
+    sets_unfold.
+    exists x.
+    split.
+    destruct H.
+    - apply IHstr in H.
+      tauto.
+    - destruct H.
+      unfold char_step.
+      unfold char_step in H2.
+      sets_unfold in H2.
+      sets_unfold.
+      destruct H2.
+      exists x0.
+      destruct H2.
+      split.
+      2:{
+        unfold e_steps.
+        unfold e_steps in H3.
+        unfold clos_refl_trans in H3.
+        unfold clos_refl_trans.
+        sets_unfold.
+        sets_unfold in H3.
+        destruct H3.
+        exists x5.
+        clear H2.
+        revert x0 H3.
+        induction x5.
+        2:{
+          intros.
+          simpl.
+          sets_unfold.
+          simpl in H3.
+          sets_unfold in H3.
+          destruct H3.
+          exists x6.
+          destruct H2.
+          split.
+          2:{
+            apply IHx5 in H3.
+            tauto.
+          }
+          pose proof e_step_add_graph_preserves2(T:=T).
+          pose proof H1.
+          destruct H5.
+          rewrite H6 in H1.
+          specialize (H4 x4 x2 x3 x0 x6 s2).
+          apply H4 in H1.
+          tauto.
+          pose proof union_rel_e_step_preserves(T:=T).
+          specialize (H7 x1 x4 empty_nfa x0 x6).
+          apply H7 in H0.
+          tauto.
+          tauto.
+        }
+        intros.
+        simpl in H3.
+        simpl.
+        unfold Rels.id in H3.
+        unfold Rels.id.
+        simpl.
+        simpl in H3.
+        tauto. 
+      }
+      pose proof c_step_add_graph_preserves2(T:=T).
+      pose proof H1.
+      destruct H5.
+      rewrite H6 in H1.
+      specialize (H4 x4 x2 x3 x x0 s2 a).
+      apply H4 in H1.
+      tauto.
+      pose proof union_rel_c_step_preserves(T:=T).
+      specialize (H7 x1 x4 empty_nfa x x0 a).
+      apply H7 in H0.
+      tauto.
+      tauto.   
+  }
+  intros.
+  simpl.
+  simpl in H.
+  unfold e_steps.
+  unfold e_steps in H.
+  unfold clos_refl_trans in H.
+  unfold clos_refl_trans.
+  sets_unfold.
+  sets_unfold in H.
+  destruct H.
+  exists x.
+  revert v1 H.
+  induction x.
+  2:{
+    intros.
+    simpl.
+    sets_unfold.
+    simpl in H.
+    sets_unfold in H.
+    destruct H.
+    exists x0.
+    destruct H.
+    split.
+    2:{
+      apply IHx in H2.
+      tauto.
+    }
+    pose proof e_step_add_graph_preserves2(T:=T).
+    pose proof H1.
+    destruct H4.
+    rewrite H5 in H1.
+    specialize (H3 x4 x2 x3 v1 x0 s2).
+    apply H3 in H1.
+    tauto.
+    pose proof union_rel_e_step_preserves(T:=T).
+    specialize (H6 x1 x4 empty_nfa v1 x0).
+    apply H6 in H0.
+    tauto.
+    tauto.
+  }
+  intros.
+  simpl in H.
+  simpl.
+  unfold Rels.id in H.
+  unfold Rels.id.
+  simpl.
+  simpl in H.
+  tauto.
+Qed. 
+
+Lemma add_graph_match_preserve2:
+  forall {T: Type} (str: list T) (x1 x2 x3: pg_nfa T)(s1 s2:state) (v1 v2 :Z),
+  match_str x2 v1 v2 str->
+  (s1, x3, s2) ∈ (G_add_graph x1 x2).(nrm)->
+  match_str x3 v1 v2 (str).
+Proof.
+Admitted. 
+
+Lemma concat_hoare_backward {T: Type}:
+  forall (str : list T) (s: state) (r1:reg_exp T)(r2: reg_exp T),
+  Hoare
+    (fun s1 => s1 = s)                  
+    (regexToNFA (Concat_r r1 r2))                           
+    (fun (e : elem T) (s2 : state) =>                          
+    exp_match (Concat_r r1 r2) str ->MatchR r1/\MatchR r2->match_str e.(graph) e.(startVertex) e.(endVertex) str).
+Proof.
+  intros.
+  unfold Hoare.
+  split.
+  - intros.
+    intros contra.
+    apply derive_false in contra.
+    tauto.
+  - intros.
+    apply RexMatch_ConcatR in H1.
+    destruct H1.
+    destruct H1.
+    destruct H1.
+    destruct H3.
+    destruct H2.
+    repeat destruct H0.
+    repeat destruct H6.
+    unfold MatchR in H2.
+    specialize (H2 x s1 x2 s x1).
+    apply H2 in H1.
+    2:{
+      tauto.
+    }
+    2:{
+       tauto. 
+    }
+    specialize (H5 x0 x2 x4 x2 x3).
+    apply H5 in H3.
+    2:{
+      tauto.
+    }
+    2:{
+       tauto. 
+    }
+    destruct H7.
+    destruct H7.
+    destruct H7.
+    destruct H7.
+    destruct H7.
+    destruct H7.
+    destruct H7.
+    destruct H9.
+    destruct H9.
+    destruct H9.
+    clear H2.
+    clear H5.
+    pose proof (add_graph_match_preserve1(T := T)).
+    specialize (H2 x x1.(graph) x3.(graph) x9 x7 x8 x10 x1.(startVertex) x1.(endVertex)).
+    apply H2 in H1.
+    2:{
+      tauto.
+    }
+    2:{
+      tauto.
+    }
+    pose proof (add_graph_match_preserve2(T := T)).
+    specialize (H5 x0 x7 x3.(graph) x9 x8 x10 x3.(startVertex) x3.(endVertex)).
+    apply H5 in H3.
+    2:{
+      tauto.
+    }
+    pose proof match_str_concat(T:=T).
+    specialize (H12 x x0 a x9 x5 x10 x6 s2 x1.(startVertex) x1.(endVertex) x3.(startVertex) x3.(endVertex)).
+    apply H12 in H1.
+    2:{
+      tauto.
+    }
+    3:{
+      tauto.
+    }
+    rewrite <- H4 in H1.
+    destruct H8.
+    rewrite H8.
+    simpl.
+    tauto.
+    destruct H9.
+    destruct H9.
+    destruct union_pg0.
+    unfold Sets_disjoint_union in union_vertex.
+    destruct union_vertex.
+    sets_unfold in H14.
+    split.
+    + apply H14.
+      left.
+      destruct H7.
+      destruct union_pg0.
+      unfold Sets_disjoint_union in union_vertex.
+      destruct union_vertex.
+      sets_unfold in H15.
+      apply H15.
+      right.
+      pose proof start_end_in_graph(T:=T).
+      specialize (H16 x1 s1 x2 r1).
+      apply H16 in H0.
+      tauto.
+    + apply H14.
+      right.
+      pose proof start_end_in_graph(T:=T).
+      specialize (H15 x3 x2 x4 r2).
+      apply H15 in H6.
+      tauto.
+Qed.
+
+Definition MatchE {T} (r1 : reg_exp T) :=
+  forall (str:list T) (s1 s2 s: state) (a: elem T),
+  (s1, a, s2) ∈ (regexToNFA r1).(nrm) ->
+  match_str a.(graph) a.(startVertex) a.(endVertex) str->
+  s1 = s->
+  exp_match r1 str .
+
+Lemma NfaMatch_ConcatR{T}:
+  forall (str: list T)(x x1 a: elem T)(r1 r2 :reg_exp T)(v1 v2:Z)(s1 s2 s3 s4:state),
+  match_str a.(graph) v1 v2 str ->
+  (s1, x, s2) ∈ (regexToNFA r1).(nrm)->
+  (s2, x1, s3) ∈ (regexToNFA r2).(nrm)->
+  (s3, a, s4) ∈ (act_concat x x1).(nrm)->
+  exists (str1 str2: list T),
+  match_str x.(graph) v1 x.(endVertex) str1 /\ match_str x1.(graph) x1.(startVertex) v2 str2 /\ str= str2 ++ str1.
+Proof.
+  intros.
+  revert v2 H.
+  induction str.
+  2:{
+    intros.
+    
+  }
+  
+
+  
+
+Admitted.
+
+Lemma concat_hoare_forward {T: Type}:
+  forall (str : list T) (s: state) (r1:reg_exp T)(r2: reg_exp T),
+  Hoare
+    (fun s1 => s1 = s)                  
+    (regexToNFA (Concat_r r1 r2))                          
+    (fun (e : elem T) (s2 : state) =>                          
+    MatchE r1 /\ MatchE r2->match_str e.(graph) e.(startVertex) e.(endVertex) str ->exp_match (Concat_r r1 r2) str).
+Proof.
+  intros.
+  unfold Hoare.
+  split.
+  - intros.
+    intros contra.
+    pose proof derive_false.
+    apply H0 in contra.
+    tauto.
+  - intros.
+    destruct H0.
+    destruct H0.
+    destruct H0.
+    destruct H3.
+    destruct H3.
+    destruct H3.
+    unfold MatchE in H1.
+    destruct H1.
+    pose proof NfaMatch_ConcatR(T:=T).
+    specialize (H6 str x x1 a r1 r2 a.(startVertex) a.(endVertex) s1 x0 x2 s2).
+    apply H6 in H2.
+    2:{
+      tauto.
+    }
+    2:{
+      tauto.
+    }
+    2:{
+      tauto.
+    }
+    destruct H2.
+    destruct H2.
+    destruct H2.
+    destruct H7.
+    destruct H4.
+    destruct H4.
+    destruct H4.
+    destruct H4.
+    destruct H4.
+    destruct H4.
+    destruct H10.
+    destruct H10.
+    destruct H10.
+    destruct H9.
+    rewrite H9 in H2, H7.
+    simpl in H2, H7.
+    specialize (H1 x3 s1 x0 s x).
+    apply H1 in H0.
+    2:{
+      tauto.
+    }
+    2:{
+      tauto.
+    }
+    specialize (H5 x4 x0 x2 x0 x1).
+    apply H5 in H3.
+    2:{
+      tauto.
+    }
+    2:{
+      tauto.
+    }
+    simpl.
+    unfold set_prod.
+    exists x3 ,x4.
+    tauto.
 Qed.
