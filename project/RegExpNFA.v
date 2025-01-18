@@ -4896,3 +4896,215 @@ Proof.
     }
     Admitted.
 
+Lemma string_step_concat {T: Type}:
+forall (x: pg_nfa T) (s1 s2: list T) (v1 v2 v3: Z),
+  string_step x s1 v1 v2 ->
+  string_step x s2 v2 v3 ->
+  string_step x (s1 ++ s2) v1 v3.
+Admitted.
+
+Theorem star_hoare_backward {T: Type}:
+forall (s: state) (r: reg_exp T) (str: list T),
+  (forall (s0: state) (str1: list T),
+  Hoare 
+  (fun s1 : state => s1 = s0) 
+  (regexToNFA r)
+  (fun (e : elem T) (_ : state) =>
+    exp_match r str1 ->
+    match_str e.(graph) e.(startVertex) e.(endVertex) str1)) ->
+  Hoare
+  (fun s1 => s1 = s)
+  (regexToNFA (Star_r r))
+  (fun(e : elem T) (s2 : state) =>
+    exp_match (Star_r r) str -> match_str e.(graph) e.(startVertex) e.(endVertex) str).
+Proof.
+  intros.
+  unfold Hoare.
+  split.
+  + intros.
+    unfold not.
+    intros.
+    pose proof derive_false T (Star_r r) s1 H1.
+    tauto.
+  + intros.
+    destruct H1.
+    destruct H1.
+    destruct H1.
+    destruct H3.
+    destruct H3.
+    destruct H3.
+    destruct H4.
+    destruct H4.
+    destruct H4.
+    destruct H5.
+    destruct H5.
+    destruct H5.
+    destruct H5.
+    destruct H5.
+    destruct H5.
+    destruct H7.
+    destruct H7.
+    destruct H7.
+    destruct H8.
+    destruct H8.
+    destruct H8.
+    destruct H9.
+    destruct H9.
+    destruct H9.
+    destruct H10.
+    destruct H10.
+    destruct H10.
+    destruct H11.
+    destruct H11.
+    destruct H11.
+    destruct H12.
+    destruct H12.
+    destruct H12.
+    destruct H13.
+    destruct H13.
+    destruct H13.
+    destruct H14.
+    destruct H14.
+    destruct H14.
+    destruct H15.
+    destruct H6.
+    unfold match_str.
+    rewrite H6.
+    simpl.
+    assert ((string_step x5 str x1 x.(endVertex)) -> (string_step x5 str x1 x3)).
+    intros.
+    pose proof start_end_in_graph x s1 x0 r H1.
+    destruct H19.
+    pose proof add_graph_num_vertex1 x4 x8 x7 empty_nfa x.(graph) H5 x.(endVertex).
+    assert ((x7.(pg)).(vvalid) x.(endVertex)).
+    tauto.
+    pose proof add_vertex_in_graph x8 x10 x9 x7 x1 H7 x.(endVertex).
+    assert ((x9.(pg)).(vvalid) x.(endVertex)).
+    tauto.
+    pose proof add_vertex_in_graph x10 x12 x11 x9 x3 H8 x.(endVertex).
+    assert ((x11.(pg)).(vvalid) x.(endVertex)).
+    tauto.
+    pose proof add_edge_in_graph x14 x16 x15 x11 x13 x1 x.(endVertex) epsilon H10 x.(endVertex).
+    assert ((x15.(pg)).(vvalid) x.(endVertex)).
+    tauto.
+    pose proof add_vertex_in_graph x10 x12 x11 x9 x3 H8 x3.
+    assert ((x11.(pg)).(vvalid) x3).
+    tauto.
+    pose proof add_edge_in_graph x14 x16 x15 x11 x13 x1 x.(endVertex) epsilon H10 x3.
+    assert ((x15.(pg)).(vvalid) x3).
+    tauto.
+    pose proof add_edge_e_step x18 x20 x19 x15 x17 x.(endVertex) x3 H28 H32 H12.
+    pose proof add_edge_preserve_e_step x22 x24 x23 x19 x21 x.(endVertex) x.(startVertex) x.(endVertex) x3 H33 H14.
+    rewrite <- H15 in H34.
+    pose proof e_step_extend_string_step2 x5 x1 x.(endVertex) x3 str H34 H18.
+    tauto.
+    apply H18.
+    clear H18.
+    destruct H2.
+    revert H2.
+    revert str.
+    induction x25.
+    2:{
+      intros.
+      simpl in H2.
+      unfold set_prod in H2.
+      destruct H2.
+      destruct H2.
+      destruct H2.
+      destruct H18.
+      pose proof IHx25 x27 H18.
+      rewrite H19.
+      pose proof H s1 x26.
+      unfold Hoare in H21.
+      destruct H21.
+      pose proof H22 s1 x x0.
+      assert (match_str x.(graph) x.(startVertex) x.(endVertex) x26).
+      tauto.
+      clear H23 H22 H21.
+      unfold match_str in H24.
+      pose proof start_end_in_graph x s1 x0 r H1.
+      destruct H21.
+      pose proof add_graph_num_vertex1 x4 x8 x7 empty_nfa x.(graph) H5 x.(startVertex).
+      assert ((x7.(pg)).(vvalid) x.(startVertex)).
+      tauto.
+      pose proof add_graph_num_vertex1 x4 x8 x7 empty_nfa x.(graph) H5 x.(endVertex).
+      assert ((x7.(pg)).(vvalid) x.(endVertex)).
+      tauto.
+      pose proof add_vertex_in_graph x8 x10 x9 x7 x1 H7 x.(startVertex).
+      assert ((x9.(pg)).(vvalid) x.(startVertex)).
+      tauto.
+      pose proof add_vertex_in_graph x8 x10 x9 x7 x1 H7 x.(endVertex).
+      assert ((x9.(pg)).(vvalid) x.(endVertex)).
+      tauto.
+      pose proof add_vertex_in_graph x10 x12 x11 x9 x3 H8 x.(startVertex).
+      assert ((x11.(pg)).(vvalid) x.(startVertex)).
+      tauto.
+      pose proof add_vertex_in_graph x10 x12 x11 x9 x3 H8 x.(endVertex).
+      assert ((x11.(pg)).(vvalid) x.(endVertex)).
+      tauto.
+      clear H34 H32 H30 H28 H26 H23.
+      pose proof add_edge_in_graph x14 x16 x15 x11 x13 x1 x.(endVertex) epsilon H10 x.(startVertex).
+      assert ((x15.(pg)).(vvalid) x.(startVertex)).
+      tauto.
+      pose proof add_edge_in_graph x14 x16 x15 x11 x13 x1 x.(endVertex) epsilon H10 x.(endVertex).
+      assert ((x15.(pg)).(vvalid) x.(endVertex)).
+      tauto.
+      pose proof add_edge_in_graph x18 x20 x19 x15 x17 x.(endVertex) x3 epsilon H12 x.(startVertex).
+      assert ((x19.(pg)).(vvalid) x.(startVertex)).
+      tauto.
+      pose proof add_edge_in_graph x18 x20 x19 x15 x17 x.(endVertex) x3 epsilon H12 x.(endVertex).
+      assert ((x19.(pg)).(vvalid) x.(endVertex)).
+      tauto.
+      clear H36 H32 H28 H23.
+      pose proof add_edge_e_step x22 x24 x23 x19 x21 x.(endVertex) x.(startVertex) H37 H34 H14.
+      rewrite <- H15 in H23.
+      pose proof e_step_extend_string_step2 x5 x1 x.(endVertex) x.(startVertex) x27 H23 H20.
+      pose proof add_graph_preserve_string_step2 x4 x8 x7 empty_nfa x.(graph) x.(startVertex) x.(endVertex) x26 H5 H24.
+      pose proof add_vertex_preserve_string_step x8 x10 x9 x7 x1 x.(startVertex) x.(endVertex) x26 H7 H32.
+      pose proof add_vertex_preserve_string_step x10 x12 x11 x9 x3 x.(startVertex) x.(endVertex) x26 H8 H36.
+      pose proof add_edge_preserve_string_step x14 x16 x15 x11 x13 x1 x.(endVertex) x.(startVertex) x.(endVertex) epsilon x26 H10 H38.
+      pose proof add_edge_preserve_string_step x18 x20 x19 x15 x17 x.(endVertex) x3 x.(startVertex) x.(endVertex) epsilon x26 H12 H39.
+      pose proof add_edge_preserve_string_step x22 x24 x23 x19 x21 x.(endVertex) x.(startVertex) x.(startVertex) x.(endVertex) epsilon x26 H14 H40.
+      rewrite <- H15 in H41.
+      clear H24 H21 H22 H25 H27 H29 H31 H33 H35 H26 H30 H24 H37 H23 H32 H36 H38 H39 H40 H34 H20.
+      pose proof string_step_concat x5 x27 x26 x1 x.(startVertex) x.(endVertex) H28 H41.
+      apply H20.
+    }
+    intros.
+    simpl in H2.
+    sets_unfold in H2.
+    rewrite <- H2.
+    simpl.
+    unfold e_steps.
+    unfold clos_refl_trans.
+    unfold Sets.indexed_union.
+    simpl.
+    exists Nat.one.
+    simpl.
+    sets_unfold.
+    exists x.(endVertex).
+    split.
+    * pose proof add_vertex_in_graph x8 x10 x9 x7 x1 H7 x1.
+      assert ((x9.(pg)).(vvalid) x1).
+      tauto.
+      pose proof add_vertex_in_graph x10 x12 x11 x9 x3 H8 x1.
+      assert ((x11.(pg)).(vvalid) x1).
+      tauto.
+      pose proof start_end_in_graph x s1 x0 r H1.
+      destruct H22.
+      pose proof add_graph_num_vertex1 x4 x8 x7 empty_nfa x.(graph) H5 x.(endVertex).
+      assert ((x7.(pg)).(vvalid) x.(endVertex)).
+      tauto.
+      pose proof add_vertex_in_graph x8 x10 x9 x7 x1 H7 x.(endVertex).
+      assert ((x9.(pg)).(vvalid) x.(endVertex)).
+      tauto.
+      pose proof add_vertex_in_graph x10 x12 x11 x9 x3 H8 x.(endVertex).
+      assert ((x11.(pg)).(vvalid) x.(endVertex)).
+      tauto.
+      pose proof add_edge_e_step x14 x16 x15 x11 x13 x1 x.(endVertex) H21 H29 H10.
+      pose proof add_edge_preserve_e_step x18 x20 x19 x15 x17 x.(endVertex) x3 x1 x.(endVertex) H30 H12.
+      pose proof add_edge_preserve_e_step x22 x24 x23 x19 x21 x.(endVertex) x.(startVertex) x1 x.(endVertex) H31 H14.
+      rewrite H15.
+      apply H32.
+    * reflexivity.
+Qed.
