@@ -5465,7 +5465,78 @@ Proof.
     - pose proof H32 H3.
       unfold match_str.
       clear H32 H31 H30 H29 H28 H27 H26 H24 H25 H23 H8 H H0.
-Abort.
+      unfold match_str in H33.
+      pose proof add_vertex_in_graph x12 x14 x13 x11 x3 H10 x3.
+      destruct H.
+      assert (x3 = x3).
+      reflexivity.
+      assert ((x13.(pg)).(vvalid) x3).
+      tauto.
+      pose proof add_vertex_in_graph x14 x16 x15 x13 x5 H11 x3.
+      destruct H24.
+      assert ((x15.(pg)).(vvalid) x3).
+      tauto.
+      pose proof add_edge_in_graph x18 x20 x19 x15 x17 x3 x.(startVertex) epsilon H13 x3.
+      assert ((x19.(pg)).(vvalid) x3).
+      tauto.
+      pose proof start_end_in_graph x1 x0 x2 r2 H4.
+      destruct H29.
+      pose proof add_graph_num_vertex1 x10 x12 x11 x9 x1.(graph) H9 x1.(startVertex).
+      assert ((x11.(pg)).(vvalid) x1.(startVertex)).
+      tauto.
+      pose proof add_vertex_in_graph x12 x14 x13 x11 x3 H10 x1.(startVertex).
+      assert ((x13.(pg)).(vvalid) x1.(startVertex)).
+      tauto.
+      pose proof add_vertex_in_graph x14 x16 x15 x13 x5 H11 x1.(startVertex).
+      assert ((x15.(pg)).(vvalid) x1.(startVertex)).
+      tauto.
+      pose proof add_edge_in_graph x18 x20 x19 x15 x17 x3 x.(startVertex) epsilon H13 x1.(startVertex).
+      assert ((x19.(pg)).(vvalid) x1.(startVertex)).
+      tauto.
+      pose proof add_graph_preserve_string_step2 x10 x12 x11 x9 x1.(graph) x1.(startVertex) x1.(endVertex) str H9 H33.
+      pose proof add_vertex_preserve_string_step x12 x14 x13 x11 x3 x1.(startVertex) x1.(endVertex) str H10 H40.
+      pose proof add_vertex_preserve_string_step x14 x16 x15 x13 x5 x1.(startVertex) x1.(endVertex) str H11 H41.
+      pose proof add_edge_preserve_string_step x18 x20 x19 x15 x17 x3 x.(startVertex) x1.(startVertex) x1.(endVertex) epsilon str H13 H42.
+      pose proof add_edge_preserve_string_step x22 x24 x23 x19 x21 x3 x1.(startVertex) x1.(startVertex) x1.(endVertex) epsilon str H15 H43.
+      pose proof add_empty_edge_extend_string_step1 x22 x24 x23 x19 x21 x3 x1.(startVertex) x1.(endVertex) str H28 H39 H15 H44.
+      pose proof add_edge_preserve_string_step x26 x28 x27 x23 x25 x.(endVertex) x5 x3 x1.(endVertex) epsilon str H17 H45.
+      pose proof add_edge_preserve_string_step x30 x32 x31 x27 x29 x1.(endVertex) x5 x3 x1.(endVertex) epsilon str H19 H46.
+      pose proof add_graph_num_vertex1 x10 x12 x11 x9 x1.(graph) H9 x1.(endVertex).
+      assert ((x11.(pg)).(vvalid) x1.(endVertex)).
+      tauto.
+      pose proof add_vertex_in_graph x12 x14 x13 x11 x3 H10 x1.(endVertex).
+      assert ((x13.(pg)).(vvalid) x1.(endVertex)).
+      tauto.
+      pose proof add_vertex_in_graph x14 x16 x15 x13 x5 H11 x1.(endVertex).
+      assert ((x15.(pg)).(vvalid) x1.(endVertex)).
+      tauto.
+      clear H52 H50 H48 H38 H37 H36 H35 H34 H31 H27 H25 H24.
+      pose proof add_edge_in_graph x18 x20 x19 x15 x17 x3 x.(startVertex) epsilon H13 x1.(endVertex).
+      assert ((x19.(pg)).(vvalid) x1.(endVertex)).
+      tauto.
+      pose proof add_edge_in_graph x22 x24 x23 x19 x21 x3 x1.(startVertex) epsilon H15 x1.(endVertex).
+      assert ((x23.(pg)).(vvalid) x1.(endVertex)).
+      tauto.
+      pose proof add_edge_in_graph x26 x28 x27 x23 x25 x.(endVertex) x5 epsilon H17 x1.(endVertex).
+      assert ((x27.(pg)).(vvalid) x1.(endVertex)).
+      tauto.
+      pose proof add_vertex_in_graph x14 x16 x15 x13 x5 H11 x5.
+      assert ((x15.(pg)).(vvalid) x5).
+      tauto.
+      pose proof add_edge_in_graph x18 x20 x19 x15 x17 x3 x.(startVertex) epsilon H13 x5.
+      assert ((x19.(pg)).(vvalid) x5).
+      tauto.
+      pose proof add_edge_in_graph x22 x24 x23 x19 x21 x3 x1.(startVertex) epsilon H15 x5.
+      assert ((x23.(pg)).(vvalid) x5).
+      tauto.
+      pose proof add_edge_in_graph x26 x28 x27 x23 x25 x.(endVertex) x5 epsilon H17 x5.
+      assert ((x27.(pg)).(vvalid) x5).
+      tauto.
+      clear H54 H50 H38 H36 H34 H27 H24 H H0.
+      pose proof add_empty_edge_extend_string_step2 x30 x32 x31 x27 x29 x3 x1.(endVertex) x5 str H35 H55 H19 H47.
+      rewrite H20.
+      tauto.
+Qed.
 
 Lemma act_union_vrel {T: Type}:
 forall (A B a: elem T) (s1 s2: state),
