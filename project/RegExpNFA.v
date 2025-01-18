@@ -2037,7 +2037,1014 @@ Lemma another_order_evalid_range :
 	(s1, elem1, s2) ∈ (regexToNFA r).(nrm) -> s1.(max_e) <= s2.(max_e) /\
 	forall ge, ge ∈ elem1.(graph).(pg).(evalid) -> s1.(max_e) < ge <= s2.(max_e).
 Proof.
-Admitted.
+  intros T elem1 s1 s2 r H.
+  revert s2 H.
+  revert elem1.
+  revert s1.
+  induction r.
+  + intros.
+    unfold regexToNFA in H.
+    unfold ret_nfa in H.
+    unfold StateRelMonad.nrm in H.
+    destruct H.
+    destruct H.
+    destruct H.
+    unfold StateRelMonad.nrm in H0.
+    destruct H0.
+    destruct H0.
+    destruct H0.
+    unfold StateRelMonad.nrm in H1.
+    destruct H1.
+    destruct H1.
+    destruct H1.
+    unfold StateRelMonad.nrm in H2.
+    destruct H2.
+    pose proof e_range_graph_constr_singleton None s1 x0 x2 x4 x x1 x3 as e_range_singleton .
+    pose proof H1 as graph_constr_temp.
+    unfold StateRelMonad.nrm in H1.
+    destruct H1.
+    destruct H1.
+    destruct H1.
+    unfold StateRelMonad.nrm in H4.
+    destruct H4.
+    destruct H4.
+    destruct H4.
+    unfold StateRelMonad.nrm in H5.
+    destruct H5.
+    destruct H5.
+    destruct H5.
+    unfold StateRelMonad.nrm in H6.
+    destruct H6.
+    destruct H6.
+    destruct H6.
+    pose proof after_get_new_vertex s1 x0 x H as [_ e_state_equal1].
+    pose proof after_get_new_vertex x0 x2 x1 H0 as [_ e_state_equal2].
+    pose proof after_G_add_vertex empty_nfa x5 x2 x6 x H1 as [e_state_equal3 ?].
+    pose proof after_G_add_vertex x5 x7 x6 x8 x1 H4 as [e_state_equal4 ?].
+    pose proof after_get_new_edge x8 x10 x9 H5 as [[_ e_state_equal5] _].
+    pose proof after_G_add_edge x7 x11 x10 x12 x9 x x1 None H6 as [e_state_equal6 ?].
+    split.
+    1: {
+      unfold StateRelMonad.nrm in H7.
+      destruct H7.
+      rewrite e_state_equal1.
+      rewrite e_state_equal2.
+      rewrite e_state_equal3.
+      rewrite e_state_equal4.
+      rewrite <- H3.
+      rewrite <- H11.
+      rewrite <- e_state_equal6.
+      lia.
+    }
+    intros.
+    assert (after_ret_nfa: elem1.(graph)=x3). {
+      rewrite H2.
+      reflexivity.
+    }
+    rewrite after_ret_nfa in H11.
+    destruct H7.
+    rewrite H7 in H11.
+    destruct H10 as [_ temp].
+    pose proof temp ge as temp.
+    destruct temp as [temp _].
+    pose proof temp H11; clear temp.
+    clear e_range_singleton.
+    destruct H10.
+    (* 下面分为 ge ∈ x7.graph 或 ge==x9 *)
+    - (* ge=x9 的情况 *)
+      pose proof after_get_new_edge x8 x10 x9 H5 as [[x9_range _] _].
+      split.
+      2: {
+        rewrite <- H3.
+        rewrite <- H12.
+        rewrite <- e_state_equal6.
+        lia.
+      }
+      rewrite e_state_equal1.
+      rewrite e_state_equal2.
+      rewrite e_state_equal3.
+      rewrite e_state_equal4.
+      lia.
+    - (* ge ∈ x7.graph 的情况 *)
+      pose proof after_G_add_vertex x5 x7 x6 x8 x1 H4 as [_ [_ temp]].
+      pose proof temp ge as temp.
+      destruct temp as [forward _].
+      pose proof forward H10; clear forward.
+      clear H8 H9.
+      pose proof after_G_add_vertex empty_nfa x5 x2 x6 x H1 as [_ [_ temp]].
+      pose proof temp ge as temp.
+      destruct temp as [forward _].
+      pose proof forward H13; clear forward.
+      simpl in H8.
+      tauto.
+  + intros.
+    unfold regexToNFA in H.
+    unfold act_singleton in H.
+    unfold StateRelMonad.nrm in H.
+    destruct H.
+    destruct H.
+    destruct H.
+    unfold StateRelMonad.nrm in H0.
+    destruct H0.
+    destruct H0.
+    destruct H0.
+    unfold StateRelMonad.nrm in H1.
+    destruct H1.
+    destruct H1.
+    destruct H1.
+    split.
+    1: {
+      pose proof after_get_new_vertex s1 x0 x H as [_ edge_equal1].
+      pose proof after_get_new_vertex x0 x2 x1 H0 as [_ edge_equal2].
+      unfold graph_constr in H1.
+      destruct H1.
+      destruct H1.
+      destruct H1.
+      unfold StateRelMonad.nrm in H3.
+      destruct H3.
+      destruct H3.
+      destruct H3.
+      unfold StateRelMonad.nrm in H4.
+      destruct H4.
+      destruct H4.
+      destruct H4.
+      unfold StateRelMonad.nrm in H5.
+      destruct H5.
+      destruct H5.
+      destruct H5.
+      pose proof after_G_add_vertex empty_nfa x5 x2 x6 x H1 as [state_equal3 _].
+      pose proof after_G_add_vertex x5 x7 x6 x8 x1 H3 as [state_equal4 _].
+      unfold StateRelMonad.nrm in H6.
+      destruct H6.
+      unfold StateRelMonad.nrm in H2.
+      destruct H2.
+      pose proof after_G_add_edge x7 x11 x10 x12 x9 x x1 (Some t) H5 as [state_equal5].
+      pose proof after_get_new_edge x8 x10 x9 H4 as [[_ edge_equal6] _].
+      rewrite <- H8.
+      rewrite <- H7.
+      rewrite <- state_equal5.
+      rewrite edge_equal6.
+      rewrite <- state_equal4.
+      rewrite <- state_equal3.
+      apply Z.le_trans with (m := x0.(max_e)).
+      lia.
+      lia.
+    }
+    1: {
+      intros.
+      unfold graph_constr in H1.
+      destruct H1.
+      destruct H1.
+      destruct H1.
+      unfold StateRelMonad.nrm in H4.
+      destruct H4.
+      destruct H4.
+      destruct H4.
+      unfold StateRelMonad.nrm in H5.
+      destruct H5.
+      destruct H5.
+      destruct H5.
+      unfold StateRelMonad.nrm in H6.
+      destruct H6.
+      destruct H6.
+      destruct H6.
+      unfold StateRelMonad.nrm in H7.
+      destruct H7.
+      unfold StateRelMonad.nrm in H2.
+      destruct H2.
+      assert (after_ret_nfa: elem1.(graph)=x3). {
+        rewrite H2.
+        reflexivity.
+      }
+      rewrite after_ret_nfa in H3.
+      rewrite H7 in H3.
+      pose proof after_G_add_edge x7 x11 x10 x12 x9 x x1 (Some t) H6 as [state_equal1 [_ temp]].
+      pose proof temp ge as temp.
+      destruct temp as [forward _].
+      pose proof forward H3; clear forward.
+      destruct H10.
+      (* 下面分为 ge=x9 和 ge ∈ x7.graph 两种情况 *)
+      - (* ge=x9 的情况 *)
+        pose proof after_get_new_edge x8 x10 x9 H5 as [[x9_range edge_equal2] _].
+        split.
+        2: {
+          rewrite <- H9.
+          rewrite <- H8.
+          rewrite <- state_equal1.
+          lia.
+        }
+        pose proof after_G_add_vertex empty_nfa x5 x2 x6 x H1 as [state_equal3 _].
+        pose proof after_G_add_vertex x5 x7 x6 x8 x1 H4 as [state_equal4 _].
+        pose proof after_get_new_vertex s1 x0 x H as [_ edge_equal5].
+        pose proof after_get_new_vertex x0 x2 x1 H0 as [_ edge_equal6].
+        rewrite edge_equal5.
+        rewrite edge_equal6.
+        rewrite state_equal3.
+        rewrite state_equal4.
+        lia.
+      - (* 下面是 ge ∈ x7.graph 的情况 *)
+        pose proof after_G_add_vertex x5 x7 x6 x8 x1 H4 as [state_equal2 [_ temp]].
+        pose proof temp ge as temp.
+        destruct temp as [forward _].
+        pose proof forward H10; clear forward.
+        pose proof after_G_add_vertex empty_nfa x5 x2 x6 x H1 as [state_equal3 [_ temp]].
+        pose proof temp ge as temp.
+        destruct temp as [forward _].
+        pose proof forward H11; clear forward.
+        simpl in H12.
+        tauto.
+    }
+  + intros.
+    unfold StateRelMonad.nrm in H.
+    destruct H.
+    destruct H.
+    destruct H.
+    unfold StateRelMonad.nrm in H0.
+    destruct H0.
+    destruct H0.
+    destruct H0.
+    unfold StateRelMonad.nrm in H1.
+    destruct H1.
+    destruct H1.
+    destruct H1.
+    destruct H1.
+    destruct H1.
+    destruct H1.
+    unfold StateRelMonad.nrm in H3.
+    destruct H3.
+    destruct H3.
+    destruct H3.
+    unfold StateRelMonad.nrm in H4.
+    destruct H4.
+    destruct H4.
+    destruct H4.
+    unfold StateRelMonad.nrm in H5.
+    destruct H5.
+    destruct H5.
+    destruct H5.
+    pose proof IHr1 s1 x x0 H as [state_relation1 belong_g1].
+    pose proof IHr2 x0 x1 x2 H0 as [state_relation2 belong_g2].
+    clear IHr1 IHr2.
+    clear H H0.
+    (* 展开状态转移情况 *)
+    pose proof after_get_new_edge x8 x10 x9 H4 as [[x9_range state_equal3] _].
+    split.
+    1: {
+      unfold StateRelMonad.nrm in H2.
+      destruct H2 as [_ ?].
+      unfold StateRelMonad.nrm in H6.
+      destruct H6.
+      unfold StateRelMonad.nrm in H5.
+      destruct H5 as [_ ?].
+      unfold StateRelMonad.nrm in H3.
+      destruct H3 as [_ ?].
+      unfold StateRelMonad.nrm in H1.
+      destruct H1 as [_ ?].
+      rewrite <- H.
+      rewrite <- H2.
+      rewrite <- H5.
+      rewrite state_equal3.
+      rewrite <- H3.
+      rewrite <- H1.
+      apply Z.le_trans with (m := x0.(max_e)).
+      lia.
+      lia.
+    }
+    1: {
+      intros.
+      unfold StateRelMonad.nrm in H2.
+      destruct H2.
+      assert (after_ret_nfa: elem1.(graph)=x3). {
+        rewrite H0.
+        reflexivity.
+      }
+      rewrite after_ret_nfa in H; clear after_ret_nfa H0.
+      unfold StateRelMonad.nrm in H6.
+      destruct H6.
+      rewrite H0 in H; clear H0.
+      pose proof after_G_add_edge x7 x11 x10 x12 x9 x.(endVertex) x1.(startVertex) None H5 as [state_equal4 [_ temp]].
+      pose proof temp ge as temp.
+      destruct temp as [temp _].
+      pose proof temp H; clear temp.
+      destruct H0.
+      (* 分成 ge=x9 和 ge ∈ x7.graph 两种情况 *)
+      - (* ge = x9 的情况 *)
+        split.
+        2: {
+          rewrite <- H2.
+          rewrite <- H6.
+          rewrite <- state_equal4.
+          lia.
+        }
+        apply Z.le_lt_trans with (m := x0.(max_e)).
+        lia.
+        apply Z.le_lt_trans with (m := x2.(max_e)).
+        lia.
+        unfold StateRelMonad.nrm in H1.
+        destruct H1.
+        rewrite H7.
+        unfold StateRelMonad.nrm in H3.
+        destruct H3.
+        rewrite H8.
+        lia.
+      - (* ge ∈ x7.graph 的情况 *)
+        unfold StateRelMonad.nrm in H3.
+        destruct H3.
+        destruct H3.
+        destruct union_pg0.
+        unfold Sets_disjoint_union in union_edge.
+        sets_unfold in union_edge.
+        destruct union_edge as [_ ?].
+        pose proof H3 ge as temp.
+        destruct temp as [_ temp].
+        pose proof temp H0; clear temp.
+        clear union_src1 union_src2 union_dst1 union_dst2 union_symbol3 union_symbol4 union_vertex.
+        destruct H8.
+        (* 这里再分为 ge ∈ x5 (再推一步到递归情况x) 和 ge ∈ x1 (递归情况x1) 两种情况 *)
+        -- (* ge ∈ x5 的情况 *)
+          unfold StateRelMonad.nrm in H1.
+          destruct H1.
+          destruct H1.
+          destruct union_pg0.
+          clear union_vertex union_src1 union_src2 union_dst1 union_dst2 union_symbol3 union_symbol4.
+          unfold Sets_disjoint_union in union_edge.
+          sets_unfold in union_edge.
+          destruct union_edge as [_ ?].
+          pose proof H1 ge as temp.
+          destruct temp as [_ temp].
+          pose proof temp H8; clear temp.
+          destruct H10.
+          simpl in H10.
+          contradiction.
+          (* ge ∈ x.graph 的情况，是递推情况 *)
+          pose proof belong_g1 ge H10.
+          split.
+          lia.
+          rewrite <- H2.
+          rewrite <- H6.
+          rewrite <- state_equal4.
+          rewrite state_equal3.
+          rewrite <- H7.
+          rewrite <- H9.
+          lia.
+        -- pose proof belong_g2 ge H8.
+          split.
+          lia.
+          rewrite <- H2.
+          rewrite <- H6.
+          rewrite <- state_equal4.
+          rewrite state_equal3.
+          rewrite <- H7.
+          unfold StateRelMonad.nrm in H1.
+          destruct H1 as [_ ?].
+          rewrite <- H1.
+          lia.
+    }
+  + intros.
+    unfold StateRelMonad.nrm in H.
+    destruct H.
+    destruct H.
+    destruct H.
+    unfold StateRelMonad.nrm in H0.
+    destruct H0.
+    destruct H0.
+    destruct H0.
+    unfold StateRelMonad.nrm in H1.
+    destruct H1.
+    destruct H1.
+    destruct H1.
+    unfold StateRelMonad.nrm in H2.
+    destruct H2.
+    destruct H2.
+    destruct H2.
+    unfold StateRelMonad.nrm in H3.
+    destruct H3.
+    destruct H3.
+    destruct H3.
+    unfold StateRelMonad.nrm in H3.
+    destruct H3.
+    destruct H3.
+    destruct H3.
+    unfold StateRelMonad.nrm in H3.
+    destruct H3.
+    unfold StateRelMonad.nrm in H5.
+    destruct H5.
+    destruct H5.
+    destruct H5.
+    unfold StateRelMonad.nrm in H7.
+    destruct H7.
+    destruct H7.
+    destruct H7.
+    unfold StateRelMonad.nrm in H8.
+    destruct H8.
+    destruct H8.
+    destruct H8.
+    unfold StateRelMonad.nrm in H9.
+    destruct H9.
+    destruct H9.
+    destruct H9.
+    unfold StateRelMonad.nrm in H10.
+    destruct H10.
+    destruct H10.
+    destruct H10.
+    unfold StateRelMonad.nrm in H11.
+    destruct H11.
+    destruct H11.
+    destruct H11.
+    unfold StateRelMonad.nrm in H12.
+    destruct H12.
+    destruct H12.
+    destruct H12.
+    unfold StateRelMonad.nrm in H13.
+    destruct H13.
+    destruct H13.
+    destruct H13.
+    unfold StateRelMonad.nrm in H14.
+    destruct H14.
+    destruct H14.
+    destruct H14.
+    unfold StateRelMonad.nrm in H15.
+    destruct H15.
+    destruct H15.
+    destruct H15.
+    unfold StateRelMonad.nrm in H16.
+    destruct H16.
+    destruct H16.
+    destruct H16.
+    unfold StateRelMonad.nrm in H17.
+    destruct H17.
+    pose proof IHr1 s1 x x0 H as [state_relation1 belong_g1].
+    pose proof IHr2 x0 x1 x2 H0 as [state_relation2 belong_g2].
+    clear IHr1 IHr2.
+    clear H H0.
+    unfold StateRelMonad.nrm in H4.
+    destruct H4.
+    split.
+    1: {
+      pose proof after_G_add_edge x27 x31 x30 x32 x29 x1.(endVertex) x5 None H16 as [state_equal3 _].
+      pose proof after_get_new_edge x28 x30 x29 H15 as [[_ state_relation4] _].
+      pose proof after_G_add_edge x23 x27 x26 x28 x25 x.(endVertex) x5 None H14 as [state_equal5 _].
+      pose proof after_get_new_edge x24 x26 x25 H13 as [[_ state_relation6] _].
+      pose proof after_G_add_edge x19 x23 x22 x24 x21 x3 x1.(startVertex) None H12 as [state_equal7 _].
+      pose proof after_get_new_edge x20 x22 x21 H11 as [[_ state_relation8] _].
+      pose proof after_G_add_edge x15 x19 x18 x20 x17 x3 x.(startVertex) None H10 as [state_equal9 _].
+      pose proof after_get_new_edge x16 x18 x17 H9 as [[_ state_relation10] _].
+      pose proof after_G_add_vertex x13 x15 x14 x16 x5 H8 as [state_equal11 _].
+      pose proof after_G_add_vertex x11 x13 x12 x14 x3 H7 as [state_equal12 _].
+      unfold StateRelMonad.nrm in H5.
+      destruct H5 as [_ ?].
+      pose proof after_get_new_vertex x4 x6 x5 H2 as [_ state_equal13].
+      pose proof after_get_new_vertex x2 x4 x3 H1 as [_ state_equal14].
+      apply Z.le_trans with (m := x0.(max_e)).
+      lia.
+      apply Z.le_trans with (m := x2.(max_e)).
+      lia.
+      rewrite state_equal14.
+      rewrite state_equal13.
+      rewrite H6.
+      rewrite H4.
+      rewrite state_equal12.
+      rewrite state_equal11.
+      apply Z.le_trans with (m := x18.(max_e)).
+      lia.
+      rewrite state_equal9.
+      apply Z.le_trans with (m := x22.(max_e)).
+      lia.
+      rewrite state_equal7.
+      apply Z.le_trans with (m := x26.(max_e)).
+      lia.
+      rewrite state_equal5.
+      apply Z.le_trans with (m := x30.(max_e)).
+      lia.
+      rewrite state_equal3.
+      rewrite H18.
+      rewrite H0.
+      lia.
+    }
+    intros.
+    assert (after_ret_nfa: elem1.(graph)=x7). {
+      rewrite H.
+      reflexivity.
+    }
+    rewrite after_ret_nfa in H4; clear after_ret_nfa.
+    rewrite H17 in H4.
+    pose proof after_G_add_edge x27 x31 x30 x32 x29 x1.(endVertex) x5 None H16 as [state_equal3 [_ ?]].
+    pose proof H19 ge as temp; clear H19.
+    destruct temp as [temp _].
+    pose proof temp H4; clear temp.
+    pose proof after_get_new_edge x28 x30 x29 H15 as [[x29_range state_relation4] _].
+    pose proof after_G_add_edge x23 x27 x26 x28 x25 x.(endVertex) x5 None H14 as [state_equal5 [_ ?]].
+    pose proof after_get_new_edge x24 x26 x25 H13 as [[x25_range state_relation6] _].
+    pose proof after_G_add_edge x19 x23 x22 x24 x21 x3 x1.(startVertex) None H12 as [state_equal7 [_ ?]].
+    pose proof after_get_new_edge x20 x22 x21 H11 as [[x21_range state_relation8] _].
+    pose proof after_G_add_edge x15 x19 x18 x20 x17 x3 x.(startVertex) None H10 as [state_equal9 [_ ?]].
+    pose proof after_get_new_edge x16 x18 x17 H9 as [[x17_range state_relation10] _].
+    pose proof after_G_add_vertex x13 x15 x14 x16 x5 H8 as [state_equal11 [_ ?]].
+    pose proof after_G_add_vertex x11 x13 x12 x14 x3 H7 as [state_equal12 [_ ?]].
+    unfold StateRelMonad.nrm in H5.
+    destruct H5.
+    destruct H5.
+    destruct H19.
+    (* 分成 ge=x29 和 ge ∈ x27 两种情况 *)
+    (* 先排除 ge=x29 *)
+    split.
+    2: {
+      rewrite <- H0.
+      rewrite <- H18.
+      rewrite <- state_equal3.
+      lia.
+    }
+    (* 从 s1 推到 x28 *)
+    apply Z.le_lt_trans with (m := x0.(max_e)).
+    lia.
+    apply Z.le_lt_trans with (m := x2.(max_e)).
+    lia.
+    pose proof after_get_new_vertex x2 x4 x3 H1 as [_ state_equal13].
+    pose proof after_get_new_vertex x4 x6 x5 H2 as [_ state_equal14].
+    rewrite state_equal13.
+    rewrite state_equal14.
+    rewrite H6.
+    rewrite H25.
+    rewrite state_equal12.
+    rewrite state_equal11.
+    apply Z.lt_trans with (m := x18.(max_e)).
+    lia.
+    rewrite state_equal9.
+    apply Z.lt_trans with (m := x22.(max_e)).
+    lia.
+    rewrite state_equal7.
+    apply Z.lt_trans with (m := x26.(max_e)).
+    lia.
+    rewrite state_equal5.
+    apply Z.lt_le_trans with (m := x30.(max_e)).
+    lia.
+    lia.
+    (* 排除了 ge = x29 往下推 ge ∈ x27.graph *)
+    clear H4 x29_range.
+    pose proof H20 ge as temp; clear H20.
+    destruct temp as [temp _].
+    pose proof temp H5; clear temp.
+    (* 再分成 ge=x25 和 ge ∈ x23.graph *)
+    (* 
+    x25_range: max_e x24 < x25 <= max_e x26
+    *)
+    destruct H4.
+    split.
+    2: {
+      rewrite <- H0.
+      rewrite <- H18.
+      rewrite <- state_equal3.
+      apply Z.le_trans with (m := x26.(max_e)).
+      lia.
+      rewrite state_equal5.
+      lia.
+    }
+    apply Z.le_lt_trans with (m := x0.(max_e)).
+    lia.
+    apply Z.le_lt_trans with (m := x2.(max_e)).
+    lia.
+    pose proof after_get_new_vertex x2 x4 x3 H1 as [_ state_equal13].
+    pose proof after_get_new_vertex x4 x6 x5 H2 as [_ state_equal14].
+    rewrite state_equal13.
+    rewrite state_equal14.
+    rewrite H6.
+    rewrite H25.
+    rewrite state_equal12.
+    rewrite state_equal11.
+    apply Z.lt_trans with (m := x18.(max_e)).
+    lia.
+    rewrite state_equal9.
+    apply Z.lt_trans with (m := x22.(max_e)).
+    lia.
+    rewrite state_equal7.
+    lia.
+    (* 至此排除 ge=x25 往下推 ge ∈ x23.graph *)
+    clear H5 x25_range.
+    pose proof H21 ge as temp.
+    destruct temp as [temp _].
+    pose proof temp H4; clear temp.
+    (* 再分成 ge=x21 和 ge ∈ x19.graph *)
+    destruct H5.
+    (* 
+    x21_range: max_e x20 < x21 <= max_e x22
+    *)
+    split.
+    1: {
+      apply Z.le_lt_trans with (m := x0.(max_e)).
+      lia.
+      apply Z.le_lt_trans with (m := x2.(max_e)).
+      lia.
+      pose proof after_get_new_vertex x2 x4 x3 H1 as [_ state_equal13].
+      pose proof after_get_new_vertex x4 x6 x5 H2 as [_ state_equal14].
+      rewrite state_equal13.
+      rewrite state_equal14.
+      rewrite H6.
+      rewrite H25.
+      rewrite state_equal12.
+      rewrite state_equal11.
+      apply Z.lt_trans with (m := x18.(max_e)).
+      lia.
+      rewrite state_equal9.
+      lia.
+    }
+    rewrite <- H0.
+    rewrite <- H18.
+    rewrite <- state_equal3.
+    apply Z.le_trans with (m := x22.(max_e)).
+    lia.
+    rewrite state_equal7.
+    apply Z.le_trans with (m := x26.(max_e)).
+    lia.
+    rewrite state_equal5.
+    lia.
+    (* 至此排除 ge=x21 往下推 ge ∈ x19.graph *)
+    clear H4 x21_range H21.
+    pose proof H22 ge as temp.
+    destruct temp as [temp _].
+    pose proof temp H5.
+    (* 再分成 ge=x17 和 ge ∈ x15.graph *)
+    destruct H4.
+    (* 
+    x17_range: max_e x16 < x17 <= max_e x18
+    *)
+    split.
+    1: {
+      apply Z.le_lt_trans with (m := x0.(max_e)).
+      lia.
+      apply Z.le_lt_trans with (m := x2.(max_e)).
+      lia.
+      pose proof after_get_new_vertex x2 x4 x3 H1 as [_ state_equal13].
+      pose proof after_get_new_vertex x4 x6 x5 H2 as [_ state_equal14].
+      rewrite state_equal13.
+      rewrite state_equal14.
+      rewrite H6.
+      rewrite H25.
+      rewrite state_equal12.
+      rewrite state_equal11.
+      lia.
+    }
+    rewrite <- H0.
+    rewrite <- H18.
+    rewrite <- state_equal3.
+    apply Z.le_trans with (m := x18.(max_e)).
+    lia.
+    rewrite state_equal9.
+    apply Z.le_trans with (m := x22.(max_e)).
+    lia.
+    rewrite state_equal7.
+    apply Z.le_trans with (m := x26.(max_e)).
+    lia.
+    rewrite state_equal5.
+    lia.
+    (* 至此排除 ge=x17 往下推 ge ∈ x15.graph *)
+    clear H22 x17_range temp.
+    pose proof H23 ge as temp.
+    destruct temp as [temp _].
+    pose proof temp H4; clear temp.
+    pose proof H24 ge as temp.
+    destruct temp as [temp _].
+    pose proof temp H19; clear temp.
+    destruct union_pg0.
+    unfold Sets_disjoint_union in union_edge.
+    sets_unfold in union_edge; clear union_vertex union_src1 union_src2 union_dst1 union_dst2 union_symbol3 union_symbol4.
+    destruct union_edge as [_ temp].
+    pose proof temp ge as temp.
+    destruct temp as [_ temp].
+    pose proof temp H20; clear temp.
+    (* 再分成 ge ∈ x9.graph (再推一步得递归情况x) 和 ge ∈ x1.graph (递归情况x1) *)
+    destruct H21.
+    2: {
+      (* 递归情况 ge ∈ x1.graph *)
+      pose proof belong_g2 ge H21.
+      split.
+      lia.
+      (* max_e x0 < ge <= max_e x2 *)
+      apply Z.le_trans with (m := x2.(max_e)).
+      lia.
+      pose proof after_get_new_vertex x2 x4 x3 H1 as [_ state_equal13].
+      pose proof after_get_new_vertex x4 x6 x5 H2 as [_ state_equal14].
+      rewrite state_equal13.
+      rewrite state_equal14.
+      rewrite H6.
+      rewrite H25.
+      rewrite state_equal12.
+      rewrite state_equal11.
+      apply Z.le_trans with (m := x18.(max_e)).
+      lia.
+      rewrite state_equal9.
+      apply Z.le_trans with (m := x22.(max_e)).
+      lia.
+      rewrite state_equal7.
+      apply Z.le_trans with (m := x26.(max_e)).
+      lia.
+      rewrite state_equal5.
+      apply Z.le_trans with (m := x30.(max_e)).
+      lia.
+      rewrite state_equal3.
+      rewrite H18.
+      rewrite H0.
+      lia.
+    }
+    (* ge ∈ x9.graph (再推一步得递归情况x) *)
+    destruct H3.
+    destruct union_pg0; clear union_symbol3 union_symbol4.
+    unfold Sets_disjoint_union in union_edge; clear union_vertex union_src1 union_src2 union_dst1 union_dst2.
+    sets_unfold in union_edge.
+    destruct union_edge as [_ ?].
+    pose proof H3 ge as temp.
+    destruct temp as [_ temp].
+    pose proof temp H21; clear temp.
+    destruct H22.
+    simpl in H22.
+    contradiction.
+    (* ge ∈ x.graph 的递归情况 *)
+    pose proof belong_g1 ge H22.
+    (* max_e s1 < ge <= max_e x0 *)
+    split.
+    lia.
+    apply Z.le_trans with (m := x0.(max_e)).
+    lia.
+    apply Z.le_trans with (m := x2.(max_e)).
+    lia.
+    pose proof after_get_new_vertex x2 x4 x3 H1 as [_ state_equal13].
+    pose proof after_get_new_vertex x4 x6 x5 H2 as [_ state_equal14].
+    rewrite state_equal13.
+    rewrite state_equal14.
+    rewrite H6.
+    rewrite H25.
+    rewrite state_equal12.
+    rewrite state_equal11.
+    apply Z.le_trans with (m := x18.(max_e)).
+    lia.
+    rewrite state_equal9.
+    apply Z.le_trans with (m := x22.(max_e)).
+    lia.
+    rewrite state_equal7.
+    apply Z.le_trans with (m := x26.(max_e)).
+    lia.
+    rewrite state_equal5.
+    apply Z.le_trans with (m := x30.(max_e)).
+    lia.
+    rewrite state_equal3.
+    rewrite H18.
+    rewrite H0.
+    lia.
+  + intros.
+    unfold StateRelMonad.nrm in H.
+    destruct H.
+    destruct H.
+    destruct H.
+    unfold StateRelMonad.nrm in H0.
+    destruct H0.
+    destruct H0.
+    destruct H0.
+    unfold StateRelMonad.nrm in H1.
+    destruct H1.
+    destruct H1.
+    destruct H1.
+    unfold StateRelMonad.nrm in H2.
+    destruct H2.
+    destruct H2.
+    destruct H2.
+    unfold StateRelMonad.nrm in H3.
+    destruct H3.
+    unfold StateRelMonad.nrm in H2.
+    destruct H2.
+    destruct H2.
+    destruct H2.
+    unfold StateRelMonad.nrm in H5.
+    destruct H5.
+    destruct H5.
+    destruct H5.
+    unfold StateRelMonad.nrm in H6.
+    destruct H6.
+    destruct H6.
+    destruct H6.
+    unfold StateRelMonad.nrm in H7.
+    destruct H7.
+    destruct H7.
+    destruct H7.
+    unfold StateRelMonad.nrm in H8.
+    destruct H8.
+    destruct H8.
+    destruct H8.
+    unfold StateRelMonad.nrm in H9.
+    destruct H9.
+    destruct H9.
+    destruct H9.
+    unfold StateRelMonad.nrm in H10.
+    destruct H10.
+    destruct H10.
+    destruct H10.
+    unfold StateRelMonad.nrm in H11.
+    destruct H11.
+    destruct H11.
+    destruct H11.
+    unfold StateRelMonad.nrm in H12.
+    destruct H12.
+    destruct H12.
+    destruct H12.
+    unfold StateRelMonad.nrm in H13.
+    destruct H13.
+    pose proof IHr s1 x x0 H as [state_relation1 belong_x].
+    clear IHr H.
+    split.
+    1: {
+      pose proof after_G_add_edge x19 x23 x22 x24 x21 x.(endVertex) x.(startVertex) None H12 as [x22_x24 _].
+      pose proof after_get_new_edge x20 x22 x21 H11 as [[_ x22_x20_1] _].
+      pose proof after_G_add_edge x15 x19 x18 x20 x17 x.(endVertex) x3 None H10 as [x18_x20 _].
+      pose proof after_get_new_edge x16 x18 x17 H9 as [[_ x18_x16_1] _].
+      pose proof after_G_add_edge x11 x15 x14 x16 x13 x1 x.(endVertex) None H8 as [x14_x16 _].
+      pose proof after_get_new_edge x12 x14 x13 H7 as [[_ x14_x12_1] _].
+      pose proof after_G_add_vertex x9 x11 x10 x12 x3 H6 as [x10_x12 _].
+      pose proof after_G_add_vertex x7 x9 x8 x10 x1 H5 as [x8_x10 _].
+      unfold StateRelMonad.nrm in H2.
+      destruct H2 as [_ x4_x8].
+      pose proof after_get_new_vertex x2 x4 x3 H1 as [_ x2_x4].
+      pose proof after_get_new_vertex x0 x2 x1 H0 as [_ x0_x2].
+      (* 从 s1 推到 s2 *)
+      apply Z.le_trans with (m := x0.(max_e)).
+      lia.
+      rewrite x0_x2.
+      rewrite x2_x4.
+      rewrite x4_x8.
+      rewrite x8_x10.
+      rewrite x10_x12.
+      apply Z.le_trans with (m := x14.(max_e)).
+      lia.
+      rewrite x14_x16.
+      apply Z.le_trans with (m := x18.(max_e)).
+      lia.
+      rewrite x18_x20.
+      apply Z.le_trans with (m := x22.(max_e)).
+      lia.
+      rewrite x22_x24.
+      rewrite H14.
+      rewrite H4.
+      lia.    
+    }
+    intros.
+    assert (after_ret_nfa: elem1.(graph)=x5). {
+      rewrite H3.
+      reflexivity.
+    }
+    rewrite after_ret_nfa in H.
+    clear H3 after_ret_nfa.
+    rewrite H13 in H; clear H13.
+    unfold StateRelMonad.nrm in H12.
+    destruct H12 as [? x22_x24].
+    destruct H3.
+    destruct add_edge_pg0; clear add_edge_symbol_old0 add_edge_symbol_new0.
+    unfold Sets_disjoint_union in add_edge_edge.
+    sets_unfold in add_edge_edge.
+    clear add_edge_vertex add_edge_src_old add_edge_dst_old add_edge_src_new add_edge_dst_new.
+    destruct add_edge_edge as [_ temp].
+    pose proof temp ge as temp.
+    destruct temp as [_ temp].
+    pose proof temp H; clear temp.
+    pose proof after_get_new_edge x20 x22 x21 H11 as [[x21_range x22_x20_1] _].
+    pose proof after_G_add_edge x15 x19 x18 x20 x17 x.(endVertex) x3 None H10 as [x18_x20 [_ trans1]].
+    pose proof after_get_new_edge x16 x18 x17 H9 as [[x17_range x18_x16_1] _].
+    pose proof after_G_add_edge x11 x15 x14 x16 x13 x1 x.(endVertex) None H8 as [x14_x16 [_ trans2]].
+    pose proof after_get_new_edge x12 x14 x13 H7 as [[x13_range x14_x12_1] _].
+    pose proof after_G_add_vertex x9 x11 x10 x12 x3 H6 as [x10_x12 [_ trans3]].
+    pose proof after_G_add_vertex x7 x9 x8 x10 x1 H5 as [x8_x10 _].
+    unfold StateRelMonad.nrm in H2.
+    destruct H2 as [x7_graph x4_x8].
+    pose proof after_get_new_vertex x2 x4 x3 H1 as [_ x2_x4].
+    pose proof after_get_new_vertex x0 x2 x1 H0 as [_ x0_x2].
+    (* 开始讨论 ge 在不同图中的结果 *)
+    (* 首先是 ge ∈ x19 和 ge=x21  *)
+    destruct H3.
+    2: {
+      (* 先排除 ge=x21 的情况 *)
+      (* max_e x20 < x21 <= max_e x22 *)
+      split.
+      apply Z.le_lt_trans with (m := x0.(max_e)).
+      lia.
+      rewrite x0_x2.
+      rewrite x2_x4.
+      rewrite x4_x8.
+      rewrite x8_x10.
+      rewrite x10_x12.
+      apply Z.le_lt_trans with (m := x14.(max_e)).
+      lia.
+      rewrite x14_x16.
+      apply Z.le_lt_trans with (m := x18.(max_e)).
+      lia.
+      rewrite x18_x20.
+      lia.
+      rewrite <- H4.
+      rewrite <- H14.
+      rewrite <- x22_x24.
+      lia.
+    }
+    clear x21_range.
+    pose proof trans1 ge as temp.
+    destruct temp as [temp _].
+    pose proof temp H2; clear temp trans1.
+    (* ge=x17 和 ge ∈ x15 两种情况 *)
+    destruct H3.
+    1: {
+      (* max_e x16 < x17 <= max_e x18 *)
+      split.
+      apply Z.le_lt_trans with (m := x0.(max_e)).
+      lia.
+      rewrite x0_x2.
+      rewrite x2_x4.
+      rewrite x4_x8.
+      rewrite x8_x10.
+      rewrite x10_x12.
+      apply Z.le_lt_trans with (m := x14.(max_e)).
+      lia.
+      rewrite x14_x16.
+      lia.
+      rewrite <- H4.
+      rewrite <- H14.
+      rewrite <- x22_x24.
+      apply Z.le_trans with (m := x20.(max_e)).
+      2: lia.
+      apply Z.le_trans with (m := x18.(max_e)).
+      lia.
+      rewrite x18_x20.
+      lia.
+    }
+    (* 至此排除 ge=x17，往下讨论 ge ∈ x15 *)
+    pose proof trans2 ge as temp.
+    destruct temp as [temp _].
+    pose proof temp H3; clear temp trans2 x17_range.
+    (* ge=x13 和 ge ∈ x11 两种情况 *)
+    destruct H12.
+    1: {
+      (* max_e x12 < x13 <= max_e x14 *)
+      split.
+      apply Z.le_lt_trans with (m := x0.(max_e)).
+      lia.
+      rewrite x0_x2.
+      rewrite x2_x4.
+      rewrite x4_x8.
+      rewrite x8_x10.
+      rewrite x10_x12.
+      lia.
+      apply Z.le_trans with (m := x14.(max_e)).
+      lia.
+      rewrite x14_x16.
+      apply Z.le_trans with (m := x18.(max_e)).
+      lia.
+      rewrite x18_x20.
+      apply Z.le_trans with (m := x22.(max_e)).
+      lia.
+      rewrite x22_x24.
+      rewrite H14.
+      rewrite H4.
+      lia.
+    }
+    (* 至此排除 ge=x13，往下讨论 ge ∈ x11 *)
+    pose proof trans3 ge as temp.
+    destruct temp as [temp _].
+    pose proof temp H12; clear temp trans3 x13_range.
+    unfold StateRelMonad.nrm in H5.
+    destruct H5 as [? _].
+    destruct H5.
+    destruct add_vertex_pg0; clear add_vertex_symbol0.
+    clear add_vertex_vertex add_vertex_src add_vertex_dst.
+    rewrite <- add_vertex_edge in H13.
+    destruct x7_graph.
+    destruct union_pg0; clear union_symbol3 union_symbol4.
+    unfold Sets_disjoint_union in union_edge; clear union_vertex union_src1 union_src2 union_dst1 union_dst2.
+    sets_unfold in union_edge.
+    destruct union_edge as [_ temp].
+    pose proof temp ge as temp.
+    destruct temp as [_ temp].
+    pose proof temp H13; clear temp.
+    destruct H5.
+    simpl in H5.
+    contradiction.
+    pose proof belong_x ge H5.
+    (* 到递推情况 x.graph *)
+    (* max_e s1 < ge <= max_e x0 *)
+    split.
+    lia.
+    apply Z.le_trans with (m := x0.(max_e)).
+    lia.
+    rewrite x0_x2.
+    rewrite x2_x4.
+    rewrite x4_x8.
+    rewrite x8_x10.
+    rewrite x10_x12.
+    apply Z.le_trans with (m := x14.(max_e)).
+    lia.
+    rewrite x14_x16.
+    apply Z.le_trans with (m := x18.(max_e)).
+    lia.
+    rewrite x18_x20.
+    apply Z.le_trans with (m := x22.(max_e)).
+    lia.
+    rewrite x22_x24.
+    rewrite H14.
+    rewrite H4.
+    lia.    
+Qed.
 
 Lemma evalid_range :
   forall {T: Type} (elem1: elem T) (s1 s2: state) (r: reg_exp T),
