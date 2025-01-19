@@ -7044,7 +7044,8 @@ Qed.
 
 (* 这个命题描述了在图 x1 上添加一个新的边后，保持匹配字符串的能力。
   如果在图 x1 中存在一个匹配字符串的路径，并且通过图 x1 添加了一条新的边，
-  那么这个路径在新图 x2 中仍然有效。 *)
+  那么这个路径在新图 x2 中仍然有效。
+  与add_graph_match_preserve证明类似 *)
 Lemma add_edge_match_preserve:
   forall {T: Type}(str: list T) (x1 x2: pg_nfa T)(s1 s2:state) (e v1 v2 v3 v4:Z),
   match_str x1 v1 v2 str->
