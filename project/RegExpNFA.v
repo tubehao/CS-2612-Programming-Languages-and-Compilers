@@ -5877,15 +5877,6 @@ Proof.
       tauto.
 Qed.
 
-Lemma act_union_vrel {T: Type}:
-forall (A B a: elem T) (s1 s2: state),
-  (s1, a, s2) ∈ (act_union A B).(nrm) ->
-    (e_step a.(graph) a.(startVertex) A.(startVertex) /\
-    e_step a.(graph) a.(startVertex) B.(startVertex) /\
-    e_step a.(graph) A.(endVertex) a.(endVertex) /\
-    e_step a.(graph) B.(endVertex) a.(endVertex)).
-Admitted.
-
 (* act_union A B 合成的 NFA 中，某个元素 a 不能同时涉及跨越 A 和 B 之间的转换 *)
 Lemma act_union_non_vrel {T: Type}:
 forall (A B a: elem T) (s1 s2: state),
