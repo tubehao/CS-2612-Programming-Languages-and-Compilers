@@ -6064,6 +6064,13 @@ forall (x: pg_nfa T) (s1 s2: list T) (v1 v2 v3: Z),
   string_step x (s1 ++ s2) v1 v3.
 Admitted.
 
+Lemma string_step_concat2 {T: Type}:
+forall (x: pg_nfa T) (s1 s2: list T) (v1 v2 v3: Z),
+  string_step x s1 v1 v2 ->
+  string_step x s2 v2 v3 ->
+  string_step x (s2 ++ s1) v1 v3.
+Admitted.
+
 Theorem star_hoare_backward {T: Type}:
 forall (s: state) (r: reg_exp T) (str: list T),
   (forall (s0: state) (str1: list T),
@@ -7476,102 +7483,6 @@ Definition MatchE {T} (r1 : reg_exp T) :=
   s1 = s->
   exp_match r1 str .
 
-Lemma NfaMatch_ConcatR{T}:
-  forall (str: list T)(x x1 a: elem T)(r1 r2 :reg_exp T)(v1 v2:Z)(s1 s2 s3 s4:state),
-  match_str a.(graph) v1 v2 str ->
-  (s1, x, s2) ∈ (regexToNFA r1).(nrm)->
-  (s2, x1, s3) ∈ (regexToNFA r2).(nrm)->
-  (s3, a, s4) ∈ (act_concat x x1).(nrm)->
-  exists (str1 str2: list T),
-  match_str x.(graph) v1 x.(endVertex) str1 /\ match_str x1.(graph) x1.(startVertex) v2 str2 /\ str= str2 ++ str1.
-Proof.
-  intros.
-  revert v2 H.
-  induction str.
-  2:{
-    intros.
-    
-  }
-  
-
-  
-
-Admitted.
-
-Lemma concat_hoare_forward {T: Type}:
-  forall (str : list T) (s: state) (r1:reg_exp T)(r2: reg_exp T),
-  Hoare
-    (fun s1 => s1 = s)                  
-    (regexToNFA (Concat_r r1 r2))                          
-    (fun (e : elem T) (s2 : state) =>                          
-    MatchE r1 /\ MatchE r2->match_str e.(graph) e.(startVertex) e.(endVertex) str ->exp_match (Concat_r r1 r2) str).
-Proof.
-  intros.
-  unfold Hoare.
-  split.
-  - intros.
-    intros contra.
-    pose proof derive_false.
-    apply H0 in contra.
-    tauto.
-  - intros.
-    destruct H0.
-    destruct H0.
-    destruct H0.
-    destruct H3.
-    destruct H3.
-    destruct H3.
-    unfold MatchE in H1.
-    destruct H1.
-    pose proof NfaMatch_ConcatR(T:=T).
-    specialize (H6 str x x1 a r1 r2 a.(startVertex) a.(endVertex) s1 x0 x2 s2).
-    apply H6 in H2.
-    2:{
-      tauto.
-    }
-    2:{
-      tauto.
-    }
-    2:{
-      tauto.
-    }
-    destruct H2.
-    destruct H2.
-    destruct H2.
-    destruct H7.
-    destruct H4.
-    destruct H4.
-    destruct H4.
-    destruct H4.
-    destruct H4.
-    destruct H4.
-    destruct H10.
-    destruct H10.
-    destruct H10.
-    destruct H9.
-    rewrite H9 in H2, H7.
-    simpl in H2, H7.
-    specialize (H1 x3 s1 x0 s x).
-    apply H1 in H0.
-    2:{
-      tauto.
-    }
-    2:{
-      tauto.
-    }
-    specialize (H5 x4 x0 x2 x0 x1).
-    apply H5 in H3.
-    2:{
-      tauto.
-    }
-    2:{
-      tauto.
-    }
-    simpl.
-    unfold set_prod.
-    exists x3 ,x4.
-    tauto.
-Qed.
 
 Lemma act_star_shrink {T: Type}:
 forall (s1 s2: state) (A: elem T) (a : elem T) (l: list T),
@@ -7749,5 +7660,540 @@ Proof.
     simpl in H18.
     pose proof H18 H21.
     simpl.
+    tauto.
+Qed.
+
+
+Lemma regexToNFA_hoare_backward{T:Type}:
+forall (str : list T) (s: state) (r :reg_exp T),
+Hoare
+  (fun s1 => s1 = s)                  
+  (regexToNFA r)                          
+  (fun (e : elem T) (s2 : state) =>                          
+  exp_match r str ->match_str e.(graph) e.(startVertex) e.(endVertex) str).
+Proof.
+  intros.
+  unfold Hoare.
+  split.
+  intros.
+  intros contra.
+  pose proof derive_false.
+  specialize (H0 T r s1).
+  tauto.
+  intros.
+  revert s1 s2 s a str H0 H H1.
+  induction r.
+  - pose proof empty_string_hoare_backward(T:=T).
+    intros.
+    specialize (H str s).
+    apply H in H0.
+    tauto.
+    tauto.
+    tauto.
+  - pose proof char_set_hoare_backward(T:=T).
+    intros.
+    specialize (H str s).
+    apply H in H0.
+    tauto.
+    tauto.
+    tauto.
+  - pose proof concat_hoare_backward(T:=T).
+    intros.
+    specialize (H str s r1 r2).
+    unfold Hoare in H.
+    destruct H.
+    specialize (H3 s1 a s2).
+    apply H3 in H2.
+    tauto.
+    tauto.
+    tauto.
+    split.
+    unfold MatchR.
+    intros.
+    specialize (IHr1 s0 s3 s4 a0 str0).
+    apply IHr1 in H4.
+    tauto.
+    tauto.
+    tauto.
+    unfold MatchR.
+    intros.
+    specialize (IHr2 s0 s3 s4 a0 str0).
+    apply IHr2 in H4.
+    tauto.
+    tauto.
+    tauto.
+  - pose proof union_hoare_backward(T:=T).
+    intros.
+    specialize (H s r1 r2 str).
+    destruct H.
+    intros.
+    unfold Hoare.
+    split.
+    intros.
+    intros contra.
+    pose proof derive_false.
+    specialize (H3 T r1 s3).
+    tauto.
+    intros.
+    specialize (IHr1 s3 s4 s0 a0 str).
+    tauto.
+    intros.
+    unfold Hoare.
+    split.
+    intros.
+    intros contra.
+    pose proof derive_false.
+    specialize (H3 T r2 s3).
+    tauto.
+    intros.
+    specialize (IHr2 s3 s4 s0 a0 str).
+    tauto.
+    specialize (H3 s1 a s2).
+    apply H3 in H1.
+    tauto.
+    tauto.
+    tauto.
+  - pose proof star_hoare_backward(T:=T).
+    intros.
+    specialize (H s r str).
+    destruct H.
+    intros.
+    unfold Hoare.
+    split.
+    intros.
+    intros contra.
+    pose proof derive_false.
+    specialize (H3 T r s3).
+    tauto.
+    intros.
+    specialize (IHr s3 s4 s0 a0 str1).
+    apply IHr in H3.
+    tauto.
+    tauto.
+    tauto.
+    specialize (H3 s1 a s2).
+    apply H3 in H1.
+    tauto.
+    tauto.
+    tauto.
+Qed.
+Lemma concat_match_e_step_vertex_preserve1{T:Type}:
+  forall (x x1 a: elem T)(v1 v2 :Z)(s3 s4:state),
+  e_step a.(graph) v1 v2 ->
+  x1.(graph).(pg).(vvalid) v2->
+  (s3, a, s4) ∈ (act_concat x x1).(nrm)->
+  x1.(graph).(pg).(vvalid) v1 \/ v1 = x.(endVertex).
+Proof.
+Admitted.
+
+
+Lemma concat_match_e_step_vertex_preserve2{T:Type}:
+  forall (x x1 a: elem T)(v1 v2 :Z)(s3 s4:state),
+  e_step a.(graph) v1 v2 ->
+  x.(graph).(pg).(vvalid) v2->
+  (s3, a, s4) ∈ (act_concat x x1).(nrm)->
+  x.(graph).(pg).(vvalid) v1.
+Proof.
+Admitted.
+
+Lemma concat_match_c_step_vertex_preserve1{T:Type}:
+  forall (x x1 a: elem T)(v1 v2 :Z)(s3 s4:state)(a0:T),
+  c_step a.(graph) a0 v1 v2 ->
+  x1.(graph).(pg).(vvalid) v2->
+  (s3, a, s4) ∈ (act_concat x x1).(nrm)->
+  x1.(graph).(pg).(vvalid) v1.
+Proof.
+Admitted.
+
+
+Lemma concat_match_c_step_vertex_preserve2{T:Type}:
+  forall (x x1 a: elem T)(v1 v2 :Z)(s3 s4:state)(a0:T),
+  c_step a.(graph) a0 v1 v2 ->
+  x.(graph).(pg).(vvalid) v2->
+  (s3, a, s4) ∈ (act_concat x x1).(nrm)->
+  x.(graph).(pg).(vvalid) v1.
+Proof.
+Admitted.
+
+Lemma NfaMatch_ConcatR_pre1{T:Type}:
+  forall (str str3: list T)(x x1 a: elem T)(s3 s4:state)(v1 v2 :Z),
+  match_str a.(graph) v1 v2 str ->
+  x.(graph).(pg).(vvalid) v1 /\ x1.(graph).(pg).(vvalid) v2->
+  (s3, a, s4) ∈ (act_concat x x1).(nrm)->
+  ((match_str x1.(graph) x1.(startVertex) x1.(endVertex) str3) ->  ~ (str3 ∈ [nil]))-> 
+  exists (str1 str2: list T),
+  match_str a.(graph) v1 x.(endVertex) str1 /\ match_str a.(graph) x1.(startVertex) v2 str2 /\ str= str2 ++ str1.
+Proof.
+  intros.
+  revert v2 str3 H H0 H2.
+  induction str.
+  2:{
+    intros.
+    destruct H.
+    sets_unfold in H.
+    destruct H.
+    specialize (IHstr x0 str3).
+    apply IHstr in H.
+    destruct H.
+    destruct H.
+    destruct H.
+    exists x2, (a0:: x3).
+    split.
+    tauto.
+    split.
+    - assert (H6: string_step a.(graph) [a0] x0 v2).
+      {
+        unfold string_step.
+        sets_unfold.
+        exists x0.
+        split.
+        - unfold e_steps.
+          unfold clos_refl_trans.
+          sets_unfold.
+          exists Nat.zero.
+          simpl.
+          unfold Rels.id.
+          simpl.
+          tauto.
+        - tauto. 
+      }
+      pose proof string_step_concat2(T:=T).
+      specialize (H5 a.(graph) x3 [a0]%list x1.(startVertex) x0 v2).
+      destruct H4.
+      apply H5 in H4.
+      + sets_unfold in H4.
+        simpl.
+        tauto.
+      + tauto.
+    - destruct H4.
+      rewrite H5.
+      simpl.
+      tauto.
+    - split.
+      tauto.
+      destruct H3.
+      sets_unfold in H3.
+      destruct H3.
+      destruct H4.
+      destruct x3.
+      + simpl in H4.
+        unfold Rels.id in H4.
+        simpl in H4.
+        rewrite H4 in H3.
+        pose proof concat_match_c_step_vertex_preserve1(T:=T).
+        specialize (H5 x x1 a x0 v2 s3 s4 a0).
+        apply H5 in H3.
+        tauto.
+        tauto.
+        tauto.
+      + destruct H4.
+        sets_unfold in H4.
+        destruct H4.
+        revert x4 H4 H5.
+        induction x3.
+        * intros.
+          simpl in H5.
+          unfold Rels.id in H5.
+          simpl in H5.
+          rewrite H5 in H4.
+          pose proof concat_match_e_step_vertex_preserve1(T:=T).
+          specialize (H6 x x1 a x2 v2 s3 s4).
+          apply H6 in H4.
+          2:{
+            tauto.
+          }
+          2:{
+            tauto.
+          }
+          pose proof add_edge_match_preserve(T:=T).
+          destruct H1.
+          destruct H1.
+          destruct H1.
+          destruct H1.
+          destruct H1.
+          destruct H1.
+          destruct H9.
+          destruct H9.
+          destruct H9.
+          destruct H10.
+          destruct H10.
+          destruct H10.
+          destruct H10.
+          destruct H11.
+          destruct H11.
+          destruct H11.
+          pose proof add_graph_match_preserve2(T:=T).
+          specialize (H14 str3 x6 x1.(graph) x8 x7 x9 x1.(startVertex) x1.(endVertex)).
+          Admitted.
+
+
+
+
+Lemma NfaMatch_ConcatR{T:Type}:
+  forall (str: list T)(x x1 a: elem T)(r1 r2 :reg_exp T)(v1 v2:Z)(s1 s2 s3 s4:state),
+  match_str a.(graph) v1 v2 str ->
+  (s1, x, s2) ∈ (regexToNFA r1).(nrm)->
+  (s2, x1, s3) ∈ (regexToNFA r2).(nrm)->
+  (s3, a, s4) ∈ (act_concat x x1).(nrm)->
+  exists (str1 str2: list T),
+  match_str x.(graph) v1 x.(endVertex) str1 /\ match_str x1.(graph) x1.(startVertex) v2 str2 /\ str= str2 ++ str1.
+Proof.
+  intros.
+  revert v2 H.
+  induction str.
+  2:{
+    intros.
+    destruct H.
+    sets_unfold in H.
+    destruct H.
+    apply IHstr in H.
+    destruct H.
+    destruct H.
+    destruct H.
+    destruct H4.
+    exists x2 , (a0::x3).
+    split.
+    tauto.
+    split.
+    - assert (H6: string_step a.(graph) [a0] x0 v2).
+      {
+        unfold string_step.
+        sets_unfold.
+        exists x0.
+        split.
+        - unfold e_steps.
+          unfold clos_refl_trans.
+          sets_unfold.
+          exists Nat.zero.
+          simpl.
+          unfold Rels.id.
+          simpl.
+          tauto.
+        - tauto. 
+      }
+      pose proof string_step_concat(T:=T).
+      destruct H2.
+      destruct H2.
+      destruct H2.
+      destruct H2.
+      destruct H2.
+      destruct H2.
+      destruct H9.
+      destruct H9.
+      destruct H9.
+      destruct H10.
+      destruct H10.
+      destruct H10.
+      destruct H11.
+      destruct H11.
+      destruct H11.
+      destruct H3.
+      sets_unfold in H3.
+      destruct H3.
+      destruct H3.
+      destruct H3.
+      destruct H3.
+      destruct H3.
+      destruct H9.
+      destruct H3.
+      destruct union_pg0.
+
+      
+      
+
+  }
+  
+
+  
+
+Admitted.
+
+Lemma concat_hoare_forward {T: Type}:
+  forall (str : list T) (s: state) (r1:reg_exp T)(r2: reg_exp T),
+  Hoare
+    (fun s1 => s1 = s)                  
+    (regexToNFA (Concat_r r1 r2))                          
+    (fun (e : elem T) (s2 : state) =>                          
+    MatchE r1 /\ MatchE r2->match_str e.(graph) e.(startVertex) e.(endVertex) str ->exp_match (Concat_r r1 r2) str).
+Proof.
+  intros.
+  unfold Hoare.
+  split.
+  - intros.
+    intros contra.
+    pose proof derive_false.
+    apply H0 in contra.
+    tauto.
+  - intros.
+    destruct H0.
+    destruct H0.
+    destruct H0.
+    destruct H3.
+    destruct H3.
+    destruct H3.
+    unfold MatchE in H1.
+    destruct H1.
+    pose proof NfaMatch_ConcatR(T:=T).
+    specialize (H6 str x x1 a r1 r2 a.(startVertex) a.(endVertex) s1 x0 x2 s2).
+    apply H6 in H2.
+    2:{
+      tauto.
+    }
+    2:{
+      tauto.
+    }
+    2:{
+      tauto.
+    }
+    destruct H2.
+    destruct H2.
+    destruct H2.
+    destruct H7.
+    destruct H4.
+    destruct H4.
+    destruct H4.
+    destruct H4.
+    destruct H4.
+    destruct H4.
+    destruct H10.
+    destruct H10.
+    destruct H10.
+    destruct H9.
+    rewrite H9 in H2, H7.
+    simpl in H2, H7.
+    specialize (H1 x3 s1 x0 s x).
+    apply H1 in H0.
+    2:{
+      tauto.
+    }
+    2:{
+      tauto.
+    }
+    specialize (H5 x4 x0 x2 x0 x1).
+    apply H5 in H3.
+    2:{
+      tauto.
+    }
+    2:{
+      tauto.
+    }
+    simpl.
+    unfold set_prod.
+    exists x3 ,x4.
+    tauto.
+Qed.
+
+
+Lemma regexToNFA_hoare_forward{T:Type}:
+forall (str : list T) (s: state) (r :reg_exp T),
+Hoare
+  (fun s1 => s1 = s)                  
+  (regexToNFA r)                          
+  (fun (e : elem T) (s2 : state) =>                          
+  match_str e.(graph) e.(startVertex) e.(endVertex) str ->exp_match r str).
+Proof.
+  intros.
+  unfold Hoare.
+  split.
+  intros.
+  intros contra.
+  pose proof derive_false.
+  specialize (H0 T r s1).
+  tauto.
+  intros.
+  revert s1 s2 s a str H0 H H1.
+  induction r.
+  - pose proof empty_string_hoare_forward(T:=T).
+    intros.
+    specialize (H str s).
+    apply H in H0.
+    tauto.
+    tauto.
+    tauto.
+  - pose proof char_set_hoare_forward(T:=T).
+    intros.
+    specialize (H str s).
+    apply H in H0.
+    tauto.
+    tauto.
+    tauto.
+  - pose proof concat_hoare_forward(T:=T).
+    intros.
+    specialize (H str s r1 r2).
+    unfold Hoare in H.
+    destruct H.
+    specialize (H3 s1 a s2).
+    apply H3 in H2.
+    tauto.
+    tauto.
+    tauto.
+    split.
+    unfold MatchE.
+    intros.
+    specialize (IHr1 s0 s3 s4 a0 str0).
+    apply IHr1 in H4.
+    tauto.
+    tauto.
+    tauto.
+    unfold MatchE.
+    intros.
+    specialize (IHr2 s0 s3 s4 a0 str0).
+    apply IHr2 in H4.
+    tauto.
+    tauto.
+    tauto.
+  - pose proof union_hoare_forward(T:=T).
+    intros.
+    specialize (H s r1 r2 str).
+    destruct H.
+    intros.
+    unfold Hoare.
+    split.
+    intros.
+    intros contra.
+    pose proof derive_false.
+    specialize (H3 T r1 s3).
+    tauto.
+    intros.
+    specialize (IHr1 s3 s4 s0 a0 str).
+    tauto.
+    intros.
+    unfold Hoare.
+    split.
+    intros.
+    intros contra.
+    pose proof derive_false.
+    specialize (H3 T r2 s3).
+    tauto.
+    intros.
+    specialize (IHr2 s3 s4 s0 a0 str).
+    tauto.
+    specialize (H3 s1 a s2).
+    apply H3 in H1.
+    tauto.
+    tauto.
+    tauto.
+  - pose proof star_hoare_forward(T:=T).
+    intros.
+    specialize (H s r str).
+    destruct H.
+    intros.
+    unfold Hoare.
+    split.
+    intros.
+    intros contra.
+    pose proof derive_false.
+    specialize (H3 T r s3).
+    tauto.
+    intros.
+    specialize (IHr s3 s4 s0 a0 str1).
+    apply IHr in H3.
+    tauto.
+    tauto.
+    tauto.
+    specialize (H3 s1 a s2).
+    apply H3 in H1.
+    tauto.
+    tauto.
     tauto.
 Qed.
