@@ -3,7 +3,7 @@ SETS_DIR = sets
 COMPCERT_DIR = compcert_lib
 PL_DIR = pl
 ASSIGNMENT_DIR = Assignment
-
+PROJECT_DIR = project
 COQBIN=
 
 -include CONFIGURE
@@ -38,13 +38,16 @@ PL_FILES=$(PL_FILE_NAMES:%.v=$(PL_DIR)/%.v)
 
 ASSIGNMENT_FILE_NAMES = \
 	Assignment1018b.v Assignment1023.v Assignment1030b.v Assignment1127a.v Assignment1127b.v
+PROJECT_FILE_NAME = RegExpNFA.v
 
 ASSIGNMENT_FILES=$(ASSIGNMENT_FILE_NAMES:%.v=$(ASSIGNMENT_DIR)/%.v)
+PROJECT_FILE=$(PROJECT_DIR)/$(PROJECT_FILE_NAME)
 
 FILES = $(PL_FILES) \
   $(SETS_FILES) \
   $(COMPCERT_FILES) \
-	$(ASSIGNMENT_FILES)
+	$(ASSIGNMENT_FILES) \
+	$(PROJECT_FILE)
 
 $(SETS_FILES:%.v=%.vo): %.vo: %.v
 	@echo COQC $<;
@@ -59,6 +62,10 @@ $(PL_FILES:%.v=%.vo): %.vo: %.v
 	@$(COQC) $(PL_FLAG) $<
 
 $(ASSIGNMENT_FILES:%.v=%.vo): %.vo: %.v
+	@echo COQC $(<F);
+	@$(COQC) $(PL_FLAG) $<
+
+$(PROJECT_FILE:%.v=%.vo): %.vo: %.v
 	@echo COQC $(<F);
 	@$(COQC) $(PL_FLAG) $<
 
