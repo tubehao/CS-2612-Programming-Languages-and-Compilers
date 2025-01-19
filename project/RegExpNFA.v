@@ -768,13 +768,6 @@ Proof.
   tauto.
 Qed.
 
-(* 经过add_graph之后能够产生的图中的边小于等于末状态的max_e *)
-Lemma after_G_add_graph_all_edge_number_become_larger :
-forall {T: Type} (pg1 pg2: pg_nfa T) (s1 s2: state) (g: pg_nfa T),
-  (s1, g, s2) ∈ (G_add_graph pg1 pg2).(nrm) ->
-  forall gv, gv ∈ g.(pg).(evalid) -> gv <= s2.(max_e).
-Admitted.
-
 (* 加边或加点后前后图边关系 *)
 Lemma after_G_add_edge:
   forall {T: Type} (g1 g2: pg_nfa T) (s1 s2: state) (e x y: Z) (t: option (T -> Prop)),
@@ -3054,11 +3047,24 @@ Proof.
         sets_unfold in H5.
         destruct H5.
       }
-      pose proof after_G_add_graph_all_edge_number_become_larger x3 x1.(graph) x4 x6 x5 H2.
-      pose proof H7 x7.
-      pose proof H8 H4.
-      rewrite H5 in H6.
-      rewrite H6 in H9.
+      pose proof add_graph_maxe_equal x4 x6 x5 x3 x1.(graph) H2.
+      pose proof add_graph_maxe_equal x2 x4 x3 empty_nfa x.(graph) H1.
+      pose proof add_graph_num_edge2 x4 x6 x5 x3 x1.(graph) H2 x7 H4.
+      destruct H9.
+      pose proof add_graph_num_edge2 x2 x4 x3 empty_nfa x.(graph) H1 x7 H9.
+      unfold empty_nfa in H10.
+      simpl in H10.
+      destruct H10.
+      tauto.
+      pose proof evalid_range x s x0 r1_1 H.
+      destruct H11.
+      pose proof H11 x7 H10.
+      pose proof evalid_range x1 x0 x2 r1_2 H0.
+      destruct H14.
+      lia.
+      pose proof evalid_range x1 x0 x2 r1_2 H0.
+      destruct H10.
+      pose proof H10 x7 H9.
       lia.
     }
     3:{
