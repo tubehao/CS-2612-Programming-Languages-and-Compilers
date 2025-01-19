@@ -7870,3 +7870,240 @@ Proof.
     simpl.
     tauto.
 Qed.
+
+    
+(*********************************************************)
+(**                                                      *)
+(** 总命题                                                *)
+(**                                                      *)
+(*********************************************************)
+
+(* 正则表达式匹配推导到nfa匹配 *)
+Lemma regexToNFA_hoare_backward{T:Type}:
+forall (str : list T) (s: state) (r :reg_exp T),
+Hoare
+  (fun s1 => s1 = s)                  
+  (regexToNFA r)                          
+  (fun (e : elem T) (s2 : state) =>                          
+  exp_match r str ->match_str e.(graph) e.(startVertex) e.(endVertex) str).
+Proof.
+  intros.
+  unfold Hoare.
+  split.
+  intros.
+  intros contra.
+  pose proof derive_false.
+  specialize (H0 T r s1).
+  tauto.
+  intros.
+  revert s1 s2 s a str H0 H H1.
+  induction r.
+  - pose proof empty_string_hoare_backward(T:=T).
+    intros.
+    specialize (H str s).
+    apply H in H0.
+    tauto.
+    tauto.
+    tauto.
+  - pose proof char_set_hoare_backward(T:=T).
+    intros.
+    specialize (H str s).
+    apply H in H0.
+    tauto.
+    tauto.
+    tauto.
+  - pose proof concat_hoare_backward(T:=T).
+    intros.
+    specialize (H str s r1 r2).
+    unfold Hoare in H.
+    destruct H.
+    specialize (H3 s1 a s2).
+    apply H3 in H2.
+    tauto.
+    tauto.
+    tauto.
+    split.
+    unfold MatchR.
+    intros.
+    specialize (IHr1 s0 s3 s4 a0 str0).
+    apply IHr1 in H4.
+    tauto.
+    tauto.
+    tauto.
+    unfold MatchR.
+    intros.
+    specialize (IHr2 s0 s3 s4 a0 str0).
+    apply IHr2 in H4.
+    tauto.
+    tauto.
+    tauto.
+  - pose proof union_hoare_backward(T:=T).
+    intros.
+    specialize (H s r1 r2 str).
+    destruct H.
+    intros.
+    unfold Hoare.
+    split.
+    intros.
+    intros contra.
+    pose proof derive_false.
+    specialize (H3 T r1 s3).
+    tauto.
+    intros.
+    specialize (IHr1 s3 s4 s0 a0 str).
+    tauto.
+    intros.
+    unfold Hoare.
+    split.
+    intros.
+    intros contra.
+    pose proof derive_false.
+    specialize (H3 T r2 s3).
+    tauto.
+    intros.
+    specialize (IHr2 s3 s4 s0 a0 str).
+    tauto.
+    specialize (H3 s1 a s2).
+    apply H3 in H1.
+    tauto.
+    tauto.
+    tauto.
+  - pose proof star_hoare_backward(T:=T).
+    intros.
+    specialize (H s r str).
+    destruct H.
+    intros.
+    unfold Hoare.
+    split.
+    intros.
+    intros contra.
+    pose proof derive_false.
+    specialize (H3 T r s3).
+    tauto.
+    intros.
+    specialize (IHr s3 s4 s0 a0 str1).
+    apply IHr in H3.
+    tauto.
+    tauto.
+    tauto.
+    specialize (H3 s1 a s2).
+    apply H3 in H1.
+    tauto.
+    tauto.
+    tauto.
+Qed.
+
+(* nfa匹配推导正则表达式匹配 *)
+Lemma regexToNFA_hoare_forward{T:Type}:
+forall (str : list T) (s: state) (r :reg_exp T),
+Hoare
+  (fun s1 => s1 = s)                  
+  (regexToNFA r)                          
+  (fun (e : elem T) (s2 : state) =>                          
+  match_str e.(graph) e.(startVertex) e.(endVertex) str ->exp_match r str).
+Proof.
+  intros.
+  unfold Hoare.
+  split.
+  intros.
+  intros contra.
+  pose proof derive_false.
+  specialize (H0 T r s1).
+  tauto.
+  intros.
+  revert s1 s2 s a str H0 H H1.
+  induction r.
+  - pose proof empty_string_hoare_forward(T:=T).
+    intros.
+    specialize (H str s).
+    apply H in H0.
+    tauto.
+    tauto.
+    tauto.
+  - pose proof char_set_hoare_forward(T:=T).
+    intros.
+    specialize (H str s).
+    apply H in H0.
+    tauto.
+    tauto.
+    tauto.
+  - pose proof concat_hoare_forward(T:=T).
+    intros.
+    specialize (H str s r1 r2).
+    unfold Hoare in H.
+    destruct H.
+    specialize (H3 s1 a s2).
+    apply H3 in H2.
+    tauto.
+    tauto.
+    tauto.
+    split.
+    unfold MatchE.
+    intros.
+    specialize (IHr1 s0 s3 s4 a0 str0).
+    apply IHr1 in H4.
+    tauto.
+    tauto.
+    tauto.
+    unfold MatchE.
+    intros.
+    specialize (IHr2 s0 s3 s4 a0 str0).
+    apply IHr2 in H4.
+    tauto.
+    tauto.
+    tauto.
+  - pose proof union_hoare_forward(T:=T).
+    intros.
+    specialize (H s r1 r2 str).
+    destruct H.
+    intros.
+    unfold Hoare.
+    split.
+    intros.
+    intros contra.
+    pose proof derive_false.
+    specialize (H3 T r1 s3).
+    tauto.
+    intros.
+    specialize (IHr1 s3 s4 s0 a0 str).
+    tauto.
+    intros.
+    unfold Hoare.
+    split.
+    intros.
+    intros contra.
+    pose proof derive_false.
+    specialize (H3 T r2 s3).
+    tauto.
+    intros.
+    specialize (IHr2 s3 s4 s0 a0 str).
+    tauto.
+    specialize (H3 s1 a s2).
+    apply H3 in H1.
+    tauto.
+    tauto.
+    tauto.
+  - pose proof star_hoare_forward(T:=T).
+    intros.
+    specialize (H s r str).
+    destruct H.
+    intros.
+    unfold Hoare.
+    split.
+    intros.
+    intros contra.
+    pose proof derive_false.
+    specialize (H3 T r s3).
+    tauto.
+    intros.
+    specialize (IHr s3 s4 s0 a0 str1).
+    apply IHr in H3.
+    tauto.
+    tauto.
+    tauto.
+    specialize (H3 s1 a s2).
+    apply H3 in H1.
+    tauto.
+    tauto.
+    tauto.
+Qed.
