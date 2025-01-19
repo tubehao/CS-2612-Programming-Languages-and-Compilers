@@ -7729,6 +7729,7 @@ Proof.
     * reflexivity.
 Qed.
 
+(* 如果list可以在a（A的star）上从a的起始点走string_step到a的终点，那么它也可以在a上从A的起始点走string_step到A的终点 *)
 Lemma act_star_shrink {T: Type}:
 forall (s1 s2: state) (A: elem T) (a : elem T) (l: list T),
   (s1, a, s2) ∈ (act_star A).(nrm) ->
@@ -7736,9 +7737,11 @@ forall (s1 s2: state) (A: elem T) (a : elem T) (l: list T),
   (string_step a.(graph) l A.(endVertex) A.(endVertex)).
 Admitted.
 
+(* 如果一个正则表达式r匹配一个字符串l，那么字符串l可以在nfa G中通过 string_step 从 x 到 y。 *)
 Definition string_step_regex {T} (G: pg_nfa T) (r: reg_exp T): Z -> Z -> Prop :=
   fun x y => (forall l, exp_match r l -> string_step G l x y).
 
+(* Fixpoint描述了n步的字符串匹配。它表示从状态x到状态y的n步字符串转换，其中每一步都可能匹配一个正则表达式r。 *)
 Fixpoint string_n_step_regex {T} (n: nat) (G: pg_nfa T) (r: reg_exp T) : Z -> Z -> Prop :=
   match n with
   | O => (fun x y => x = y)
@@ -7760,6 +7763,7 @@ forall (s1 s2 s3: state) (A: elem T) (a : elem T) (r: reg_exp T),
 Admitted.
 
 (* act_star_loop will be used to prove act_star_aux *)
+(* 扩展了act_star操作，表明如果通过act_star操作的步骤匹配了字符串，那么该字符串就匹配了正则表达式Star_r r *)
 Lemma act_star_aux {T: Type}:
 forall (s1 s2 s3: state) (A: elem T) (a : elem T) (r: reg_exp T) (str: list T),
   (s1, A, s2) ∈ (regexToNFA r).(nrm) ->
@@ -7775,7 +7779,7 @@ forall (s1 s2 s3: state) (A: elem T) (a : elem T) (r: reg_exp T) (str: list T),
   exp_match (Star_r r) str.
 Admitted.
 
-
+(* nfa匹配到正则表达式匹配 *)
 Theorem star_hoare_forward {T: Type}:
 forall (s: state) (r: reg_exp T) (str: list T),
   (forall (s0: state) (str1: list T),
