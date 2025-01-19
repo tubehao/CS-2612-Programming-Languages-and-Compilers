@@ -720,7 +720,15 @@ Lemma add_edge_in_graph :
   forall {T: Type} (s1 s2: state) (x x1: pg_nfa T) (e v1 v2: Z) t,
     (s1, x, s2) ∈ (G_add_edge x1 e v1 v2 t).(nrm) ->
     (forall a : Z, (x1.(pg)).(vvalid) a <-> (x.(pg)).(vvalid) a).
-Admitted.
+Proof.
+  intros.
+  destruct H.
+  destruct H.
+  destruct add_edge_pg0.
+  sets_unfold in add_edge_vertex.
+  pose proof add_edge_vertex a.
+  apply H.
+Qed.
 
 (* 对图进行G_add_edge操作，新图中的边要么是原图中的边，要么是新加的边 *)
 Lemma add_edge_edge_equal :
