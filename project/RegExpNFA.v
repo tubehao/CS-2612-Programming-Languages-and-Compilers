@@ -7822,7 +7822,139 @@ Lemma add_graph_match_preserve2:
   (s1, x3, s2) ∈ (G_add_graph x1 x2).(nrm)->
   match_str x3 v1 v2 (str).
 Proof.
-Admitted. 
+intros.
+unfold match_str in H.
+unfold match_str.
+revert v2 H.
+induction str.
+2:{
+  intros.
+  unfold match_str in H.
+  simpl in H.
+  sets_unfold in H.
+  destruct H.
+  simpl.
+  sets_unfold.
+  exists x.
+  split.
+  destruct H.
+  - apply IHstr in H.
+    tauto.
+  - destruct H.
+    unfold char_step.
+    unfold char_step in H1.
+    sets_unfold in H1.
+    sets_unfold.
+    destruct H1.
+    exists x0.
+    destruct H1.
+    split.
+    2:{
+      unfold e_steps.
+      unfold e_steps in H2.
+      unfold clos_refl_trans in H2.
+      unfold clos_refl_trans.
+      sets_unfold.
+      sets_unfold in H2.
+      destruct H2.
+      exists x4.
+      clear H1.
+      revert x0 H2.
+      induction x4.
+      2:{
+        intros.
+        simpl.
+        sets_unfold.
+        simpl in H2.
+        sets_unfold in H2.
+        destruct H2.
+        exists x5.
+        destruct H1.
+        split.
+        2:{
+          apply IHx4 in H2.
+          tauto.
+        }
+        pose proof e_step_add_graph_preserves1(T:=T).
+        pose proof H0.
+        destruct H4.
+        rewrite H5 in H0.
+        specialize (H3 x1 x2 x3 x0 x5 s2).
+        apply H3 in H0.
+        tauto.
+        pose proof union_rel_e_step_preserves(T:=T).
+        specialize (H6 x2 x3 x1 x0 x5).
+        apply H6 in H4.
+        tauto.
+        tauto.
+      }
+      intros.
+      simpl in H2.
+      simpl.
+      unfold Rels.id in H2.
+      unfold Rels.id.
+      simpl.
+      simpl in H2.
+      tauto. 
+    }
+    pose proof c_step_add_graph_preserves1(T:=T).
+    pose proof H0.
+    destruct H4.
+    rewrite H5 in H0.
+    specialize (H3 x1 x2 x3 x x0 s2 a).
+    apply H3 in H0.
+    tauto.
+    pose proof union_rel_c_step_preserves(T:=T).
+    specialize (H6 x2 x3 x1 x x0 a).
+    apply H6 in H4.
+    tauto.
+    tauto.   
+}
+intros.
+simpl.
+simpl in H.
+unfold e_steps.
+unfold e_steps in H.
+unfold clos_refl_trans in H.
+unfold clos_refl_trans.
+sets_unfold.
+sets_unfold in H.
+destruct H.
+exists x.
+revert v1 H.
+induction x.
+2:{
+  intros.
+  simpl.
+  sets_unfold.
+  simpl in H.
+  sets_unfold in H.
+  destruct H.
+  exists x0.
+  destruct H.
+  split.
+  2:{
+    apply IHx in H1.
+    tauto.
+  }
+  pose proof e_step_add_graph_preserves1(T:=T).
+  pose proof H0.
+  destruct H3.
+  rewrite H4 in H0.
+  specialize (H2 x1 x2 x3 v1 x0 s2).
+  apply H2 in H0.
+  tauto.
+  tauto.
+}
+intros.
+simpl in H.
+simpl.
+unfold Rels.id in H.
+unfold Rels.id.
+simpl.
+simpl in H.
+tauto.
+Qed. 
 
 (* 正则表达式匹配到nfa匹配 *)
 Lemma concat_hoare_backward {T: Type}:
