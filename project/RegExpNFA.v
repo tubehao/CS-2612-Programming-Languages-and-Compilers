@@ -5395,7 +5395,40 @@ Lemma add_edge_preserve_e_step :
   e_step x1 u1 u2 ->
   (s1, x, s2) ∈ (G_add_edge x1 e v1 v2 epsilon).(nrm) ->
   e_step x u1 u2.
-Admitted.
+Proof.
+  intros.
+  unfold e_step in H.
+  destruct H.
+  destruct H.
+  destruct H.
+  unfold e_step.
+  exists x0.
+  split.
+  split.
+  pose proof add_edge_edge_equal s1 s2 x x1 e v1 v2 epsilon H0 x0.
+  tauto.
+  pose proof add_edge_in_graph s1 s2 x x1 e v1 v2 epsilon H0 u1.
+  tauto.
+  pose proof add_edge_in_graph s1 s2 x x1 e v1 v2 epsilon H0 u2.
+  tauto.
+  destruct H0.
+  destruct H.
+  destruct add_edge_pg0.
+  pose proof add_edge_src_old x0 step_evalid.
+  rewrite H.
+  tauto.
+  destruct H0.
+  destruct H.
+  destruct add_edge_pg0.
+  pose proof add_edge_dst_old x0 step_evalid.
+  rewrite H.
+  tauto.
+  destruct H0.
+  destruct H.
+  pose proof add_edge_symbol_old0 x0 step_evalid.
+  rewrite H.
+  tauto.
+Qed.
 
 (* 将一步e_step和string_step合并 *)
 Lemma e_step_extend_string_step1:
