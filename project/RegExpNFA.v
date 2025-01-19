@@ -5383,11 +5383,542 @@ Proof.
 Qed. 
 
 (* 在通过 regexToNFA 生成的 NFA 中，其起始顶点和结束顶点都是有效的图中顶点。 *)
+(* 在通过 regexToNFA 生成的 NFA 中，其起始顶点和结束顶点都是有效的图中顶点。 *)
 Lemma start_end_in_graph :
   forall {T: Type} (x: elem T) (s1 s2: state) (r: reg_exp T),
   (s1, x, s2) ∈ (regexToNFA r).(nrm) ->
     (((x.(graph)).(pg)).(vvalid) x.(startVertex)) /\ (((x.(graph)).(pg)).(vvalid) x.(endVertex)).
-Admitted.
+Proof.
+  intros.
+  revert s2 H.
+  revert x.
+  revert s1.
+  induction r.
+  + intros.
+    unfold regexToNFA in H.
+    unfold StateRelMonad.nrm in H.
+    destruct H.
+    destruct H.
+    destruct H.
+    destruct H.
+    unfold StateRelMonad.nrm in H0.
+    destruct H0.
+    destruct H0.
+    destruct H0.
+    unfold StateRelMonad.nrm in H2.
+    destruct H2.
+    destruct H2.
+    destruct H2.
+    (* 出现了 (x5, x, s2) ∈ (ret_nfa x0 x2 x4).(nrm) *)
+    unfold StateRelMonad.nrm in H3.
+    destruct H3.
+    assert (x_start: x.(startVertex)=x0). {
+      rewrite H3.
+      tauto.
+    }
+    assert (x_end: x.(endVertex)=x2). {
+      rewrite H3.
+      tauto.
+    }
+    assert (x_graph: x.(graph)=x4). {
+      rewrite H3.
+      tauto.
+    }
+    clear H3.
+    (* 要分别证明 x0 ∈ x4 且 x2 ∈ x4 *)
+    unfold StateRelMonad.nrm in H2.
+    destruct H2.
+    destruct H2.
+    destruct H2.
+    unfold StateRelMonad.nrm in H3.
+    destruct H3.
+    destruct H3.
+    destruct H3.
+    unfold StateRelMonad.nrm in H5.
+    destruct H5.
+    destruct H5.
+    destruct H5.
+    unfold StateRelMonad.nrm in H6.
+    destruct H6.
+    destruct H6.
+    destruct H6.
+    unfold StateRelMonad.nrm in H7.
+    destruct H7.
+    (* 要分别证明 x0 ∈ x4 且 x2 ∈ x4 *)
+    pose proof after_G_add_edge x8 x12 x11 x13 x10 x0 x2 None H6 as [x11_x13 [in_x12_in_x8 _]].
+    pose proof after_G_add_vertex x6 x8 x7 x9 x2 H3 as [x7_x9 [in_x8_in_x6 _]].
+    pose proof after_G_add_vertex empty_nfa x6 x3 x7 x0 H2 as [x3_x7 [in_x6_is_x0 _]].
+    rewrite x_graph.
+    rewrite H7.
+    split.
+    - rewrite x_start.
+      pose proof in_x12_in_x8 x0 as temp.
+      destruct temp as [_ temp].
+      apply temp; clear temp.
+      pose proof in_x8_in_x6 x0 as temp.
+      destruct temp as [_ temp].
+      apply temp; clear temp.
+      right.
+      pose proof in_x6_is_x0 x0 as temp.
+      destruct temp as [_ temp].
+      apply temp; clear temp.
+      left.
+      tauto.
+    - rewrite x_end.
+      pose proof in_x12_in_x8 x2 as temp.
+      destruct temp as [_ temp].
+      apply temp; clear temp.
+      pose proof in_x8_in_x6 x2 as temp.
+      destruct temp as [_ temp].
+      apply temp; clear temp.
+      left.
+      tauto.
+  + intros.
+    unfold regexToNFA in H.
+    unfold StateRelMonad.nrm in H.
+    destruct H.
+    destruct H.
+    destruct H.
+    destruct H.
+    unfold StateRelMonad.nrm in H0.
+    destruct H0.
+    destruct H0.
+    destruct H0.
+    unfold StateRelMonad.nrm in H2.
+    destruct H2.
+    destruct H2.
+    destruct H2.
+    (* 出现了 (x5, x, s2) ∈ (ret_nfa x0 x2 x4).(nrm) *)
+    unfold StateRelMonad.nrm in H3.
+    destruct H3.
+    assert (x_start: x.(startVertex)=x0). {
+      rewrite H3.
+      tauto.
+    }
+    assert (x_end: x.(endVertex)=x2). {
+      rewrite H3.
+      tauto.
+    }
+    assert (x_graph: x.(graph)=x4). {
+      rewrite H3.
+      tauto.
+    }
+    clear H3.
+    (* 要分别证明 x0 ∈ x4 且 x2 ∈ x4 *)
+    unfold StateRelMonad.nrm in H2.
+    destruct H2.
+    destruct H2.
+    destruct H2.
+    unfold StateRelMonad.nrm in H3.
+    destruct H3.
+    destruct H3.
+    destruct H3.
+    unfold StateRelMonad.nrm in H5.
+    destruct H5.
+    destruct H5.
+    destruct H5.
+    unfold StateRelMonad.nrm in H6.
+    destruct H6.
+    destruct H6.
+    destruct H6.
+    unfold StateRelMonad.nrm in H7.
+    destruct H7.
+    (* 要分别证明 x0 ∈ x4 且 x2 ∈ x4 *)
+    pose proof after_G_add_edge x8 x12 x11 x13 x10 x0 x2 (Some t) H6 as [x11_x13 [in_x12_in_x8 _]].
+    pose proof after_G_add_vertex x6 x8 x7 x9 x2 H3 as [x7_x9 [in_x8_in_x6 _]].
+    pose proof after_G_add_vertex empty_nfa x6 x3 x7 x0 H2 as [x3_x7 [in_x6_is_x0 _]].
+    rewrite x_graph.
+    rewrite H7.
+    split.
+    - rewrite x_start.
+      pose proof in_x12_in_x8 x0 as temp.
+      destruct temp as [_ temp].
+      apply temp; clear temp.
+      pose proof in_x8_in_x6 x0 as temp.
+      destruct temp as [_ temp].
+      apply temp; clear temp.
+      right.
+      pose proof in_x6_is_x0 x0 as temp.
+      destruct temp as [_ temp].
+      apply temp; clear temp.
+      left.
+      tauto.
+    - rewrite x_end.
+      pose proof in_x12_in_x8 x2 as temp.
+      destruct temp as [_ temp].
+      apply temp; clear temp.
+      pose proof in_x8_in_x6 x2 as temp.
+      destruct temp as [_ temp].
+      apply temp; clear temp.
+      left.
+      tauto.
+  + intros.
+    unfold StateRelMonad.nrm in H.
+    destruct H.
+    destruct H.
+    destruct H.
+    destruct H0.
+    destruct H0.
+    destruct H0.
+    unfold StateRelMonad.nrm in H1.
+    destruct H1.
+    destruct H1.
+    destruct H1.
+    unfold StateRelMonad.nrm in H1.
+    destruct H1.
+    destruct H1.
+    destruct H1.
+    unfold StateRelMonad.nrm in H1.
+    destruct H1.
+    destruct H1; clear union_symbol3 union_symbol4.
+    destruct union_pg0; clear union_edge union_src1 union_dst1 union_src2 union_dst2.
+    unfold Sets_disjoint_union in union_vertex.
+    sets_unfold in union_vertex.
+    destruct union_vertex as [? inx6_isx0].
+    unfold StateRelMonad.nrm in H3.
+    destruct H3.
+    destruct H3.
+    destruct H3.
+    unfold StateRelMonad.nrm in H5.
+    destruct H5.
+    destruct H5.
+    destruct H5.
+    unfold StateRelMonad.nrm in H6.
+    destruct H6.
+    destruct H6.
+    destruct H6.
+    unfold StateRelMonad.nrm in H7.
+    destruct H7 as [x4_x12 x13_x5].
+    unfold StateRelMonad.nrm in H2.
+    destruct H2.
+    assert (x_start: x.(startVertex)=x0.(startVertex)). {
+      rewrite H2.
+      tauto.
+    }
+    assert (x_end: x.(endVertex)=x2.(endVertex)). {
+      rewrite H2.
+      tauto.
+    }
+    assert (x_graph: x.(graph)=x4). {
+      rewrite H2.
+      tauto.
+    }
+    clear H2.
+    (* 先产生递推式 *)
+    pose proof IHr1 s1 x0 x1 H as regex1; clear IHr1.
+    pose proof IHr2 x1 x2 x3 H0 as regex2; clear IHr2.
+    (* 重写 起点/终点/图 *)
+    rewrite x_start.
+    rewrite x_end.
+    rewrite x_graph.
+    rewrite x4_x12.
+    pose proof after_G_add_edge x8 x12 x11 x13 x10 x0.(endVertex) x2.(startVertex) None H6 as [x11_x13 [in_x12_in_x8 _]].
+    unfold StateRelMonad.nrm in H3.
+    destruct H3 as [? x7_x9].
+    destruct H2; clear union_symbol3 union_symbol4.
+    destruct union_pg0; clear union_edge union_src1 union_dst1 union_src2 union_dst2.
+    unfold Sets_disjoint_union in union_vertex.
+    sets_unfold in union_vertex.
+    destruct union_vertex as [? inx8_inx6_inx2].
+    pose proof after_get_new_edge x9 x11 x10 H5 as [_ x9_x11].
+    split.
+    - pose proof in_x12_in_x8 x0.(startVertex) as temp; clear in_x12_in_x8.
+      destruct temp as [_ temp].
+      apply temp; clear temp.
+      pose proof inx8_inx6_inx2 x0.(startVertex) as temp.
+      destruct temp as [temp _].
+      apply temp; clear temp.
+      left.
+      pose proof inx6_isx0 x0.(startVertex) as temp.
+      destruct temp as [temp _].
+      apply temp; clear temp.
+      right.
+      tauto.
+    - pose proof in_x12_in_x8 x2.(endVertex) as temp; clear in_x12_in_x8.
+      destruct temp as [_ temp].
+      apply temp; clear temp.
+      pose proof inx8_inx6_inx2 x2.(endVertex) as temp.
+      destruct temp as [temp _].
+      apply temp; clear temp.
+      right.
+      tauto.
+  + intros.
+    unfold StateRelMonad.nrm in H.
+    destruct H.
+    destruct H.
+    destruct H.
+    destruct H0.
+    destruct H0.
+    destruct H0.
+    unfold StateRelMonad.nrm in H1.
+    destruct H1.
+    destruct H1.
+    destruct H1.
+    unfold StateRelMonad.nrm in H2.
+    destruct H2.
+    destruct H2.
+    destruct H2.
+    unfold StateRelMonad.nrm in H3.
+    destruct H3.
+    destruct H3.
+    destruct H3.
+    unfold StateRelMonad.nrm in H3.
+    destruct H3.
+    destruct H3.
+    destruct H3.
+    unfold StateRelMonad.nrm in H5.
+    destruct H5.
+    destruct H5.
+    destruct H5.
+    unfold StateRelMonad.nrm in H6.
+    destruct H6.
+    destruct H6.
+    destruct H6.
+    unfold StateRelMonad.nrm in H7.
+    destruct H7.
+    destruct H7.
+    destruct H7.
+    unfold StateRelMonad.nrm in H8.
+    destruct H8.
+    destruct H8.
+    destruct H8.
+    unfold StateRelMonad.nrm in H9.
+    destruct H9.
+    destruct H9.
+    destruct H9.
+    unfold StateRelMonad.nrm in H10.
+    destruct H10.
+    destruct H10.
+    destruct H10.
+    unfold StateRelMonad.nrm in H11.
+    destruct H11.
+    destruct H11.
+    destruct H11.
+    unfold StateRelMonad.nrm in H12.
+    destruct H12.
+    destruct H12.
+    destruct H12.
+    unfold StateRelMonad.nrm in H13.
+    destruct H13.
+    destruct H13.
+    destruct H13.
+    unfold StateRelMonad.nrm in H14.
+    destruct H14.
+    destruct H14.
+    destruct H14.
+    unfold StateRelMonad.nrm in H15.
+    destruct H15.
+    destruct H15.
+    destruct H15.
+    unfold StateRelMonad.nrm in H16.
+    destruct H16 as [x8_x32 x33_x9].
+    unfold StateRelMonad.nrm in H4.
+    destruct H4 as [? x9_s2].
+    (* 转化要证明的点和图 *)
+    assert (x_start: x.(startVertex)=x4). {
+      rewrite H4.
+      tauto.
+    }
+    assert (x_end: x.(endVertex)=x6). {
+      rewrite H4.
+      tauto.
+    }
+    assert (x_graph: x.(graph)=x8). {
+      rewrite H4.
+      tauto.
+    }
+    clear H4.
+    (* 先产生递推式 *)
+    pose proof IHr1 s1 x0 x1 H as regex1; clear IHr1.
+    pose proof IHr2 x1 x2 x3 H0 as regex2; clear IHr2.
+    (* 重写 起点/终点/图 *)
+    rewrite x_start.
+    rewrite x_end.
+    rewrite x_graph.
+    rewrite x8_x32.
+    pose proof after_G_add_edge x28 x32 x31 x33 x30 x2.(endVertex) x6 None H15 as [x31_x33 [inx32_inx28 _]].
+    pose proof after_G_add_edge x24 x28 x27 x29 x26 x0.(endVertex) x6 None H13 as [x27_x29 [inx28_inx24 _]].
+    pose proof after_G_add_edge x20 x24 x23 x25 x22 x4 x2.(startVertex) None H11 as [x23_x25 [inx24_inx20 _]].
+    pose proof after_G_add_edge x16 x20 x19 x21 x18 x4 x0.(startVertex) None H9 as [x19_x21 [inx20_inx16 _]].
+    pose proof after_G_add_vertex x14 x16 x15 x17 x6 H7 as [x15_x17 [inx16_inx14 _]].
+    pose proof after_G_add_vertex x12 x14 x13 x15 x4 H6 as [x11_x13 [inx14_inx12 _]].
+    unfold StateRelMonad.nrm in H5.
+    destruct H5 as [? _].
+    destruct H4; clear union_symbol3 union_symbol4.
+    destruct union_pg0; clear union_edge union_src1 union_dst1 union_src2 union_dst2.
+    unfold Sets_disjoint_union in union_vertex.
+    sets_unfold in union_vertex.
+    destruct union_vertex as [? inx12_inx10_inx2].
+    unfold StateRelMonad.nrm in H3.
+    destruct H3 as [? x7_x11].
+    destruct H3; clear union_symbol3 union_symbol4.
+    destruct union_pg0; clear union_edge union_src1 union_dst1 union_src2 union_dst2.
+    unfold Sets_disjoint_union in union_vertex.
+    sets_unfold in union_vertex.
+    destruct union_vertex as [? inx10_inx0].
+    split.
+    - pose proof inx32_inx28 x4 as temp; clear inx32_inx28.
+      destruct temp as [_ temp].
+      apply temp; clear temp.
+      pose proof inx28_inx24 x4 as temp; clear inx28_inx24.
+      destruct temp as [_ temp].
+      apply temp; clear temp.
+      pose proof inx24_inx20 x4 as temp; clear inx24_inx20.
+      destruct temp as [_ temp].
+      apply temp; clear temp.
+      pose proof inx20_inx16 x4 as temp; clear inx20_inx16.
+      destruct temp as [_ temp].
+      apply temp; clear temp.
+      pose proof inx16_inx14 x4 as temp; clear inx16_inx14.
+      destruct temp as [_ temp].
+      apply temp; clear temp.
+      right.
+      pose proof inx14_inx12 x4 as temp; clear inx14_inx12.
+      destruct temp as [_ temp].
+      apply temp; clear temp.
+      left.
+      tauto.
+    - pose proof inx32_inx28 x6 as temp; clear inx32_inx28.
+      destruct temp as [_ temp].
+      apply temp; clear temp.
+      pose proof inx28_inx24 x6 as temp; clear inx28_inx24.
+      destruct temp as [_ temp].
+      apply temp; clear temp.
+      pose proof inx24_inx20 x6 as temp; clear inx24_inx20.
+      destruct temp as [_ temp].
+      apply temp; clear temp.
+      pose proof inx20_inx16 x6 as temp; clear inx20_inx16.
+      destruct temp as [_ temp].
+      apply temp; clear temp.
+      pose proof inx16_inx14 x6 as temp; clear inx16_inx14.
+      destruct temp as [_ temp].
+      apply temp; clear temp.
+      left.
+      reflexivity.
+  + intros.
+    unfold StateRelMonad.nrm in H.
+    destruct H.
+    destruct H.
+    destruct H.
+    destruct H0.
+    destruct H0.
+    destruct H0.
+    unfold StateRelMonad.nrm in H1.
+    destruct H1.
+    destruct H1.
+    destruct H1.
+    unfold StateRelMonad.nrm in H2.
+    destruct H2.
+    destruct H2.
+    destruct H2.
+    unfold StateRelMonad.nrm in H3.
+    destruct H3.
+    unfold StateRelMonad.nrm in H2.
+    destruct H2.
+    destruct H2.
+    destruct H2.
+    unfold StateRelMonad.nrm in H5.
+    destruct H5.
+    destruct H5.
+    destruct H5.
+    unfold StateRelMonad.nrm in H6.
+    destruct H6.
+    destruct H6.
+    destruct H6.
+    unfold StateRelMonad.nrm in H7.
+    destruct H7.
+    destruct H7.
+    destruct H7.
+    unfold StateRelMonad.nrm in H8.
+    destruct H8.
+    destruct H8.
+    destruct H8.
+    unfold StateRelMonad.nrm in H9.
+    destruct H9.
+    destruct H9.
+    destruct H9.
+    unfold StateRelMonad.nrm in H10.
+    destruct H10.
+    destruct H10.
+    destruct H10.
+    unfold StateRelMonad.nrm in H11.
+    destruct H11.
+    destruct H11.
+    destruct H11.
+    unfold StateRelMonad.nrm in H12.
+    destruct H12.
+    destruct H12.
+    destruct H12.
+    unfold StateRelMonad.nrm in H13.
+    destruct H13 as [x6_x24 x25_x7].
+    (* 转化要证明的点和图 *)
+    assert (x_start: x.(startVertex)=x2). {
+      rewrite H3.
+      tauto.
+    }
+    assert (x_end: x.(endVertex)=x4). {
+      rewrite H3.
+      tauto.
+    }
+    assert (x_graph: x.(graph)=x6). {
+      rewrite H3.
+      tauto.
+    }
+    clear H3.
+    (* 先产生递推式 *)
+    pose proof IHr s1 x0 x1 H as regexr; clear IHr.
+    (* 重写 起点/终点/图 *)
+    rewrite x_start.
+    rewrite x_end.
+    rewrite x_graph.
+    rewrite x6_x24.
+    pose proof after_G_add_edge x20 x24 x23 x25 x22 x0.(endVertex) x0.(startVertex) None H12 as [x23_x25 [inx24_inx20 _]].
+    pose proof after_G_add_edge x16 x20 x19 x21 x18 x0.(endVertex) x4 None H10 as [x19_x21 [inx20_inx16 _]].
+    pose proof after_G_add_edge x12 x16 x15 x17 x14 x2 x0.(endVertex) None H8 as [x15_x17 [inx16_inx12 _]].
+    pose proof after_G_add_vertex x10 x12 x11 x13 x4 H6 as [x11_x13 [inx12_inx10 _]].
+    pose proof after_G_add_vertex x8 x10 x9 x11 x2 H5 as [x9_x11 [inx10_inx8 _]].
+    unfold StateRelMonad.nrm in H2.
+    destruct H2 as [? x5_x9].
+    destruct H2; clear union_symbol3 union_symbol4.
+    destruct union_pg0; clear union_edge union_src1 union_dst1 union_src2 union_dst2.
+    unfold Sets_disjoint_union in union_vertex.
+    sets_unfold in union_vertex.
+    destruct union_vertex as [? inx8_inx0].
+    split.
+    - pose proof inx24_inx20 x2 as temp; clear inx24_inx20.
+      destruct temp as [_ temp].
+      apply temp; clear temp.
+      pose proof inx20_inx16 x2 as temp; clear inx20_inx16.
+      destruct temp as [_ temp].
+      apply temp; clear temp.
+      pose proof inx16_inx12 x2 as temp; clear inx16_inx12.
+      destruct temp as [_ temp].
+      apply temp; clear temp.
+      pose proof inx12_inx10 x2 as temp; clear inx12_inx10.
+      destruct temp as [_ temp].
+      apply temp; clear temp.
+      right.
+      pose proof inx10_inx8 x2 as temp; clear inx10_inx8.
+      destruct temp as [_ temp].
+      apply temp; clear temp.
+      left.
+      tauto.
+    - pose proof inx24_inx20 x4 as temp; clear inx24_inx20.
+      destruct temp as [_ temp].
+      apply temp; clear temp.
+      pose proof inx20_inx16 x4 as temp; clear inx20_inx16.
+      destruct temp as [_ temp].
+      apply temp; clear temp.
+      pose proof inx16_inx12 x4 as temp; clear inx16_inx12.
+      destruct temp as [_ temp].
+      apply temp; clear temp.
+      pose proof inx12_inx10 x4 as temp; clear inx12_inx10.
+      destruct temp as [_ temp].
+      apply temp; clear temp.
+      left.
+      reflexivity.
+Qed.
+
 
 (* 加边后原有的e_step仍然成立 *)
 Lemma add_edge_preserve_e_step :
