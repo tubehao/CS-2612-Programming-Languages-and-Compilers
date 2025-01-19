@@ -7572,3 +7572,182 @@ Proof.
     exists x3 ,x4.
     tauto.
 Qed.
+
+Lemma act_star_shrink {T: Type}:
+forall (s1 s2: state) (A: elem T) (a : elem T) (l: list T),
+  (s1, a, s2) ∈ (act_star A).(nrm) ->
+  string_step a.(graph) l a.(startVertex) a.(endVertex) ->
+  (string_step a.(graph) l A.(endVertex) A.(endVertex)).
+Admitted.
+
+Definition string_step_regex {T} (G: pg_nfa T) (r: reg_exp T): Z -> Z -> Prop :=
+  fun x y => (forall l, exp_match r l -> string_step G l x y).
+
+Fixpoint string_n_step_regex {T} (n: nat) (G: pg_nfa T) (r: reg_exp T) : Z -> Z -> Prop :=
+  match n with
+  | O => (fun x y => x = y)
+  | S n' => (string_step_regex G r) ∘ (string_n_step_regex n' G r)
+  end.
+
+Lemma act_star_loop {T: Type}:
+forall (s1 s2 s3: state) (A: elem T) (a : elem T) (r: reg_exp T),
+  (s1, A, s2) ∈ (regexToNFA r).(nrm) ->
+  (s2, a, s3) ∈ (act_star A).(nrm) ->
+  (forall (s0: state) (str1: list T),
+  Hoare 
+  (fun s1 : state => s1 = s0) 
+  (regexToNFA r)
+  (fun (e : elem T) (_ : state) =>
+    match_str e.(graph) e.(startVertex) e.(endVertex) str1 ->
+    exp_match r str1)) ->
+  forall n, string_n_step_regex n a.(graph) r A.(endVertex) A.(endVertex).
+Admitted.
+(* act_star_loop will be used to prove act_star_aux *)
+
+Lemma act_star_aux {T: Type}:
+forall (s1 s2 s3: state) (A: elem T) (a : elem T) (r: reg_exp T) (str: list T),
+  (s1, A, s2) ∈ (regexToNFA r).(nrm) ->
+  (s2, a, s3) ∈ (act_star A).(nrm) ->
+  (forall (s0: state) (str1: list T),
+  Hoare 
+  (fun s1 : state => s1 = s0) 
+  (regexToNFA r)
+  (fun (e : elem T) (_ : state) =>
+    match_str e.(graph) e.(startVertex) e.(endVertex) str1 ->
+    exp_match r str1)) ->
+  string_step a.(graph) str A.(endVertex) A.(endVertex) ->
+  exp_match (Star_r r) str.
+Admitted.
+
+Theorem star_hoare_forward {T: Type}:
+forall (s: state) (r: reg_exp T) (str: list T),
+  (forall (s0: state) (str1: list T),
+  Hoare 
+  (fun s1 : state => s1 = s0) 
+  (regexToNFA r)
+  (fun (e : elem T) (_ : state) =>
+    match_str e.(graph) e.(startVertex) e.(endVertex) str1 ->
+    exp_match r str1)) ->
+  Hoare
+  (fun s1 => s1 = s)
+  (regexToNFA (Star_r r))
+  (fun(e : elem T) (s2 : state) =>
+    match_str e.(graph) e.(startVertex) e.(endVertex) str -> exp_match (Star_r r) str).
+Proof.
+  intros.
+  unfold Hoare.
+  split.
+  + intros.
+    unfold not.
+    intros.
+    pose proof derive_false T (Star_r r) s1 H1.
+    tauto.
+  + intros.
+    destruct H1.
+    destruct H1.
+    destruct H1.
+    destruct H3.
+    destruct H3.
+    destruct H3.
+    destruct H4.
+    destruct H4.
+    destruct H4.
+    destruct H5.
+    destruct H5.
+    destruct H5.
+    destruct H5.
+    destruct H5.
+    destruct H5.
+    destruct H7.
+    destruct H7.
+    destruct H7.
+    destruct H8.
+    destruct H8.
+    destruct H8.
+    destruct H9.
+    destruct H9.
+    destruct H9.
+    destruct H10.
+    destruct H10.
+    destruct H10.
+    destruct H11.
+    destruct H11.
+    destruct H11.
+    destruct H12.
+    destruct H12.
+    destruct H12.
+    destruct H13.
+    destruct H13.
+    destruct H13.
+    destruct H14.
+    destruct H14.
+    destruct H14.
+    destruct H15.
+    destruct H6.
+    rewrite H6 in H2.
+    simpl in H2.
+    unfold match_str in H2.
+    pose proof act_star_shrink x0 s2 x a str.
+    assert ((x0, a, s2) ∈ (act_star x).(nrm)).
+    simpl.
+    exists x1.
+    exists x2.
+    split.
+    tauto.
+    exists x3.
+    exists x4.
+    split.
+    tauto.
+    exists x5.
+    exists x6.
+    split.
+    exists x7.
+    exists x8.
+    split.
+    tauto.
+    exists x9.
+    exists x10.
+    split.
+    tauto.
+    exists x11.
+    exists x12.
+    split.
+    tauto.
+    exists x13.
+    exists x14.
+    split.
+    tauto.
+    exists x15.
+    exists x16.
+    split.
+    tauto.
+    exists x17.
+    exists x18.
+    split.
+    tauto.
+    exists x19.
+    exists x20.
+    split.
+    tauto.
+    exists x21.
+    exists x22.
+    split.
+    tauto.
+    exists x23.
+    exists x24.
+    split.
+    tauto.
+    tauto.
+    tauto.
+    pose proof H18 H19.
+    rewrite H6 in H20.
+    simpl in H20.
+    pose proof H20 H2.
+    clear H18 H20.
+    pose proof act_star_aux s1 x0 s2 x a r str H1 H19 H.
+    rewrite H6 in H18.
+    simpl in H18.
+    pose proof H18 H21.
+    simpl.
+    tauto.
+Qed.
