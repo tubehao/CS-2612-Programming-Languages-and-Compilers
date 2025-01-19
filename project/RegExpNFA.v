@@ -6151,6 +6151,78 @@ Proof.
   tauto.
 Qed.
 
+(* 在一个图中，添加一个点后，不改变原来就有的e_steps关系 *)
+Lemma add_vertex_preserve_e_steps:
+forall {T: Type} (s1 s2: state) (x x1: pg_nfa T) (v u1 u2: Z),
+  (s1, x, s2) ∈ (G_add_vertex x1 v).(nrm) ->
+  e_steps x1 u1 u2 ->
+  e_steps x u1 u2.
+Proof.
+  intros.
+  unfold e_steps in H0.
+  unfold clos_refl_trans in H0.
+  sets_unfold in H0.
+  destruct H0.
+  unfold e_steps.
+  unfold clos_refl_trans.
+  sets_unfold.
+  exists x0.
+  revert H0.
+  revert u1.
+  induction x0.
+  2:{
+    intros.
+    simpl in H0.
+    sets_unfold in H0.
+    destruct H0.
+    simpl.
+    sets_unfold.
+    exists x2.
+    split.
+    destruct H0.
+    destruct H0.
+    destruct H0.
+    destruct H0.
+    destruct H.
+    destruct H.
+    destruct add_vertex_pg0.
+    unfold e_step.
+    exists x3.
+    split.
+    split.
+    sets_unfold in add_vertex_edge.
+    pose proof add_vertex_edge x3.
+    tauto.
+    unfold Sets_disjoint_union in add_vertex_vertex.
+    sets_unfold in add_vertex_vertex.
+    destruct add_vertex_vertex.
+    pose proof H3 u1.
+    tauto.
+    unfold Sets_disjoint_union in add_vertex_vertex.
+    sets_unfold in add_vertex_vertex.
+    destruct add_vertex_vertex.
+    pose proof H3 x2.
+    tauto.
+    pose proof add_vertex_src x3 step_evalid.
+    rewrite H.
+    tauto.
+    pose proof add_vertex_dst x3 step_evalid.
+    rewrite H.
+    tauto.
+    pose proof add_vertex_symbol0 x3 step_evalid.
+    rewrite H.
+    tauto.
+    destruct H0.
+    pose proof IHx0 x2 H1.
+    apply H2.
+  }
+  simpl.
+  unfold Rels.id.
+  simpl.
+  intros.
+  lia.
+Qed.
+
 (* 类似add_graph_preserve_string_step1，
   通过操作 G_add_vertex向一个图中添加一个顶点时，在图中的字符串转换保持不变。
   具体来说，如果在原始图 x1 中，从 u1 到 u2 通过字符串 str 能够实现转换，
@@ -6160,7 +6232,152 @@ forall {T: Type} (s1 s2: state) (x x1: pg_nfa T) (v u1 u2: Z) (str: list T),
   (s1, x, s2) ∈ (G_add_vertex x1 v).(nrm) ->
   string_step x1 str u1 u2 ->
   string_step x str u1 u2.
-Admitted.
+Proof.
+  intros.
+  revert H0.
+  revert u2.
+  induction str.
+  2:{
+    intros.
+    unfold string_step in H0.
+    simpl in H0.
+    sets_unfold in H0.
+    destruct H0.
+    destruct H0.
+    unfold string_step.
+    simpl.
+    sets_unfold.
+    exists x0.
+    split.
+    + pose proof IHstr x0.
+      unfold string_step in H2.
+      sets_unfold in H2.
+      pose proof H2 H0.
+      apply H3.
+    + destruct H1.
+      destruct H1.
+      destruct H1.
+      destruct H1.
+      destruct H1.
+      destruct H3.
+      destruct H1.
+      destruct H2.
+      unfold char_step.
+      sets_unfold.
+      exists x2.
+      split.
+      - unfold c_step.
+        exists x3.
+        exists x4.
+        split.
+        destruct H.
+        destruct H.
+        destruct add_vertex_pg0.
+        split.
+        sets_unfold in add_vertex_edge.
+        pose proof add_vertex_edge x3.
+        tauto.
+        unfold Sets_disjoint_union in add_vertex_vertex.
+        sets_unfold in add_vertex_vertex.
+        destruct add_vertex_vertex.
+        pose proof H5 x0.
+        tauto.
+        unfold Sets_disjoint_union in add_vertex_vertex.
+        sets_unfold in add_vertex_vertex.
+        destruct add_vertex_vertex.
+        pose proof H5 x2.
+        tauto.
+        pose proof add_vertex_src x3 step_evalid.
+        rewrite H.
+        tauto.
+        pose proof add_vertex_dst x3 step_evalid.
+        rewrite H.
+        tauto.
+        split.
+        destruct H.
+        destruct H.
+        pose proof add_vertex_symbol0 x3 step_evalid.
+        rewrite H.
+        tauto.
+        tauto.
+      - unfold e_steps.
+        unfold clos_refl_trans.
+        sets_unfold.
+        pose proof add_vertex_preserve_e_steps s1 s2 x x1 v x2 u2 H.
+        unfold e_steps in H2.
+        unfold clos_refl_trans in H2.
+        sets_unfold in H2.
+        apply H2.
+        exists x5.
+        apply H1.  
+  }
+  intros.
+  unfold string_step.
+  unfold e_steps.
+  unfold clos_refl_trans.
+  sets_unfold.
+  unfold string_step in H0.
+  unfold e_steps in H0.
+  unfold clos_refl_trans in H0.
+  sets_unfold in H0.
+  destruct H0.
+  exists x0.
+  revert H0.
+  revert u1.
+  induction x0.
+  2:{
+    intros.
+    simpl in H0.
+    sets_unfold in H0.
+    destruct H0.
+    destruct H0.
+    simpl.
+    sets_unfold.
+    exists x2.
+    split.
+    2:{
+      pose proof IHx0 x2 H1.
+      apply H2.
+    }
+    destruct H0.
+    destruct H0.
+    destruct H0.
+    destruct H.
+    destruct H.
+    destruct add_vertex_pg0.
+    unfold e_step.
+    exists x3.
+    split.
+    split.
+    sets_unfold in add_vertex_edge.
+    pose proof add_vertex_edge x3.
+    tauto.
+    unfold Sets_disjoint_union in add_vertex_vertex.
+    sets_unfold in add_vertex_vertex.
+    destruct add_vertex_vertex.
+    pose proof H3 u1.
+    tauto.
+    unfold Sets_disjoint_union in add_vertex_vertex.
+    sets_unfold in add_vertex_vertex.
+    destruct add_vertex_vertex.
+    pose proof H3 x2.
+    tauto.
+    pose proof add_vertex_src x3 step_evalid.
+    rewrite H.
+    tauto.
+    pose proof add_vertex_dst x3 step_evalid.
+    rewrite H.
+    tauto.
+    pose proof add_vertex_symbol0 x3 step_evalid.
+    rewrite H.
+    tauto.
+  }
+  simpl.
+  unfold Rels.id.
+  simpl.
+  intros.
+  lia.
+Qed.
 
 (* 如果从状态 u1 到状态 u2 可以通过字符串 str 在原图 x1 中实现，
 那么同样的转换在修改后的图 x 中也可以通过相同的字符串 str 实现。 *)
